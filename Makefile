@@ -6,14 +6,18 @@ base:
 
 build:
 	echo "hello ,this is build"
+	docker build -t sync-block . -f $(IMAGE)/sync_block.Dockerfile
+start:
+	docker rm -f sync-block-bsc &&  docker run -itd --name sync-block-bsc -e NETWORK="bsc" -e ORIGIN=99887766 -e INTERVAL=3 -e RPC="https://bsc.test.com" -e RELOAD=False sync-block && docker logs -f sync-block-bsc
 
 server:
 	echo "hello,this is server"
 
-test-build:
+
+build-test:
 	docker build -t test . -f $(IMAGE)/test.Dockerfile
 
-test-start:
+start-test:
 	docker rm -f test &&  docker run -itd --name test -e TARGET="0x1312312312312312" -e RPC="https://infura.com" test && docker logs -f test
 
 
