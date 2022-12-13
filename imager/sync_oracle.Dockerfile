@@ -1,16 +1,17 @@
-#拉取docker环境
-FROM python:3.9-slim
-
-#设置工作目录
+FROM python
 WORKDIR /app
-
-#将dockerfile同级目录的文件传到docker容器内的app文件夹下
 ADD . .
-#RUN pip install -r requirements.txt
+RUN python --version  \
+    && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple  \
+    && pip install -r requirements.txt  \
+    && pip install -e .
 
 # 传递参数
-ENV TARGET="FUCK"
-ENV RPC="YOU"
+ENV NETWORK=""
+ENV ORIGIN=0
+ENV RELOAD=False
+ENV NODE=""
+ENV INTERVAL=0
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python main.py --target $TARGET --rpc $RPC"]
+ENTRYPOINT ["sh","-c","python cmd/main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]

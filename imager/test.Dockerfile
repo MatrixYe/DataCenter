@@ -11,7 +11,7 @@ RUN python --version && pip config set global.index-url https://pypi.tuna.tsingh
 
 # 传递参数
 ENV TARGET="FUCK"
-ENV RPC="YOU"
+ENV NODE="YOU"
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python engine/test.py --target $TARGET --rpc $RPC"]
+ENTRYPOINT ["sh","-c","python engine/test.py --target $TARGET --node $NODE"]

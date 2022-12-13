@@ -1,0 +1,53 @@
+{
+  "redis": {
+    "docker": {
+      "name": "center_redis",
+      "port": "9001:6379",
+      "volume": "v_center_redis",
+      "network": "net_center",
+      "network-alias": "redishost",
+      "password": "@password",
+      "restart": "always",
+      "img": "redis:latest"
+    },
+    "inside": {
+      "host": "redishost",
+      "port": 5432,
+      "db": 0,
+      "password": "@password"
+    },
+    "outside": {
+      "host": "127.0.0.1",
+      "port": 9001,
+      "db": 0,
+      "password": "@password"
+    }
+  },
+  "postgres": {
+    "docker": {
+      "name": "center_pg",
+      "port": "9002:5432",
+      "volume": "v_center_pg",
+      "network": "net_center",
+      "network-alias": "pghost",
+      "user": "user",
+      "password": "@password",
+      "restart": "always",
+      "img": "postgres:latest"
+    },
+    "inside": {
+      "host": "pghost",
+      "port": 5432,
+      "db": "postgres",
+      "user": "user",
+      "password": "@password"
+    },
+    "outside": {
+      "host": "127.0.0.1",
+      "port": 9002,
+      "db": "postgres",
+      "user": "user",
+      "password": "@password"
+    }
+  }
+}
