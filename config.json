@@ -1,4 +1,5 @@
 {
+  "network": "net_center",
   "redis": {
     "docker": {
       "name": "center_redis",

@@ -19,7 +19,7 @@ parser.add_argument("--origin", type=int)
 # 连接节点
 parser.add_argument("--node", type=str)
 # 是否重新同步(谨慎)
-parser.add_argument("--reload", type=bool)
+parser.add_argument("--reload", type=lambda x: (str(x).lower() in ('true', '1', 't')), default=False)
 
 args = parser.parse_args()
 

@@ -50,5 +50,5 @@ if __name__ == '__main__':
     data = config.load_config()
     start_redis(data['redis']['docker'])
     start_postgres(data['postgres']['docker'])
-    print(docker.get_container(True))
+    print(docker.continers(True))
     print("----------- END -----------")
