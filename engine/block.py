@@ -14,6 +14,7 @@ import web3
 from web3 import Web3
 from tools.redis_api import RedisApi
 from tools.eth_api import EthApi
+from tools.mongo_api import MongoApi
 from tools.uitls import is_dev_env, load_config
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
@@ -26,10 +27,11 @@ class Task(object):
         self.origin: int = kwargs.get("origin")
         self.node: str = kwargs.get("node")
         self.reload: bool = kwargs.get("reload")
-
+        #
         self.conf: dict = load_config()
-        self.eth: EthApi = EthApi.from_node(self.node)
-        self.rs: RedisApi = self._gen_redis_client()
+        self.eth: EthApi = self._conn_eth()
+        self.rs: RedisApi = self._conn_redis()
+        self.mongo = self._conn_mongo()
 
     def run(self):
         ok, err = self._check()
@@ -51,9 +53,19 @@ class Task(object):
             return False, 'interval must > 0'
         return True, None
 
-    def _gen_redis_client(self) -> RedisApi:
+    def _conn_redis(self) -> RedisApi:
         c = self.conf
         if is_dev_env():
             return RedisApi.from_config(**c['redis']['outside'])
         else:
             return RedisApi.from_config(**c['redis']['inside'])
+
+    def _conn_mongo(self) -> MongoApi:
+        c = self.conf
+        if is_dev_env():
+            return MongoApi.from_conf(**c['mongo']['outside'])
+        else:
+            return MongoApi.from_conf(**c['mongo']['inside'])
+
+    def _conn_eth(self) -> EthApi:
+        return EthApi.from_node(self.node)

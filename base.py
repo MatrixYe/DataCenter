@@ -54,11 +54,12 @@ def start_mongo(c):
     password = c['password']
     restart = c['restart']
     img = c['img']
+    cache = c['cache']
 
     docker_api.pull_image(img)
     docker_api.create_network(network)
     docker_api.create_volume(volume)
-    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img)
+    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img, cache)
 
 
 if __name__ == '__main__':

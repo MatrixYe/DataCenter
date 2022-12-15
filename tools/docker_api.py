@@ -125,13 +125,13 @@ def run_pg_container(name, port, network, network_alias, volume, user, password,
 
 
 # 创建并运行mongodb容器
-def run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img):
+def run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img,cache):
     if name not in continers(flag=False):
         if name in continers(True):
             os.system(f"docker rm {name}")
             print(f"container:{name} is exist and is stopped --> remove")
         print(f"container:{name} --> creating")
-        cmd = f"docker run -itd -p {port} --name {name} -e MONGO_INITDB_ROOT_USERNAME={user} -e MONGO_INITDB_ROOT_PASSWORD={password} -v {volume}:/data/db {img}"
+        cmd = f"docker run -itd -p {port} --name {name} -e MONGO_INITDB_ROOT_USERNAME={user} -e MONGO_INITDB_ROOT_PASSWORD={password} -v {volume}:/data/db {img} --wiredTigerCacheSizeGB {cache}"
         print(f"CMD: {cmd}")
         os.system(cmd)
     else:

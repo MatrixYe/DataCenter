@@ -61,7 +61,8 @@
       "user": "user",
       "password": "@password",
       "restart": "always",
-      "img": "mongo:latest"
+      "img": "mongo:latest",
+      "cache": 1.0
     },
     "inside": {
       "host": "pghost",
