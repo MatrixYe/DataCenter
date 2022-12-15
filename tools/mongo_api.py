@@ -7,10 +7,13 @@
 # -------------------------------------------------------------------------------
 
 from pymongo import MongoClient
+import urllib.parse
 
 
 class MongoApi(object):
-    def __init__(self, host='localhost', port=27017, user=None, password=None, db='admim'):
+    def __init__(self, host='localhost', port=27017, user=None, password=None, db=None):
+        user = urllib.parse.quote_plus(user)
+        password = urllib.parse.quote_plus(password)
         self.client = MongoClient(f"mongodb://{user}:{password}@{host}:{port}/?authMechanism=DEFAULT")
         self.database = self.client[db]
 
@@ -33,3 +36,8 @@ class MongoApi(object):
         if db:
             parmas['db'] = db
         return cls(**parmas)
+
+    def add_test_data(self, value):
+        result = self.database.test.insert_one(value)
+        return result
+        pass

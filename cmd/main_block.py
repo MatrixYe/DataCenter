@@ -26,5 +26,5 @@ args = parser.parse_args()
 if __name__ == '__main__':
     print(f"Args: {args}")
     print("platform:", platform.system())
-    # task = Task(network=args.network, origin=args.origin, interval=args.interval, node=args.node, reload=args.reload)
-    # task.run()
+    task = Task(network=args.network, origin=args.origin, interval=args.interval, node=args.node, reload=args.reload)
+    task.run()

@@ -30,7 +30,7 @@ class Task(object):
         #
         self.conf: dict = load_config()
         self.eth: EthApi = self._conn_eth()
-        self.rs: RedisApi = self._conn_redis()
+        self.redis: RedisApi = self._conn_redis()
         self.mongo = self._conn_mongo()
 
     def run(self):
@@ -39,6 +39,11 @@ class Task(object):
             log.error(f"check error:{err}")
             return
         # log.debug(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
+        print(self.conf)
+        print(self.redis.set('fuck', 'you'))
+        print(self.mongo.add_test_data({'name': 'wangdachui', 'age': 30}))
+        time.sleep(60)
+        print("end")
 
     def _check(self) -> (bool, Union[str, None]):
         if not self.network:

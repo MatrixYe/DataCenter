@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import os
 from tools import docker_api, uitls
+import time
 
 CHAIN = {
     "MAINNET": 1,
@@ -91,13 +92,7 @@ def sync_oracle():
 
 
 if __name__ == '__main__':
-    # sync_block('bsc', 998878, 3, 'https://bsc.com', False)
-    # sync_block('mainnet', 1002330, 15, 'https://bsc.com', False)
-    # sync_block('goerli', 3889977, 13, 'https://bsc.com', True)
-    #
-    # time.sleep(10)
+    sync_block('bsc', 998878, 3, 'https://bsc.com', False)
+    time.sleep(10)
     remove_block('bsc')
-    remove_block('xxxxx')
-    remove_block('mainnet')
-    remove_block('goerli')
 #

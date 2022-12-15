@@ -10,8 +10,12 @@ import json
 
 
 def load_config() -> dict:
-    with open('config.json', 'r') as f:
-        return json.load(f)
+    if platform.system() in ("Windows", "Darwin"):
+        with open('../config.json', 'r') as f:
+            return json.load(f)
+    else:
+        with open('config.json', 'r') as f:
+            return json.load(f)
 
 
 def load_redis_config() -> dict:
@@ -32,6 +36,6 @@ def load_docker_net():
 def is_dev_env() -> bool:
     """
     是否在宿主上运行
-    :return: bool
+    :return: bool True：主机上，False:docker 容器中
     """
     return platform.system() in ("Windows", "Darwin")
