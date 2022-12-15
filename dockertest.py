@@ -6,13 +6,13 @@
 # Description: 
 # -------------------------------------------------------------------------------
 
-from tools import docker
+from tools import docker_api
 
-# docker.pull_image('hello-world:latest')
-print(docker.images())
-print(docker.continers(flag=True))
-docker.rm_container('center_redis', force=True)
-docker.rm_image('hello-world', False)
-docker.rm_image('conda/miniconda3:latest', True)
-print(docker.continers(flag=True))
-print(docker.images())
+# docker_api.pull_image('hello-world:latest')
+print(docker_api.images())
+print(docker_api.continers(flag=True))
+docker_api.rm_container('center_redis', force=True)
+docker_api.rm_image('hello-world', False)
+docker_api.rm_image('conda/miniconda3:latest', True)
+print(docker_api.continers(flag=True))
+print(docker_api.images())

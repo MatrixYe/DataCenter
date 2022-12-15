@@ -5,10 +5,8 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-import time
-
-from tools import docker, config
 import os
+from tools import docker_api, uitls
 
 CHAIN = {
     "MAINNET": 1,
@@ -43,13 +41,12 @@ CHAIN = {
 
 
 def sync_block(network: str, origin: int, interval: int, node: str, reload: bool):
-    conf = config.load_config()
-    net = conf['network']
+    net = uitls.load_docker_net()
     name = f"block-{network}"
     net_alias = f"{name}host"
     img = "sync-block"
     restart = "unless-stopped"
-    st = docker.statu(name)
+    st = docker_api.statu(name)
     if st == 0:
         print("container is not exist --> creating")
         cmd = f"docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE={node} -e RELOAD={reload} --network {net} --network-alias {net_alias} --restart={restart} {img}"
@@ -66,7 +63,7 @@ def sync_block(network: str, origin: int, interval: int, node: str, reload: bool
 
 def remove_block(network: str):
     name = f"block-{network}"
-    st = docker.statu(name)
+    st = docker_api.statu(name)
     if st == 0:
         print(f"container:{name} is not exist --> pass")
         pass

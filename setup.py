@@ -6,7 +6,7 @@ setup(
     version='1.0.0',
     packages=find_packages(),
     license='MIT',
-    author='yepeng dev team',
+    author='shuyukeji dev team',
     description='qilin data center',
     entry_points={
         'console_scripts': [

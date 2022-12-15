@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 from engine.block import Task
 import argparse
+import platform
 
 parser = argparse.ArgumentParser(description='manual to this script')
 # 区块网络
@@ -23,5 +24,7 @@ parser.add_argument("--reload", type=lambda x: (str(x).lower() in ('true', '1', 
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    task = Task(network=args.network, origin=args.origin, interval=args.interval, node=args.node, reload=args.reload)
-    task.run()
+    print(f"Args: {args}")
+    print("platform:", platform.system())
+    # task = Task(network=args.network, origin=args.origin, interval=args.interval, node=args.node, reload=args.reload)
+    # task.run()

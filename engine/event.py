@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
+from typing import Union
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -26,10 +27,10 @@ class Task(object):
             log.error(msg=f"can not run sync block:{err}")
             return
         for i in range(100):
-            time.sleep(self.interval)
+            time.sleep(1)
             log.debug(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
 
-    def _check(self) -> (bool, str | None):
+    def _check(self) -> (bool, Union[str, None]):
         if not self.network:
             return False, "network is None!"
         if not self.node:
@@ -38,6 +39,4 @@ class Task(object):
             return False, 'reload can not be none,must be True or False'
         if self.origin <= 0:
             return False, 'block origin must > 0'
-        if self.interval <= 0:
-            return False, 'interval must > 0'
         return True, None

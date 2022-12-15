@@ -50,5 +50,32 @@
       "user": "user",
       "password": "@password"
     }
+  },
+  "mongo": {
+    "docker": {
+      "name": "center_mongo",
+      "port": "9003:27017",
+      "volume": "v_center_mongo",
+      "network": "net_center",
+      "network-alias": "mongohost",
+      "user": "user",
+      "password": "@password",
+      "restart": "always",
+      "img": "mongo:latest"
+    },
+    "inside": {
+      "host": "pghost",
+      "port": 27017,
+      "db": "data_center",
+      "user": "user",
+      "password": "@password"
+    },
+    "outside": {
+      "host": "localhost",
+      "port": 9003,
+      "db": "data_center",
+      "user": "user",
+      "password": "@password"
+    }
   }
 }
