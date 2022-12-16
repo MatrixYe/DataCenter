@@ -62,7 +62,9 @@
       "password": "@password",
       "restart": "always",
       "img": "mongo:latest",
-      "cache": 1.0
+      "cache": 1,
+      "memory": "1G",
+      "memory_swap": "1G"
     },
     "inside": {
       "host": "pghost",

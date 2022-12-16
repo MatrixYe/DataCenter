@@ -32,18 +32,34 @@ class Task(object):
         self.eth: EthApi = self._conn_eth()
         self.redis: RedisApi = self._conn_redis()
         self.mongo = self._conn_mongo()
+        self.rs_tag = f"block-{self.network}"
 
     def run(self):
         ok, err = self._check()
         if not ok:
             log.error(f"check error:{err}")
             return
-        # log.debug(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
+        # # log.debug(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
         print(self.conf)
-        print(self.redis.set('fuck', 'you'))
-        print(self.mongo.add_test_data({'name': 'wangdachui', 'age': 30}))
-        time.sleep(60)
-        print("end")
+        print(self.redis.set('test_height', 1001))
+        v = self.redis.get('test_height')
+        print(v)
+        print(type(v))
+        c = self.redis.get('NONO')
+        print(c)
+        print(type(c))
+        # print(self.mongo.add_test_data({'name': 'wangdachui', 'age': 30}))
+        # while True:
+        #     time.sleep(self.interval)
+        #     self.local_height()
+        #     pass
+
+    def local_height(self):
+        h = self.redis.get(self.rs_tag)
+        if h is None:
+            return 0
+        else:
+            return int(h)
 
     def _check(self) -> (bool, Union[str, None]):
         if not self.network:

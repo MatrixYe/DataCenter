@@ -55,11 +55,13 @@ def start_mongo(c):
     restart = c['restart']
     img = c['img']
     cache = c['cache']
+    memory = c['memory']
+    memory_swap = c['memory_swap']
 
     docker_api.pull_image(img)
     docker_api.create_network(network)
     docker_api.create_volume(volume)
-    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img, cache)
+    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img, cache,memory,memory_swap)
 
 
 if __name__ == '__main__':
@@ -68,7 +70,7 @@ if __name__ == '__main__':
     docker_api.pull_image('python:latest')
     conf = uitls.load_config()
     start_redis(conf['redis']['docker'])
-    start_postgres(conf['postgres']['docker'])
+    # start_postgres(conf['postgres']['docker']) # 取消PG数据库
     start_mongo(c=conf['mongo']['docker'])
     print(docker_api.continers(True))
     print("----------- END -----------")

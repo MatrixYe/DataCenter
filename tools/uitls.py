@@ -9,13 +9,11 @@ import platform
 import json
 
 
-def load_config() -> dict:
-    if platform.system() in ("Windows", "Darwin"):
-        with open('../config.json', 'r') as f:
-            return json.load(f)
-    else:
-        with open('config.json', 'r') as f:
-            return json.load(f)
+def load_config(file_path=None) -> dict:
+    if file_path is None:
+        file_path = 'config.json'
+    with open(file_path, 'r') as f:
+        return json.load(f)
 
 
 def load_redis_config() -> dict:
