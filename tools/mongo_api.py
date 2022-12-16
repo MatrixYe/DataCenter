@@ -10,12 +10,14 @@ from pymongo import MongoClient
 import urllib.parse
 
 
+# noinspection PyBroadException
 class MongoApi(object):
     def __init__(self, host='localhost', port=27017, user=None, password=None, db=None):
         user = urllib.parse.quote_plus(user)
         password = urllib.parse.quote_plus(password)
         self.client = MongoClient(f"mongodb://{user}:{password}@{host}:{port}/?authMechanism=DEFAULT")
         self.database = self.client[db]
+        self.session = self.client.start_session()
 
     @classmethod
     def from_conf(cls, **kwargs):
@@ -40,4 +42,19 @@ class MongoApi(object):
     def add_test_data(self, value):
         result = self.database.test.insert_one(value)
         return result
-        pass
+
+    def insert(self, colle: str, data=None, trans=False):
+        if data is None:
+            return
+        if not trans:
+            self.database.colle.insert_one(data)
+        else:
+            self.session.start_transaction()
+            try:
+                self.database.colle.insert_one(data)
+            except Exception as e:
+                self.session.abort_transaction()
+            else:
+                self.session.commit_transaction()
+            finally:
+                self.session.end_session()

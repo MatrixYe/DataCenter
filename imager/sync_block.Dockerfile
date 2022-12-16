@@ -1,10 +1,7 @@
-FROM python
+FROM python:3.10
 WORKDIR /app
 ADD . .
-RUN python --version  \
-    && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple  \
-    && pip install -r requirements.txt  \
-    && pip install -e .
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip install -r requirements.txt && pip install -e . && python --version
 
 # 传递参数
 ENV NETWORK=""
@@ -14,4 +11,4 @@ ENV INTERVAL=0
 ENV RELOAD=False
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python cmd/main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]
+ENTRYPOINT ["sh","-c","python main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]

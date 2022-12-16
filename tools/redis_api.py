@@ -9,7 +9,6 @@
 import os
 import json
 import logging
-
 from redis import StrictRedis
 
 
@@ -17,6 +16,11 @@ class RedisApi(object):
 
     def __init__(self, host='localhost', port=6379, password=None, db=0):
         self.redis = StrictRedis(host=host, port=port, password=password, db=db, decode_responses=True)
+        try:
+            self.redis.ping()
+        except ConnectionError as e:
+            raise f"connect redis failed:{e}"
+
         self.ps = self.redis.pubsub(ignore_subscribe_messages=True)
         self.__setSubscribed = set()
         self.active = False

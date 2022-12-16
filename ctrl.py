@@ -6,8 +6,8 @@
 # Description: 
 # -------------------------------------------------------------------------------
 import os
-from tools import docker_api, uitls
-import time
+from tools import docker_api
+import uitls
 
 CHAIN = {
     "MAINNET": 1,
@@ -46,7 +46,7 @@ def sync_block(network: str, origin: int, interval: int, node: str, reload: bool
     name = f"block-{network}"
     net_alias = f"{name}host"
     img = "sync-block"
-    restart = "unless-stopped"
+    restart = "on-failure:1"
     st = docker_api.statu(name)
     if st == 0:
         print("container is not exist --> creating")
@@ -92,7 +92,21 @@ def sync_oracle():
 
 
 if __name__ == '__main__':
-    sync_block('bsc', 998878, 3, 'https://bsc.com', False)
-    time.sleep(10)
-    remove_block('bsc')
+    # --network
+    # bsc
+    # --origin
+    # 23836740
+    # --interval
+    # 2
+    # --node
+    # https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/
+    # --reload
+    # False
+    sync_block(network='bsc',
+               origin=23836740,
+               interval=3,
+               node='https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/',
+               reload=False)
+    # time.sleep(10)
+    # remove_block('bsc')
 #

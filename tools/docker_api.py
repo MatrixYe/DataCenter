@@ -132,7 +132,7 @@ def run_mongo_container(name, port, network, network_alias, volume, user, passwo
             os.system(f"docker rm {name}")
             print(f"container:{name} is exist and is stopped --> remove")
         print(f"container:{name} --> creating")
-        cmd = f"docker run -itd -m {memory} --memory-swap {memory_swap} -p {port} --name {name} -e MONGO_INITDB_ROOT_USERNAME={user} -e MONGO_INITDB_ROOT_PASSWORD={password} -v {volume}:/data/db {img} --wiredTigerCacheSizeGB {cache}"
+        cmd = f"docker run -itd --name {name} -p {port} --network {network} --network-alias {network_alias} -m {memory} --memory-swap {memory_swap} -e MONGO_INITDB_ROOT_USERNAME={user} -e MONGO_INITDB_ROOT_PASSWORD={password} -v {volume}:/data/db {img} --wiredTigerCacheSizeGB {cache}"
         print(f"CMD: {cmd}")
         os.system(cmd)
     else:

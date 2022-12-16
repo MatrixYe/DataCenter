@@ -6,7 +6,9 @@
 # Description: 
 # -------------------------------------------------------------------------------
 import os
-from tools import uitls, docker_api
+import warnings
+from tools import docker_api
+from uitls import load_config
 
 
 def start_redis(c):
@@ -26,6 +28,7 @@ def start_redis(c):
 
 
 def start_postgres(c):
+    warnings.warn("postgres database 已废弃", DeprecationWarning)
     name = c['name']
     port = c['port']
     name = c['name']
@@ -61,14 +64,15 @@ def start_mongo(c):
     docker_api.pull_image(img)
     docker_api.create_network(network)
     docker_api.create_volume(volume)
-    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img, cache,memory,memory_swap)
+    docker_api.run_mongo_container(name, port, network, network_alias, volume, user, password, restart, img, cache,
+                                   memory, memory_swap)
 
 
 if __name__ == '__main__':
     print("---------- START ----------")
     os.system('pip install -r requirements.txt')
     docker_api.pull_image('python:latest')
-    conf = uitls.load_config()
+    conf = load_config()
     start_redis(conf['redis']['docker'])
     # start_postgres(conf['postgres']['docker']) # 取消PG数据库
     start_mongo(c=conf['mongo']['docker'])

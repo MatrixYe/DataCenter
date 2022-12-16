@@ -13,12 +13,12 @@
     },
     "inside": {
       "host": "redishost",
-      "port": 5432,
+      "port": 6379,
       "db": 0,
       "password": "@password"
     },
     "outside": {
-      "host": "127.0.0.1",
+      "host": "localhost",
       "port": 9001,
       "db": 0,
       "password": "@password"
@@ -67,7 +67,7 @@
       "memory_swap": "1G"
     },
     "inside": {
-      "host": "pghost",
+      "host": "mongohost",
       "port": 27017,
       "db": "data_center",
       "user": "user",
