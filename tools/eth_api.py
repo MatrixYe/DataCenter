@@ -10,7 +10,7 @@ import logging as log
 from web3.middleware import geth_poa_middleware
 from web3 import Web3, HTTPProvider
 
-log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
 
 # noinspection PyBroadException
@@ -19,7 +19,7 @@ class EthApi(object):
         if not endpoint_uri:
             raise "can not init eth client,endpoint_uri is None"
         self.client = Web3(HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs=request_kwargs, session=session))
-        self.client.middleware_onion.inject(geth_poa_middleware, layer=0)  # 注入poa中间件
+        self.client.middleware_onion.inject(geth_poa_middleware, layer=0)  # 注入poa中间件,兼容BSc、RInkeby等区块链网络
 
     @classmethod
     def from_node(cls, node: str):

@@ -47,14 +47,22 @@ class MongoApi(object):
         if data is None:
             return
         if not trans:
-            self.database.colle.insert_one(data)
+            try:
+                self.database[colle].insert_one(data)
+            except BaseException as e:
+                return
         else:
             self.session.start_transaction()
             try:
-                self.database.colle.insert_one(data)
+                self.database[colle].insert_one(data)
             except Exception as e:
                 self.session.abort_transaction()
             else:
                 self.session.commit_transaction()
             finally:
                 self.session.end_session()
+
+    def drop(self, colle: str):
+        if self.database[colle] is None:
+            return
+        self.database[colle].drop()

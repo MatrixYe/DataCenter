@@ -13,7 +13,7 @@ from tools.mongo_api import MongoApi
 from tools.redis_api import RedisApi
 from uitls import is_dev_env
 
-log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
 
 class Task(object):
@@ -29,17 +29,18 @@ class Task(object):
         self.mongo: MongoApi = self._conn_mongo()
         self.tag_height = f"block-{self.network}-height"
         self.tag_timestamp = f"block-{self.network}-timestamp"
-        self.collection = f"block-{self.network}"
+        self.table_name = f"block-{self.network}"
 
     def run(self):
-        log.debug(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
-        # print(self.mongo.add_test_data({'name': 'wangdachui', 'age': 30}))
+        log.info(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
+        if self.reload:
+            self.clear_all()
+
         while True:
             time.sleep(self.interval)
-            print("开始同步block数据")
             x = self.local_height()
             y = self.remote_height()
-            print(f"{self.network} local height:{x} removte height:{y}")
+            # print(f"{self.network} local height:{x} removte height:{y}")
             if x == 0:
                 x = self.origin
             if y == 0:
@@ -52,29 +53,26 @@ class Task(object):
                 n = x + i + 1
                 head = self.eth.block_head(n)
                 self.save_block(head)
-                time.sleep(2)
-            return
+                time.sleep(0.5)
         print("----------END----------")
 
     def save_block(self, head):
         if head is None:
             return
-        print("save block")
-        print(head)
         data = {
+            "_id": head.get('number'),
             "hash": self.eth.to_hex(head.get('hash')),
-            "number": head.get('number'),
             "timestamp": head.get('timestamp'),
         }
-
-        self.mongo.insert(self.collection, data)
-        self.set_local_height(data['number'], data['timestamp'])
+        log.info(f"sync block success :{data}")
+        self.mongo.insert(self.table_name, data)
+        self.set_local_height(data['_id'], data['timestamp'])
 
     def set_local_height(self, height, timestamp):
         if height and timestamp:
             self.redis.set(self.tag_height, height)
             self.redis.set(self.tag_timestamp, timestamp)
-            print(f"写入redis成功 高度：{height} 时间戳：{timestamp}")
+            # print(f"write block height：{height} timestamp：{timestamp}")
 
     def local_height(self) -> int:
         h = self.redis.get(self.tag_height)
@@ -102,3 +100,10 @@ class Task(object):
 
     def _conn_eth(self) -> EthApi:
         return EthApi.from_node(self.node)
+
+    def clear_all(self):
+        # 1.清除database
+        self.mongo.drop(self.table_name)
+        # 2.清除fredi标识
+        self.redis.delele(self.tag_height)
+        self.redis.delele(self.tag_timestamp)
