@@ -46,7 +46,7 @@ def sync_block(network: str, origin: int, interval: int, node: str, reload: bool
     name = f"block-{network}"
     net_alias = f"{name}host"
     img = "sync-block"
-    restart = "on-failure:1"
+    restart = "on-failure:3"
     st = docker_api.statu(name)
     if st == 0:
         print("container is not exist --> creating")

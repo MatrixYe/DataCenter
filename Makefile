@@ -12,8 +12,9 @@ clear:
 build:
 	echo "hello ,this is build"
 	python build.py
+
 start:
-	docker rm -f sync-block-bsc &&  docker run -itd --name sync-block-bsc -e NETWORK="bsc" -e ORIGIN=99887766 -e INTERVAL=3 -e NODE="https://bsc.test.com" -e RELOAD=False sync-block && docker logs -f sync-block-bsc
+	docker rm -f sync-block-bsc && docker run -itd --name sync-block-bsc -e NETWORK="bsc" -e ORIGIN=99887766 -e INTERVAL=3 -e NODE="https://bsc.test.com" -e RELOAD=False sync-block && docker logs -f sync-block-bsc
 ## 启动rpc服务
 server:
 	echo "hello,this is server"

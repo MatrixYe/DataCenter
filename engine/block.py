@@ -23,13 +23,13 @@ class Task(object):
         self.origin: int = kwargs.get("origin")
         self.node: str = kwargs.get("node")
         self.reload: bool = kwargs.get("reload")
+
         self.conf: dict = conf
         self.eth: EthApi = self._conn_eth()
         self.redis: RedisApi = self._conn_redis()
         self.mongo: MongoApi = self._conn_mongo()
-        self.tag_height = f"block-{self.network}-height"
-        self.tag_timestamp = f"block-{self.network}-timestamp"
-        self.table_name = f"block-{self.network}"
+        self.tag_height = f"block_{self.network}_height"
+        self.table_name = f"block_{self.network}"
 
     def run(self):
         log.info(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
@@ -41,12 +41,12 @@ class Task(object):
             x = self.local_height()
             y = self.remote_height()
             # print(f"{self.network} local height:{x} removte height:{y}")
-            if x == 0:
-                x = self.origin
             if y == 0:
                 log.error("get remote block height =0")
                 time.sleep(5)
                 continue
+            if x == 0:
+                x = self.origin if self.origin else y - 3
             if x >= y:
                 continue
             for i in range(y - x):
@@ -64,14 +64,13 @@ class Task(object):
             "hash": self.eth.to_hex(head.get('hash')),
             "timestamp": head.get('timestamp'),
         }
-        log.info(f"sync block success :{data}")
+        log.info(f"sync {self.network} block success :{data}")
         self.mongo.insert(self.table_name, data)
         self.set_local_height(data['_id'], data['timestamp'])
 
     def set_local_height(self, height, timestamp):
         if height and timestamp:
             self.redis.set(self.tag_height, height)
-            self.redis.set(self.tag_timestamp, timestamp)
             # print(f"write block height：{height} timestamp：{timestamp}")
 
     def local_height(self) -> int:
@@ -102,8 +101,8 @@ class Task(object):
         return EthApi.from_node(self.node)
 
     def clear_all(self):
+        log.info("clear all data in mongo ,and clear redis tag")
         # 1.清除database
         self.mongo.drop(self.table_name)
         # 2.清除fredi标识
         self.redis.delele(self.tag_height)
-        self.redis.delele(self.tag_timestamp)
