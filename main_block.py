@@ -50,8 +50,8 @@ def check_args():
 
 
 if __name__ == '__main__':
-    print(f"Args: {args}")
-    print("platform:", platform.system())
+    log.info(f"Args Input:{args}")
+    log.info("platform:", platform.system())
     conf = load_config()
     if conf is None:
         log.error(f"start sync block failed:config is None")
@@ -64,6 +64,6 @@ if __name__ == '__main__':
         "node": args.node,
         "reload": args.reload
     }
-
+    print(kwargs)
     task = Task(conf, **kwargs)
     task.run()

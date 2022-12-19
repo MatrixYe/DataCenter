@@ -74,7 +74,7 @@ if __name__ == '__main__':
     docker_api.pull_image('python:latest')
     conf = load_config()
     start_redis(conf['redis']['docker'])
-    # start_postgres(conf['postgres']['docker']) # 取消PG数据库
+    # start_postgres(conf['postgres']['docker']) # 废除PG数据库
     start_mongo(c=conf['mongo']['docker'])
     print(docker_api.continers(True))
     print("----------- END -----------")

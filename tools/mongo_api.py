@@ -8,6 +8,9 @@
 
 from pymongo import MongoClient
 import urllib.parse
+import logging as log
+
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
 
 # noinspection PyBroadException
@@ -17,7 +20,7 @@ class MongoApi(object):
         password = urllib.parse.quote_plus(password)
         self.client = MongoClient(f"mongodb://{user}:{password}@{host}:{port}/?authMechanism=DEFAULT")
         self.database = self.client[db]
-        self.session = self.client.start_session()
+        # self.session = self.client.start_session()
 
     @classmethod
     def from_conf(cls, **kwargs):
@@ -43,24 +46,13 @@ class MongoApi(object):
         result = self.database.test.insert_one(value)
         return result
 
-    def insert(self, colle: str, data=None, trans=False):
+    def insert(self, colle: str, data=None):
         if data is None:
-            return
-        if not trans:
-            try:
-                self.database[colle].insert_one(data)
-            except BaseException as e:
-                return
-        else:
-            self.session.start_transaction()
-            try:
-                self.database[colle].insert_one(data)
-            except Exception as e:
-                self.session.abort_transaction()
-            else:
-                self.session.commit_transaction()
-            finally:
-                self.session.end_session()
+            log.warning("data is None,skip insert")
+        try:
+            self.database[colle].insert_one(data)
+        except BaseException as e:
+            log.error(f"insert data failed:{str(e)}")
 
     def drop(self, colle: str):
         if self.database[colle] is None:

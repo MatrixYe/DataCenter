@@ -6,11 +6,11 @@
 # Description: 
 # -------------------------------------------------------------------------------
 from typing import Union
-import logging as log
 from web3.middleware import geth_poa_middleware
 from web3 import Web3, HTTPProvider
 from web3.eth import LogReceipt, Contract, ChecksumAddress
 from typing import List
+import logging as log
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -77,7 +77,7 @@ class EthApi(object):
             return None
 
     @staticmethod
-    def fitle_event(contract: Contract, event_name: str, from_block: int, to_block: int, arg_filters: dict = None) -> \
+    def filte_event(contract: Contract, event_name: str, from_block: int, to_block: int, arg_filters: dict = None) -> \
             List[LogReceipt]:
         """
 

@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import platform
 import json
+from typing import Union
 
 
 def load_config(file_path=None) -> dict:
@@ -37,3 +38,10 @@ def is_dev_env() -> bool:
     :return: bool True：主机上，False:docker 容器中
     """
     return platform.system() in ("Windows", "Darwin")
+
+
+def load_abi(file_path: str = None) -> Union[dict, None]:
+    if file_path is None:
+        file_path = './source/EventOut.json'
+    with open(file_path, 'r') as f:
+        return json.load(f)
