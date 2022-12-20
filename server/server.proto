@@ -1,0 +1,161 @@
+syntax = "proto3";
+package pb;
+option go_package = "./;pb";
+
+
+service Master{
+  // block 相关
+  rpc BlockLast(BlockLastAsk) returns (BlockLastReply);
+  rpc BlockDetail(BlockDetailAsk) returns (BlockDetailReply);
+  // event 相关
+  rpc EventLast(EventLastAsk) returns (EventLastReply);
+  rpc EventFilter(EventFilterAsk) returns (EventFilterReply);
+  // 喂价源相关
+  rpc OraclePrice(OraclePriceAsk) returns (OraclePriceReply);
+  rpc OraclePriceChg(OraclePriceChgAsk) returns (OraclePriceChgReply);
+  rpc OracleKline(OracleKlineAsk) returns (OracleKlineReply);
+}
+
+// 请求 最新区块高度
+message BlockLastAsk{
+  string network = 1;
+}
+
+// 返回 最新区块高度
+message BlockLastReply{
+  string network = 1;
+  uint64 height = 2;
+  uint64 timestamp = 3;
+  string hash = 4;
+}
+
+// 请求 区块详情
+message BlockDetailAsk{
+  string network = 1;
+  uint64 height = 2;
+}
+
+// 返回 区块详情
+message BlockDetailReply{
+  string network = 1;
+  uint64 height = 2;
+  uint64 timestamp = 3;
+  string hash = 4;
+}
+
+// 请求 最新的event同步高度
+message EventLastAsk{
+  string network = 1;
+  string target = 2;
+}
+
+// 返回 最新的event同步高度
+message EventLastReply{
+  uint64 height = 2;
+}
+
+// 请求 过滤日志
+message EventFilterAsk{
+  string network = 1;
+  string target = 2;
+  uint64 start = 3;
+  uint64 end = 4;
+  repeated string senders = 5;
+  repeated int32 itypes = 6;
+}
+
+// 返回 过滤日志
+message EventFilterReply{
+  repeated RawEvent events = 1;
+  message RawEvent{
+    string sender = 3;
+    uint32 type = 4;
+    bytes value = 5;
+    uint64 height = 1;
+    uint64 index = 2;
+    string tx_hash = 6;
+  }
+
+}
+
+// 请求 喂价源最新价格
+message OraclePriceAsk{
+  string network = 1;
+  string target = 2;
+  uint64 deadline = 3; // 截止日期，返回的价格为截止时间时刻的最新价，该字段<=0时，返回当前时刻最新价
+  bool reverse = 4;
+}
+
+// 返回 喂价源最新价格
+message OraclePriceReply{
+  string network = 1;
+  string target = 2;
+  float price = 3;
+  uint64 timestamp = 4;
+  bool is_reverse = 5;
+
+}
+
+// 请求 喂价源价格变化率
+message OraclePriceChgAsk{
+  string network = 1;
+  string target = 2;
+  uint64 start = 3;
+  uint64 end = 4;
+  bool reverse = 5;
+}
+
+// 返回 喂价源价格变化率
+message OraclePriceChgReply{
+  string network = 1;
+  string target = 2;
+  float chg = 3;
+  bool is_reverse = 4;
+
+}
+
+// 请求 k线数据
+message OracleKlineAsk{
+  string network = 1;
+  string target = 2;
+  uint64 level = 3;
+  uint64 start = 4;
+  uint64 end = 5;
+  bool reverse = 6;
+}
+
+// 返回 k线返回体
+message OracleKlineReply{
+  string network = 1;
+  string target = 2;
+  string name = 3;
+  uint32 level = 4;
+  uint64 start = 5;
+  uint64 end = 6;
+  string pair = 7;
+  repeated Candle candles = 8;
+  message Candle{
+    string open = 1;
+    float close = 2;
+    float high = 3;
+    float low = 4;
+    uint64 timestamp = 5;
+  }
+}
+
+service Admin{
+  rpc StartSyncBlock(StartSyncBlockAsk) returns (StartSyncBlockReply);
+}
+
+message StartSyncBlockAsk{
+  string network = 1;
+  uint32 origin = 2;
+  uint32 interval = 3;
+  string node = 4;
+  bool reload = 5;
+}
+message StartSyncBlockReply{
+  string name = 1;
+  string short_id = 2;
+}
+

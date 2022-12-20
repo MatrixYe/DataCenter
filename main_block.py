@@ -52,7 +52,7 @@ def check_args():
 
 if __name__ == '__main__':
     log.info(f"Args Input:{args}")
-    log.info("platform:", platform.system())
+    log.info(f"platform:{platform.system()}")
     conf = load_config()
     if conf is None:
         log.error(f"start sync block failed:config is None")
