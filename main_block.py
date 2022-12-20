@@ -5,11 +5,12 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-from engine.block import Task
 import argparse
-import platform
-from uitls import load_config
 import logging as log
+import platform
+
+from engine.block import Task
+from uitls import load_config
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 

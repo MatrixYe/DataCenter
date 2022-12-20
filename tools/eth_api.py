@@ -5,12 +5,13 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
+import logging as log
+from typing import List
 from typing import Union
-from web3.middleware import geth_poa_middleware
+
 from web3 import Web3, HTTPProvider
 from web3.eth import LogReceipt, Contract, ChecksumAddress
-from typing import List
-import logging as log
+from web3.middleware import geth_poa_middleware
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 

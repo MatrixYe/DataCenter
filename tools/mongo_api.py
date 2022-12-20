@@ -6,9 +6,10 @@
 # Description: 
 # -------------------------------------------------------------------------------
 
-from pymongo import MongoClient
-import urllib.parse
 import logging as log
+import urllib.parse
+
+from pymongo import MongoClient
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 

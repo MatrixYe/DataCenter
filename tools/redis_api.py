@@ -6,9 +6,9 @@
 # Description: 
 # -------------------------------------------------------------------------------
 
-import os
 import json
 import logging
+
 from redis import StrictRedis
 
 

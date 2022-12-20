@@ -7,11 +7,12 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
-from tools.eth_api import EthApi
-from tools.redis_api import RedisApi
-from tools.mongo_api import MongoApi
-from uitls import is_dev_env, load_abi
 from typing import List
+
+from tools.eth_api import EthApi
+from tools.mongo_api import MongoApi
+from tools.redis_api import RedisApi
+from uitls import is_dev_env, load_abi
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 

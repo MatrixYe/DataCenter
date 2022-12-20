@@ -5,11 +5,12 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-from engine.event import Task
 import argparse
-import platform
-from uitls import load_config
 import logging as log
+import platform
+
+from engine.event import Task
+from uitls import load_config
 
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
 # 1区块网络

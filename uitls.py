@@ -5,8 +5,8 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-import platform
 import json
+import platform
 from typing import Union
 
 
