@@ -1,7 +1,8 @@
-.PHONY: base product build start stop clear gengo conf start-listen stop_listen help
+.PHONY: base clear build start server destroy help
 IMAGE = imager
 ## 初始化系统
 base:
+	pip install -r requirements.txt
 	python base.py
 
 ## 清除冗余镜像、容器等
@@ -17,14 +18,8 @@ start:
 	docker rm -f sync-block-bsc && docker run -itd --name sync-block-bsc -e NETWORK="bsc" -e ORIGIN=99887766 -e INTERVAL=3 -e NODE="https://bsc.test.com" -e RELOAD=False sync-block && docker logs -f sync-block-bsc
 ## 启动rpc服务
 server:
-	echo "hello,this is server"
-
-build-test:
-	docker build -t test . -f $(IMAGE)/test.Dockerfile
-
-start-test:
-	docker rm -f test &&  docker run -itd --name test -e TARGET="0x1312312312312312" -e NODE="https://infura.com" test && docker logs -f test
-
+	echo "hello,this is server,run it"
+	docker run -itd --name server -e HOST="0.0.0.0" -e PORT=9005 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker server
 destroy:
 	echo "禁止执行!!!!"
 	#docker rm -f center_redis

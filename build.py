@@ -12,16 +12,21 @@ engines = [
     {
         'name': 'Block Engine',
         'cmd': 'docker build -t sync-block . -f imager/sync_block.Dockerfile',
-        'desc': 'block data sync engine'
+        'desc': '构建区块高度同步器基础镜像'
     }, {
         'name': 'Event Engine',
         'cmd': 'docker build -t sync-event . -f imager/sync_event.Dockerfile',
-        'desc': 'event out data sync engine'
+        'desc': '构建通用事件同步器基础镜像'
     },
     {
         'name': 'Oracle Engine',
         'cmd': 'docker build -t sync-oracle . -f imager/sync_oracle.Dockerfile',
-        'desc': 'oracle price data sync engine'
+        'desc': '构建喂价源同步器基础镜像'
+    },
+    {
+        'name': 'Rpc Server',
+        'cmd': 'docker build -t server . -f imager/server.Dockerfile',
+        'desc': '构建RPC服务镜像'
     }
 ]
 if __name__ == '__main__':

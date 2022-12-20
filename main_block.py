@@ -42,7 +42,7 @@ def check_args():
         exit()
 
     if args.origin < 0:
-        log.error('block origin must > 0')
+        log.error(f'block origin must >= 0 ,but is {args.origin}')
         exit()
 
     if args.interval <= 0:

@@ -6,7 +6,6 @@
 # Description: 
 # -------------------------------------------------------------------------------
 import os
-
 import uitls
 from tools import docker_api
 
@@ -71,9 +70,9 @@ def remove_block(network: str):
         pass
     if st == 1:
         print(f"container:{name} is  exist and running --> stop&remove")
-        # cmd1 = f"docker stop {name}"
+        cmd1 = f"docker stop {name}"
         cmd2 = f"docker rm -f {name}"
-        # os.system(cmd1)
+        os.system(cmd1)
         os.system(cmd2)
     if st == -1:
         print(f"container:{name} is  exist and stoped --> remove")
@@ -91,23 +90,4 @@ def sync_oracle():
     # todo
     pass
 
-
-if __name__ == '__main__':
-    # --network
-    # bsc
-    # --origin
-    # 23836740
-    # --interval
-    # 2
-    # --node
-    # https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/
-    # --reload
-    # False
-    sync_block(network='bsc',
-               origin=23836740,
-               interval=3,
-               node='https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/',
-               reload=False)
-    # time.sleep(10)
-    # remove_block('bsc')
 #

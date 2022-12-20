@@ -38,6 +38,30 @@ def continers(flag=False) -> list:
     return [a.name for a in client.containers.list(all=flag)]
 
 
+def info():
+    cs = client.containers.list(all=True)
+    simp_cs = [{'name': a.name,
+                'short_id': a.image.short_id,
+                'image': {
+                    'tags': a.image.tags,
+                    'short_id': a.image.short_id
+                },
+                'ports': a.ports,
+                'status': a.status,
+                }
+               for a in cs]
+    imgs = client.images.list()
+    simp_imgs = [
+        {
+            'short_id': a.short_id,
+            'tags': a.tags,
+        } for a in imgs]
+    return {
+        'contianers': simp_cs,
+        'images': simp_imgs
+    }
+
+
 def statu(c_name: str) -> int:
     # - `status` (str): One of ``restarting``, ``running``,
     #                     ``paused``, ``exited``
