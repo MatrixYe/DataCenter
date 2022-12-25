@@ -3,7 +3,7 @@ package pb;
 option go_package = "./;pb";
 
 
-service Master{
+service DataCenter{
   // block 相关
   rpc BlockLast(BlockLastAsk) returns (BlockLastReply);
   rpc BlockDetail(BlockDetailAsk) returns (BlockDetailReply);
@@ -14,6 +14,16 @@ service Master{
   rpc OraclePrice(OraclePriceAsk) returns (OraclePriceReply);
   rpc OraclePriceChg(OraclePriceChgAsk) returns (OraclePriceChgReply);
   rpc OracleKline(OracleKlineAsk) returns (OracleKlineReply);
+  //  admin相关
+
+  rpc StartSyncBlock(StartSyncBlockAsk) returns (ComReply);
+  rpc StopSyncBlock(StopSyncBlockAsk) returns (ComReply);
+
+  rpc StartSyncEvent(StartSyncEventAsk) returns (ComReply);
+  rpc StopSyncEvent(StopSyncEventAsk) returns (ComReply);
+
+  rpc StartSyncOracle(StartSyncOracleAsk) returns (ComReply);
+  rpc StopSyncOracle(StopSyncOracleAsk) returns (ComReply);
 }
 
 // 请求 最新区块高度
@@ -29,11 +39,11 @@ message BlockLastReply{
   string hash = 4;
 }
 
-// 请求 区块详情
 message BlockDetailAsk{
   string network = 1;
   uint64 height = 2;
 }
+// 请求 区块详情
 
 // 返回 区块详情
 message BlockDetailReply{
@@ -143,19 +153,50 @@ message OracleKlineReply{
   }
 }
 
-service Admin{
-  rpc StartSyncBlock(StartSyncBlockAsk) returns (StartSyncBlockReply);
-}
-
+// 请求 同步block任务
 message StartSyncBlockAsk{
   string network = 1;
-  uint32 origin = 2;
+  uint64 origin = 2;
   uint32 interval = 3;
   string node = 4;
   bool reload = 5;
 }
-message StartSyncBlockReply{
-  string name = 1;
-  string short_id = 2;
+// 返回 同步block启动结果
+message StopSyncBlockAsk{
+  string network = 1;
 }
 
+message StartSyncEventAsk{
+  string network = 1;
+  string target = 2;
+  uint64 origin = 3;
+  string node = 4;
+  uint32 delay = 5;
+  uint32 range = 6;
+  bool reload = 7;
+}
+
+message StopSyncEventAsk{
+  string network = 1;
+  string target = 2;
+}
+
+message StartSyncOracleAsk{
+  string netwrok = 1;
+  string target = 2;
+  uint64 origin = 3;
+  string node = 4;
+  bool reload = 5;
+}
+
+message StopSyncOracleAsk{
+  string network = 1;
+  string target = 2;
+}
+
+
+message ComReply{
+  string name = 1;
+  string short_id = 2;
+  string status = 3;
+}

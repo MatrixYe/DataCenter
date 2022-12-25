@@ -5,7 +5,6 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-import time
 import argparse
 from server import rpc_server
 
@@ -18,4 +17,5 @@ if __name__ == '__main__':
     print("hello ,this is server")
     host = args.host
     port = args.port
+    print(host, port)
     rpc_server.start(host, port)

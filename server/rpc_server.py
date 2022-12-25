@@ -5,20 +5,12 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-
+from . import server_pb2_grpc as gr
 import grpc
-from . import server_pb2, server_pb2_grpc
+from concurrent import futures
 
 
-class AdminImp(server_pb2_grpc.AdminServicer):
-    def __int__(self):
-        pass
-
-    def StartSyncBlock(self, request, context):
-        return super().StartSyncBlock(request, context)
-
-
-class ServerImp(server_pb2_grpc.MasterServicer):
+class DataCenterImp(gr.DataCenterServicer):
     def __int__(self):
         pass
 
@@ -43,27 +35,28 @@ class ServerImp(server_pb2_grpc.MasterServicer):
     def OracleKline(self, request, context):
         return super().OracleKline(request, context)
 
+    def StartSyncBlock(self, request, context):
+        return super().StartSyncBlock(request, context)
 
-def start():
-    pass
+    def StopSyncBlock(self, request, context):
+        return super().StopSyncBlock(request, context)
 
-# def start(host: str, port: int, **kwargs):
-#     print(f"host={host} port={port}")
-#     infos = docker_api.info()
-#     pp.pprint(infos)
-#     # --network
-#     # bsc
-#     # --origin
-#     # 23836740
-#     # --interval
-#     # 2
-#     # --node
-#     # https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/
-#     # --reload
-#     # False
-#
-#     print("测试重新开始同步bsc")
-#     ctrl.sync_block(network='bsc', origin=0, interval=2,
-#                     node='https://snowy-lively-log.bsc.discover.quiknode.pro/b2e8cf05409330a7788453776b6748fe6986389d/',
-#                     reload=False)
-#     time.sleep(100)
+    def StartSyncEvent(self, request, context):
+        return super().StartSyncEvent(request, context)
+
+    def StopSyncEvent(self, request, context):
+        return super().StopSyncEvent(request, context)
+
+    def StartSyncOracle(self, request, context):
+        return super().StartSyncOracle(request, context)
+
+    def StopSyncOracle(self, request, context):
+        return super().StopSyncOracle(request, context)
+
+
+def start(host, port):
+    print(f"connect {host}:{port}")
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    gr.add_DataCenterServicer_to_server(DataCenterImp, server)
+    server.add_insecure_port(f'{host}:{port}')
+    server.wait_for_termination()
