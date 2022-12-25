@@ -17,5 +17,8 @@ if __name__ == '__main__':
     print("hello ,this is server")
     host = args.host
     port = args.port
-    print(host, port)
-    rpc_server.start(host, port)
+    try:
+        rpc_server.Start(host, port)
+    except KeyboardInterrupt:
+        print("end")
+        pass

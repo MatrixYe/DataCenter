@@ -6,23 +6,30 @@ option go_package = "./;pb";
 service DataCenter{
   // block 相关
   rpc BlockLast(BlockLastAsk) returns (BlockLastReply);
+
   rpc BlockDetail(BlockDetailAsk) returns (BlockDetailReply);
   // event 相关
   rpc EventLast(EventLastAsk) returns (EventLastReply);
+
   rpc EventFilter(EventFilterAsk) returns (EventFilterReply);
   // 喂价源相关
   rpc OraclePrice(OraclePriceAsk) returns (OraclePriceReply);
+
   rpc OraclePriceChg(OraclePriceChgAsk) returns (OraclePriceChgReply);
+
   rpc OracleKline(OracleKlineAsk) returns (OracleKlineReply);
   //  admin相关
 
   rpc StartSyncBlock(StartSyncBlockAsk) returns (ComReply);
+
   rpc StopSyncBlock(StopSyncBlockAsk) returns (ComReply);
 
   rpc StartSyncEvent(StartSyncEventAsk) returns (ComReply);
+
   rpc StopSyncEvent(StopSyncEventAsk) returns (ComReply);
 
   rpc StartSyncOracle(StartSyncOracleAsk) returns (ComReply);
+
   rpc StopSyncOracle(StopSyncOracleAsk) returns (ComReply);
 }
 

@@ -5,17 +5,22 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-from . import server_pb2_grpc as gr
-import grpc
+from . import server_pb2_grpc, server_pb2
 from concurrent import futures
+import grpc
+import time
 
 
-class DataCenterImp(gr.DataCenterServicer):
+class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def __int__(self):
         pass
 
     def BlockLast(self, request, context):
-        return super().BlockLast(request, context)
+        network = request.network
+        print(f"receive network={network}")
+        return server_pb2.BlockLastReply(network='bsc', height=778899, timestamp=998877, hash='0xababababababab')
+
+        # return super().BlockLast(request, context)
 
     def BlockDetail(self, request, context):
         return super().BlockDetail(request, context)
@@ -54,9 +59,18 @@ class DataCenterImp(gr.DataCenterServicer):
         return super().StopSyncOracle(request, context)
 
 
-def start(host, port):
-    print(f"connect {host}:{port}")
+def Start(host, port):
+    # server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    # server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp, server)
+    # server.add_insecure_port(f'{host}:{port}')
+    # print(f"host={host},port={port}")
+    # server.wait_for_termination()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    gr.add_DataCenterServicer_to_server(DataCenterImp, server)
-    server.add_insecure_port(f'{host}:{port}')
-    server.wait_for_termination()
+    server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(), server)
+    server.add_insecure_port('[::]:9005')
+    server.start()
+    try:
+        while True:
+            time.sleep(60 * 60 * 24)
+    except KeyboardInterrupt:
+        server.stop(0)
