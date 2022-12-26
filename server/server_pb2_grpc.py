@@ -15,67 +15,67 @@ class DataCenterStub(object):
             channel: A grpc.Channel.
         """
         self.BlockLast = channel.unary_unary(
-            '/DataCenter/BlockLast',
+            '/pb.DataCenter/BlockLast',
             request_serializer=server__pb2.BlockLastAsk.SerializeToString,
             response_deserializer=server__pb2.BlockLastReply.FromString,
         )
         self.BlockDetail = channel.unary_unary(
-            '/DataCenter/BlockDetail',
+            '/pb.DataCenter/BlockDetail',
             request_serializer=server__pb2.BlockDetailAsk.SerializeToString,
             response_deserializer=server__pb2.BlockDetailReply.FromString,
         )
         self.EventLast = channel.unary_unary(
-            '/DataCenter/EventLast',
+            '/pb.DataCenter/EventLast',
             request_serializer=server__pb2.EventLastAsk.SerializeToString,
             response_deserializer=server__pb2.EventLastReply.FromString,
         )
         self.EventFilter = channel.unary_unary(
-            '/DataCenter/EventFilter',
+            '/pb.DataCenter/EventFilter',
             request_serializer=server__pb2.EventFilterAsk.SerializeToString,
             response_deserializer=server__pb2.EventFilterReply.FromString,
         )
         self.OraclePrice = channel.unary_unary(
-            '/DataCenter/OraclePrice',
+            '/pb.DataCenter/OraclePrice',
             request_serializer=server__pb2.OraclePriceAsk.SerializeToString,
             response_deserializer=server__pb2.OraclePriceReply.FromString,
         )
         self.OraclePriceChg = channel.unary_unary(
-            '/DataCenter/OraclePriceChg',
+            '/pb.DataCenter/OraclePriceChg',
             request_serializer=server__pb2.OraclePriceChgAsk.SerializeToString,
             response_deserializer=server__pb2.OraclePriceChgReply.FromString,
         )
         self.OracleKline = channel.unary_unary(
-            '/DataCenter/OracleKline',
+            '/pb.DataCenter/OracleKline',
             request_serializer=server__pb2.OracleKlineAsk.SerializeToString,
             response_deserializer=server__pb2.OracleKlineReply.FromString,
         )
         self.StartSyncBlock = channel.unary_unary(
-            '/DataCenter/StartSyncBlock',
+            '/pb.DataCenter/StartSyncBlock',
             request_serializer=server__pb2.StartSyncBlockAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
         self.StopSyncBlock = channel.unary_unary(
-            '/DataCenter/StopSyncBlock',
+            '/pb.DataCenter/StopSyncBlock',
             request_serializer=server__pb2.StopSyncBlockAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
         self.StartSyncEvent = channel.unary_unary(
-            '/DataCenter/StartSyncEvent',
+            '/pb.DataCenter/StartSyncEvent',
             request_serializer=server__pb2.StartSyncEventAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
         self.StopSyncEvent = channel.unary_unary(
-            '/DataCenter/StopSyncEvent',
+            '/pb.DataCenter/StopSyncEvent',
             request_serializer=server__pb2.StopSyncEventAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
         self.StartSyncOracle = channel.unary_unary(
-            '/DataCenter/StartSyncOracle',
+            '/pb.DataCenter/StartSyncOracle',
             request_serializer=server__pb2.StartSyncOracleAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
         self.StopSyncOracle = channel.unary_unary(
-            '/DataCenter/StopSyncOracle',
+            '/pb.DataCenter/StopSyncOracle',
             request_serializer=server__pb2.StopSyncOracleAsk.SerializeToString,
             response_deserializer=server__pb2.ComReply.FromString,
         )
@@ -236,7 +236,7 @@ def add_DataCenterServicer_to_server(servicer, server):
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'DataCenter', rpc_method_handlers)
+        'pb.DataCenter', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -255,7 +255,7 @@ class DataCenter(object):
                   wait_for_ready=None,
                   timeout=None,
                   metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/BlockLast',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/BlockLast',
                                              server__pb2.BlockLastAsk.SerializeToString,
                                              server__pb2.BlockLastReply.FromString,
                                              options, channel_credentials,
@@ -272,7 +272,7 @@ class DataCenter(object):
                     wait_for_ready=None,
                     timeout=None,
                     metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/BlockDetail',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/BlockDetail',
                                              server__pb2.BlockDetailAsk.SerializeToString,
                                              server__pb2.BlockDetailReply.FromString,
                                              options, channel_credentials,
@@ -289,7 +289,7 @@ class DataCenter(object):
                   wait_for_ready=None,
                   timeout=None,
                   metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/EventLast',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/EventLast',
                                              server__pb2.EventLastAsk.SerializeToString,
                                              server__pb2.EventLastReply.FromString,
                                              options, channel_credentials,
@@ -306,7 +306,7 @@ class DataCenter(object):
                     wait_for_ready=None,
                     timeout=None,
                     metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/EventFilter',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/EventFilter',
                                              server__pb2.EventFilterAsk.SerializeToString,
                                              server__pb2.EventFilterReply.FromString,
                                              options, channel_credentials,
@@ -323,7 +323,7 @@ class DataCenter(object):
                     wait_for_ready=None,
                     timeout=None,
                     metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/OraclePrice',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/OraclePrice',
                                              server__pb2.OraclePriceAsk.SerializeToString,
                                              server__pb2.OraclePriceReply.FromString,
                                              options, channel_credentials,
@@ -340,7 +340,7 @@ class DataCenter(object):
                        wait_for_ready=None,
                        timeout=None,
                        metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/OraclePriceChg',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/OraclePriceChg',
                                              server__pb2.OraclePriceChgAsk.SerializeToString,
                                              server__pb2.OraclePriceChgReply.FromString,
                                              options, channel_credentials,
@@ -357,7 +357,7 @@ class DataCenter(object):
                     wait_for_ready=None,
                     timeout=None,
                     metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/OracleKline',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/OracleKline',
                                              server__pb2.OracleKlineAsk.SerializeToString,
                                              server__pb2.OracleKlineReply.FromString,
                                              options, channel_credentials,
@@ -374,7 +374,7 @@ class DataCenter(object):
                        wait_for_ready=None,
                        timeout=None,
                        metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StartSyncBlock',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StartSyncBlock',
                                              server__pb2.StartSyncBlockAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,
@@ -391,7 +391,7 @@ class DataCenter(object):
                       wait_for_ready=None,
                       timeout=None,
                       metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StopSyncBlock',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StopSyncBlock',
                                              server__pb2.StopSyncBlockAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,
@@ -408,7 +408,7 @@ class DataCenter(object):
                        wait_for_ready=None,
                        timeout=None,
                        metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StartSyncEvent',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StartSyncEvent',
                                              server__pb2.StartSyncEventAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,
@@ -425,7 +425,7 @@ class DataCenter(object):
                       wait_for_ready=None,
                       timeout=None,
                       metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StopSyncEvent',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StopSyncEvent',
                                              server__pb2.StopSyncEventAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,
@@ -442,7 +442,7 @@ class DataCenter(object):
                         wait_for_ready=None,
                         timeout=None,
                         metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StartSyncOracle',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StartSyncOracle',
                                              server__pb2.StartSyncOracleAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,
@@ -459,7 +459,7 @@ class DataCenter(object):
                        wait_for_ready=None,
                        timeout=None,
                        metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/DataCenter/StopSyncOracle',
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/StopSyncOracle',
                                              server__pb2.StopSyncOracleAsk.SerializeToString,
                                              server__pb2.ComReply.FromString,
                                              options, channel_credentials,

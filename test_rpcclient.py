@@ -14,11 +14,14 @@ from server import server_pb2_grpc
 
 
 def run():
-    with grpc.insecure_channel('localhost:9005') as channel:
-        stub = server_pb2_grpc.DataCenterStub(channel=channel)
-        response = stub.BlockLast(server_pb2.BlockLastAsk(network='you'))
+    channel = grpc.insecure_channel('localhost:9005')
+    stub = server_pb2_grpc.DataCenterStub(channel=channel)
+    response = stub.BlockLast(server_pb2.BlockLastAsk(network='fuck you '))
+
     print(f"Greeter client received:{response.network} ")
     print(f"Greeter client received:{response.height} ")
+    # response2 = stub.BlockDetail(server_pb2.BlockDetailAsk(height=9988))
+    # print(response2)
 
 
 if __name__ == '__main__':

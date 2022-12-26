@@ -18,12 +18,11 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def BlockLast(self, request, context):
         network = request.network
         print(f"receive network={network}")
-        return server_pb2.BlockLastReply(network='bsc', height=778899, timestamp=998877, hash='0xababababababab')
-
-        # return super().BlockLast(request, context)
+        return server_pb2.BlockLastReply(network=request.network, height=778899, timestamp=998877,
+                                         hash='0xababababababab')
 
     def BlockDetail(self, request, context):
-        return super().BlockDetail(request, context)
+        return
 
     def EventLast(self, request, context):
         return super().EventLast(request, context)
