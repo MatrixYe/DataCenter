@@ -6,7 +6,7 @@
 # Description: 
 # -------------------------------------------------------------------------------
 import grpc
-from server import server_pb2, server_pb2_grpc
+from pb import server_pb2_grpc, server_pb2
 
 _HOST = 'localhost'
 _PORT = '9005'

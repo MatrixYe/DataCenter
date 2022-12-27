@@ -8,8 +8,10 @@
 import os
 import warnings
 
-from tools import docker_api
+from tools.docker_api import DockerApi
 from uitls import load_config
+
+docker_api = DockerApi.from_env()
 
 
 def start_redis(c):

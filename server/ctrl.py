@@ -7,78 +7,55 @@
 # -------------------------------------------------------------------------------
 import os
 import uitls
-from tools import docker_api
+from tools.docker_api import DockerApi
 
-CHAIN = {
-    "MAINNET": 1,
-    "ROPSTEN": 3,
-    "RINKEBY": 4,
-    "GOERLI": 5,
-    "KOVAN": 42,
-    "MATIC": 137,
-    "MATIC_TESTNET": 80001,
-    "FANTOM": 250,
-    "FANTOM_TESTNET": 4002,
-    "XDAI": 100,
-    "BSC": 56,
-    "BSC_TESTNET": 97,
-    "ARBITRUM": 42161,
-    "ARBITRUM_TESTNET": 79377087078960,
-    "MOONBEAM_TESTNET": 1287,
-    "AVALANCHE": 43114,
-    "AVALANCHE_TESTNET": 43113,
-    "HECO": 128,
-    "HECO_TESTNET": 256,
-    "HARMONY": 1666600000,
-    "HARMONY_TESTNET": 1666700000,
-    "OKEX": 66,
-    "OKEX_TESTNET": 65,
-    "CELO": 42220,
-    "PALM": 11297108109,
-    "PALM_TESTNET": 11297108099,
-    "MOONRIVER": 1285,
-    "FUSE": 122,
-}
+docker_api = DockerApi.from_env()
 
 
-def sync_block(network: str, origin: int, interval: int, node: str, reload: bool):
+def run_sync_block_container(network: str, origin: int, interval: int, node: str, reload: bool):
     net = uitls.load_docker_net()
     name = f"block-{network}"
     net_alias = f"{name}host"
-    img = "sync-block"
-    restart = "on-failure:3"
+    img = "sync-block:latest"
+    restart = "always"
     st = docker_api.statu(name)
     if st == 0:
         print("container is not exist --> creating")
-        cmd = f"docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE={node} -e RELOAD={reload} --network {net} --network-alias {net_alias} --restart={restart} {img}"
+        cmd = f'docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE="{node}" -e RELOAD={reload} --network {net} --network-alias {net_alias} --restart={restart} {img}'
+        print(cmd)
         os.system(cmd)
+        return f"container({name}) is not exist --> creating"
     if st == 1:
         print("container is exist --> pass")
+        return f"container({name}) is  exist --> PASS"
+
     if st == -1:
         print("container is exist,but not running --> remove and creating")
         cmd1 = f"docker rm -f {name}"
-        cmd2 = f"docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE={node} -e RELOAD={reload} --network {net} --network-alias {net_alias} --restart={restart} {img}"
+        cmd2 = f'docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE="{node}" -e RELOAD={reload} --network {net} --network-alias {net_alias} --restart={restart} {img}'
         os.system(cmd1)
         os.system(cmd2)
+        return f"container({name}) is exist,but not running -->  remove and creating"
 
 
-def remove_block(network: str):
+def rm_sync_block_container(network: str):
     name = f"block-{network}"
     st = docker_api.statu(name)
     if st == 0:
         print(f"container:{name} is not exist --> pass")
-        pass
+        return f"container:{name} is not exist --> PASS"
     if st == 1:
         print(f"container:{name} is  exist and running --> stop&remove")
-        cmd1 = f"docker stop {name}"
+        # cmd1 = f"docker stop {name}"
         cmd2 = f"docker rm -f {name}"
-        os.system(cmd1)
+        # os.system(cmd1)
         os.system(cmd2)
+        return f"container:{name} is  exist and running --> stop&remove"
     if st == -1:
         print(f"container:{name} is  exist and stoped --> remove")
         cmd = f"docker rm -f {name}"
         os.system(cmd)
-    print("remove block success")
+        return f"container:{name} is  exist and running --> stop&remove"
 
 
 def sync_event():
@@ -89,5 +66,3 @@ def sync_event():
 def sync_oracle():
     # todo
     pass
-
-#

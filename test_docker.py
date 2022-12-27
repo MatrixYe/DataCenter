@@ -6,7 +6,9 @@
 # Description: 
 # -------------------------------------------------------------------------------
 
-from tools import docker_api
+from tools.docker_api import DockerApi
+
+docker_api = DockerApi.from_env()
 
 # docker_api.pull_image('hello-world:latest')
 print(docker_api.images())

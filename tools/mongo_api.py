@@ -8,7 +8,7 @@
 
 import logging as log
 import urllib.parse
-
+from typing import List
 from pymongo import MongoClient
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
@@ -59,3 +59,24 @@ class MongoApi(object):
         if self.database[colle] is None:
             return
         self.database[colle].drop()
+
+    def list_colle_names(self) -> List[str]:
+        return self.database.list_collection_names()
+
+    def colle_exist(self, c: str) -> bool:
+        return c in self.list_colle_names()
+
+    def find_one(self, c: str, filte: dict):
+        var = self.database[c]
+        if var is None:
+            return None
+        else:
+            return var.find_one(filter=filte)
+
+    def find_all(self, c: str, filte):
+        var = self.database[c]
+        if var is None:
+            return None
+        else:
+            return var.find(filte)
+        pass

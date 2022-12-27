@@ -9,8 +9,7 @@ from __future__ import print_function
 import logging
 
 import grpc
-from server import server_pb2
-from server import server_pb2_grpc
+from pb import server_pb2_grpc, server_pb2
 
 
 def run():

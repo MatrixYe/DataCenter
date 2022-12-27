@@ -40,10 +40,7 @@ message BlockLastAsk{
 
 // 返回 最新区块高度
 message BlockLastReply{
-  string network = 1;
-  uint64 height = 2;
-  uint64 timestamp = 3;
-  string hash = 4;
+  uint64 height = 1;
 }
 
 message BlockDetailAsk{
@@ -78,21 +75,18 @@ message EventFilterAsk{
   uint64 start = 3;
   uint64 end = 4;
   repeated string senders = 5;
-  repeated int32 itypes = 6;
 }
-
 // 返回 过滤日志
 message EventFilterReply{
   repeated RawEvent events = 1;
   message RawEvent{
-    string sender = 3;
-    uint32 type = 4;
-    bytes value = 5;
-    uint64 height = 1;
+    uint64 block_number = 1;
     uint64 index = 2;
+    string sender = 3;
+    uint32 itype = 4;
+    bytes bvalue = 5;
     string tx_hash = 6;
   }
-
 }
 
 // 请求 喂价源最新价格
@@ -203,7 +197,6 @@ message StopSyncOracleAsk{
 
 
 message ComReply{
-  string name = 1;
-  string short_id = 2;
-  string status = 3;
+  string result = 1;
+  string msg = 2;
 }
