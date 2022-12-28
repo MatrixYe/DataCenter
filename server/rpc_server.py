@@ -296,14 +296,14 @@ class RpcServer(object):
         if is_dev_env():
             return RedisApi.from_config(**c['redis']['outside'])
         else:
-            return RedisApi.from_config(**c['redis']['outside'])
+            return RedisApi.from_config(**c['redis']['inside'])
 
     def _conn_mongo(self) -> MongoApi:
         c = self.conf
         if is_dev_env():
             return MongoApi.from_conf(**c['mongo']['outside'])
         else:
-            return MongoApi.from_conf(**c['mongo']['outside'])
+            return MongoApi.from_conf(**c['mongo']['inside'])
 
     def _conn_docker(self) -> DockerApi:
         return DockerApi.from_env()

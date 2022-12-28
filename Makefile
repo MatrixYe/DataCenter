@@ -14,20 +14,14 @@ build:
 	echo "hello ,this is build"
 	python build.py
 
-start:
-	docker rm -f sync-block-bsc && docker run -itd --name sync-block-bsc -e NETWORK="bsc" -e ORIGIN=99887766 -e INTERVAL=3 -e NODE="https://bsc.test.com" -e RELOAD=False sync-block && docker logs -f sync-block-bsc
 ## 启动rpc服务
 server:
 	echo "hello,this is server,run it"
-	docker run -itd --name server -e HOST="0.0.0.0" -e PORT=9005 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker server
-destroy:
-	echo "禁止执行!!!!"
-	#docker rm -f center_redis
-	#docker rm -f center_pg
-	#docker volume remove v_center_pg
-	#docker volume remove v_center_redis
-	#docker network rm net_center
+	docker run -itd --name server -p 9005:9005 --network net_center -e HOST="0.0.0.0" -e PORT=9005 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker server
 
+stop:
+	echo "hello,this is server,stop it"
+	docker rm -f server
 ## Show help
 help:
 	@echo ''
