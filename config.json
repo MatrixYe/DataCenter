@@ -3,7 +3,7 @@
   "redis": {
     "docker": {
       "name": "center_redis",
-      "port": "9001:6379",
+      "port": "9002:6379",
       "volume": "v_center_redis",
       "network": "net_center",
       "network-alias": "redishost",
@@ -19,7 +19,7 @@
     },
     "outside": {
       "host": "localhost",
-      "port": 9001,
+      "port": 9002,
       "db": 0,
       "password": "@password"
     }
@@ -27,7 +27,7 @@
   "postgres": {
     "docker": {
       "name": "center_pg",
-      "port": "9002:5432",
+      "port": "9004:5432",
       "volume": "v_center_pg",
       "network": "net_center",
       "network-alias": "pghost",
@@ -45,7 +45,7 @@
     },
     "outside": {
       "host": "127.0.0.1",
-      "port": 9002,
+      "port": 9004,
       "db": "postgres",
       "user": "user",
       "password": "@password"

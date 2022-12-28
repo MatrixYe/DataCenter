@@ -5,7 +5,6 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-import os
 import warnings
 
 from tools.docker_api import DockerApi
@@ -73,8 +72,8 @@ def start_mongo(c):
 
 if __name__ == '__main__':
     print("---------- START ----------")
-    os.system('pip install -r requirements.txt')
-    docker_api.pull_image('python:latest')
+    # os.system('pip install -r requirements.txt')
+    docker_api.pull_image('python:3.10')
     conf = load_config()
     start_redis(conf['redis']['docker'])
     # start_postgres(conf['postgres']['docker']) # 废除PG数据库

@@ -34,9 +34,15 @@ if __name__ == '__main__':
     for i, e in enumerate(engines):
         print(f"{i + 1}: {e['name']} {e['desc']}")
     i = int(input("Pleace chose image of engine:  "))
-    if i <= 0:
+    if i < 0:
         exit()
-    cmd = engines[i - 1]['cmd']
-    print(cmd)
-    os.system(cmd)
+    if i == 0:
+        for i, engine in enumerate(engines):
+            print(engine['cmd'])
+            os.system(engine['cmd'])
+    else:
+        cmd = engines[i - 1]['cmd']
+        print(cmd)
+        os.system(cmd)
+
     print("--------- END ---------")
