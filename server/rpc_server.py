@@ -5,15 +5,15 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-from pb import server_pb2_grpc, server_pb2
 from concurrent import futures
+
 import grpc
 
-from tools.redis_api import RedisApi
-from tools.mongo_api import MongoApi
+from pb import server_pb2_grpc, server_pb2
 from tools.docker_api import DockerApi
+from tools.mongo_api import MongoApi
+from tools.redis_api import RedisApi
 from uitls import is_dev_env, is_address
-
 from . import ctrl
 
 NETWORKS = {
@@ -53,13 +53,11 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         self.redis_api: RedisApi = redis_api
         self.mongo_api: MongoApi = mongo_api
         self.docker_api: DockerApi = docker_api
-        pass
 
     @staticmethod
     def _error(context, code, msg):
         context.set_code(code)
         context.set_details(msg)
-        pass
 
     # 获取最新区块高度
     def BlockLast(self, request, context):
@@ -264,14 +262,6 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
 
     def StopSyncOracle(self, request, context):
         return super().StopSyncOracle(request, context)
-
-
-# def Start(conf, port):
-#     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-#     server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(), server)
-#     server.add_insecure_port(f'[::]:{port}')
-#     server.start()
-#     server.wait_for_termination()
 
 
 class RpcServer(object):

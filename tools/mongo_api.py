@@ -9,6 +9,7 @@
 import logging as log
 import urllib.parse
 from typing import List
+
 from pymongo import MongoClient
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
