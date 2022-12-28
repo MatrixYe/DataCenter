@@ -12,7 +12,7 @@ import grpc
 from tools.redis_api import RedisApi
 from tools.mongo_api import MongoApi
 from tools.docker_api import DockerApi
-from uitls import is_dev_env
+from uitls import is_dev_env, is_address
 
 from . import ctrl
 
@@ -52,7 +52,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def __init__(self, redis_api, mongo_api, docker_api):
         self.redis_api: RedisApi = redis_api
         self.mongo_api: MongoApi = mongo_api
-        self.docker_api = docker_api
+        self.docker_api: DockerApi = docker_api
         pass
 
     @staticmethod
@@ -132,18 +132,11 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "查询高度范围错误，start must < end")
             return server_pb2.EventFilterReply()
         colle = f"event_{target[2:6]}_{target[-4:]}"
-        events = self.mongo_api.find_all(colle,
-                                         {
-                                             'sender':
-                                                 {
-                                                     '$in': senders
-                                                 },
-                                             'block_number':
-                                                 {
-                                                     '$gte': start,
-                                                     '$lte': end
-                                                 }
-                                         })
+        if senders:
+            events = self.mongo_api.find_all(colle,
+                                             {'sender': {'$in': senders}, 'block_number': {'$gte': start, '$lte': end}})
+        else:
+            events = self.mongo_api.find_all(colle, {'block_number': {'$gte': start, '$lte': end}})
 
         datas = [{'sender': a['sender'],
                   'itype': a['itype'],
@@ -151,8 +144,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
                   'block_number': a['block_number'],
                   'index': a['index'],
                   'tx_hash': a['tx_hash']} for a in list(events)]
-        # for i, data in enumerate(datas):
-        #     print(data)
+
         return server_pb2.EventFilterReply(events=datas)
 
     def OraclePrice(self, request, context):
@@ -165,36 +157,32 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return super().OracleKline(request, context)
 
     def StartSyncBlock(self, request, context):
-        #   string network = 1;
-        #   uint64 origin = 2;
-        #   uint32 interval = 3;
-        #   string node = 4;
-        #   bool reload = 5;
         network = request.network
         origin = request.origin
         interval = request.interval
         node = request.node
         reload = request.reload
         if not self.check_network(network):
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
-            return server_pb2.ComReply()
+            msg = f"无法识别的区块网络{network}"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
 
         if origin < 0:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT,
-                        "block同步起始点必须 >= 0 (为零时从当前区块高度开始同步)")
-            return server_pb2.ComReply(result='FAILED', msg='')
+            msg = "block同步起始点必须 >= 0 (为零时从当前区块高度开始同步)"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
 
         if interval <= 0 or interval > 600:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT,
-                        "扫描周期必须 >0")
-            return server_pb2.ComReply(result='FAILED', msg='')
+            msg = "interval 必须位于区间[0,600]"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
 
         if not node:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT,
-                        "无法识别的Node节点")
-            return server_pb2.ComReply(result='FAILED', msg='')
+            msg = "无法识别的node节点"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
 
-        # network: str, origin: int, interval: int, node: str, reload: bool
+        # network, origin: int, interval: int, node, reload: bool
         msg = ctrl.run_sync_block_container(network, origin, interval, node, reload)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
@@ -209,11 +197,67 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncEvent(self, request, context):
+        #         "network": args.network.lower(),
+        #         "target": args.target,
+        #         "origin": args.origin,
+        #         "node": args.node,
+        #         "reload": args.reload,
+        #         "delay": args.delay,
+        #         "range": args.range
+        network = request.network
+        target = request.target
+        origin = request.origin
+        node = request.node
+        reload = request.reload
+        delay = request.delay
+        ranger = request.range
+        if not self.check_network(network):
+            msg = f"无法识别的区块网络{network}"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
 
-        return super().StartSyncEvent(request, context)
+        if not is_address(target):
+            msg = f"目标地址错误:{target}"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        if origin <= 0:
+            msg = "Event同步起始点必须 >= 0"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        if not node:
+            msg = "无法识别的远程节点Node"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        if delay < 0 or delay > 5:
+            msg = "同步高度延时必须 >=0 & <=5"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        if ranger < 100 or ranger > 10000:
+            msg = f"ranger 的合法区间为[100,10000]"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        msg = ctrl.run_sync_event_container(network, target, origin, node, reload, delay, ranger)
+        return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncEvent(self, request, context):
-        return super().StopSyncEvent(request, context)
+        network = request.network
+        target = request.target
+        if not self.check_network(network):
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
+            return server_pb2.ComReply()
+
+        if not is_address(target):
+            msg = f"无法识别的target：{target}"
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
+            return server_pb2.ComReply(result='FAILED', msg=msg)
+
+        msg = ctrl.rm_sync_event_container(target=target)
+        return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncOracle(self, request, context):
         return super().StartSyncOracle(request, context)

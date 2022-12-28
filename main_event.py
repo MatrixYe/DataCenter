@@ -23,7 +23,7 @@ parser.add_argument("--origin", type=int)
 parser.add_argument("--node", type=str)
 # 5延时同步，针对比较快的链
 parser.add_argument("--delay", type=int, default=0)
-# 6 范围一次性最大同步的区块跨度
+# 6 一次性最大同步的区块跨度
 parser.add_argument("--range", type=int, default=1000)
 # 7 是否重新同步(谨慎为True)
 parser.add_argument("--reload", type=lambda x: (str(x).lower() in ('true', '1', 't')), default=False)
@@ -47,8 +47,8 @@ def check_args():
     if args.reload is None:
         log.error('reload can not be none,must be True or False')
         exit()
-    if args.range <= 100:
-        log.error("range must >100")
+    if args.range < 100 or args.range > 10000:
+        log.error("range must >100 and must <1w")
         exit()
     if args.delay > 5 or args.delay < 0:
         log.error("delay must <5 and >0")
@@ -57,7 +57,7 @@ def check_args():
 
 if __name__ == '__main__':
     log.info(f"Args Input:{args}")
-    log.info("Platform:", platform.system())
+    log.info(f"Platform:{platform.system()}")
     conf = load_config()
     if conf is None:
         log.error(f"start sync block failed:config is None")

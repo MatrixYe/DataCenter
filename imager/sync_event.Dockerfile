@@ -11,7 +11,9 @@ ENV NETWORK=""
 ENV TARGET=""
 ENV ORIGIN=0
 ENV NODE=""
+ENV DELAY=0
+ENV RANGE=1000
 ENV RELOAD=False
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python cmd/main_event.py --network $NETWORK --origin $TARGET --reload $ORIGIN --node $NODE --target $RELOAD"]
+ENTRYPOINT ["sh","-c","python main_event.py --network $NETWORK --target $TARGET --origin $ORIGIN --node $NODE --delay $DELAY --range $RANGE --reload $RELOAD"]

@@ -45,3 +45,14 @@ def load_abi(file_path: str = None) -> Union[dict, None]:
         file_path = './source/EventOut.json'
     with open(file_path, 'r') as f:
         return json.load(f)
+
+
+def is_address(addr: str) -> bool:
+    if not addr:
+        return False
+    if not addr.startswith('0x'):
+        return False
+    if len(addr) < 32:
+        return False
+
+    return True

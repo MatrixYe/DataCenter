@@ -14,4 +14,4 @@ ENV NODE=""
 ENV INTERVAL=0
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python cmd/main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]
+ENTRYPOINT ["sh","-c","python main_oracle.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]
