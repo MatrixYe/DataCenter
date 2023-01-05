@@ -101,11 +101,13 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return server_pb2.EventLastReply(height=int(h))
 
     @staticmethod
-    def check_network(network):
+    def check_network(network: str) -> bool:
+        if not network:
+            return False
         if network.upper() not in NETWORKS.keys():
             return False
-        else:
-            return True
+
+        return True
 
     def EventFilter(self, request, context):
         #   string network = 1;
@@ -275,8 +277,8 @@ class RpcServer(object):
     def run(self):
         print("RPC 服务启动... ...")
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(self.redis_api, self.mongo_api, self.docker_api),
-                                                         server)
+        data_center = DataCenterImp(self.redis_api, self.mongo_api, self.docker_api),
+        server_pb2_grpc.add_DataCenterServicer_to_server(data_center, server)
         server.add_insecure_port(f'[::]:{self.port}')
         server.start()
         server.wait_for_termination()

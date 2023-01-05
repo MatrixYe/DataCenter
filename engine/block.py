@@ -34,12 +34,12 @@ class Task(object):
     def run(self):
         log.info(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
         if self.reload:
-            self.clear_all()
+            self._clear_all()
 
         while True:
             time.sleep(self.interval)
-            x = self.local_height()
-            y = self.remote_height()
+            x = self._local_height()
+            y = self._remote_height()
             # print(f"{self.network} local height:{x} removte height:{y}")
             if y == 0:
                 log.error("get remote block height =0")
@@ -52,11 +52,12 @@ class Task(object):
             for i in range(y - x):
                 n = x + i + 1
                 head = self.eth.block_head(n)
-                self.save_block(head)
+                self._save_block(head)
                 time.sleep(0.5)
         print("----------END----------")
 
-    def save_block(self, head):
+    # 保存block head数据
+    def _save_block(self, head):
         if head is None:
             return
         data = {
@@ -66,23 +67,27 @@ class Task(object):
         }
         log.info(f"sync {self.network} block success :{data}")
         self.mongo.insert(self.table_name, data)
-        self.set_local_height(data['_id'], data['timestamp'])
+        self._set_local_height(data['_id'], data['timestamp'])
 
-    def set_local_height(self, height, timestamp):
+    # 设置block 同步最新高度缓存，写入redis
+    def _set_local_height(self, height, timestamp):
         if height and timestamp:
             self.redis.set(self.tag_height, height)
             # print(f"write block height：{height} timestamp：{timestamp}")
 
-    def local_height(self) -> int:
+    # 获取本地block最新高度缓存，读取redis
+    def _local_height(self) -> int:
         h = self.redis.get(self.tag_height)
         if h is None:
             return 0
         else:
             return int(h)
 
-    def remote_height(self) -> int:
+    # 获取远程block高度
+    def _remote_height(self) -> int:
         return self.eth.block_height()
 
+    # 连接redis
     def _conn_redis(self) -> RedisApi:
         c = self.conf
         if is_dev_env():
@@ -90,6 +95,7 @@ class Task(object):
         else:
             return RedisApi.from_config(**c['redis']['inside'])
 
+    # 连接mongodb
     def _conn_mongo(self) -> MongoApi:
         c = self.conf
         if is_dev_env():
@@ -97,10 +103,12 @@ class Task(object):
         else:
             return MongoApi.from_conf(**c['mongo']['inside'])
 
+    # 连接以太坊客户端
     def _conn_eth(self) -> EthApi:
         return EthApi.from_node(self.node)
 
-    def clear_all(self):
+    # 清除全部数据，mongodb 和redis
+    def _clear_all(self):
         log.info("clear all data in mongo ,and clear redis tag")
         # 1.清除database
         self.mongo.drop(self.table_name)

@@ -49,12 +49,12 @@ class Task(object):
         log.info(
             f"sync event:network:{self.network} target:{self.target} origin:{self.origin} reload:{self.reload} node:{self.node}")
         if self.reload:
-            self.clear_all()
+            self._clear_all()
 
         while True:
             time.sleep(2)
-            x = self.local_height()
-            y = self.remote_height()
+            x = self._local_height()
+            y = self._remote_height()
             # log.info(f"x={x} y={y}")
             if y == 0:
                 log.warning("block height is Zero,please check network")
@@ -69,7 +69,7 @@ class Task(object):
             a = x
             b = y if (y - x) < self.range else (x + self.range)
 
-            events = self.filte(a, b)
+            events = self._filte(a, b)
             for i, event in enumerate(events):
                 data = {
                     '_id': f"N{event.get('blockNumber')}I{event.get('logIndex')}",
@@ -86,19 +86,19 @@ class Task(object):
             # 更新tag
             self.redis.set(self.tag_event, b)
 
-    def filte(self, a: int, b: int) -> List[dict]:
+    def _filte(self, a: int, b: int) -> List[dict]:
         events = self.eth.filte_event(contract=self.contract, event_name=_EvEntName, from_block=a, to_block=b,
                                       arg_filters=None)
         return events
 
-    def local_height(self) -> int:
+    def _local_height(self) -> int:
         h = self.redis.get(self.tag_event)
         if h is None:
             return 0
         else:
             return int(h)
 
-    def remote_height(self) -> int:
+    def _remote_height(self) -> int:
         h = self.redis.get(self.tag_block)
         if h is None:
             return 0
@@ -122,7 +122,7 @@ class Task(object):
     def _conn_eth(self) -> EthApi:
         return EthApi.from_node(self.node)
 
-    def clear_all(self):
+    def _clear_all(self):
         log.info("clear all data in mongo ,and clear redis tag")
         # 1.清除database
         self.mongo.drop(self.table_name)

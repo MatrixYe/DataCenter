@@ -30,6 +30,8 @@ class EthApi(object):
 
     @classmethod
     def from_node(cls, node: str):
+        if not node:
+            raise Exception('creart eth client failed:node is empty')
         parmas = dict()
         parmas['endpoint_uri'] = node
         parmas['request_kwargs'] = None
