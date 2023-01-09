@@ -134,16 +134,17 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         colle = f"event_{target[2:6]}_{target[-4:]}"
         if senders:
             events = self.mongo_api.find_all(colle,
-                                             {'sender': {'$in': senders}, 'block_number': {'$gte': start, '$lte': end}})
+                                             {'sender':
+                                                 {
+                                                     '$in': senders
+                                                 },
+                                                 'block_number': {'$gte': start, '$lte': end}}
+                                             )
         else:
             events = self.mongo_api.find_all(colle, {'block_number': {'$gte': start, '$lte': end}})
-
-        datas = [{'sender': a['sender'],
-                  'itype': a['itype'],
-                  'bvalue': a['bvalue'],
-                  'block_number': a['block_number'],
-                  'index': a['index'],
-                  'tx_hash': a['tx_hash']} for a in list(events)]
+        # f = lambda a: {'sender': a['sender'], 'itype': a['itype'], 'bvalue': a['bvalue'],'block_number': a['block_number'], 'index': a['index'], 'tx_hash': a['tx_hash']}
+        datas = [{'sender': a['sender'], 'itype': a['itype'], 'bvalue': a['bvalue'], 'block_number': a['block_number'],
+                  'index': a['index'], 'tx_hash': a['tx_hash']} for a in list(events)]
 
         return server_pb2.EventFilterReply(events=datas)
 
