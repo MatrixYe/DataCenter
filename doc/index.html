@@ -302,7 +302,7 @@
 
 
 <h3 id="pb.BlockDetailAsk">BlockDetailAsk</h3>
-<p>请求 区块详情</p>
+<p>请求体 区块详情</p>
 
 
 <table class="field-table">
@@ -335,7 +335,7 @@
 
 
 <h3 id="pb.BlockDetailReply">BlockDetailReply</h3>
-<p>返回 区块详情</p>
+<p>返回体 区块详情</p>
 
 
 <table class="field-table">
@@ -382,7 +382,7 @@
 
 
 <h3 id="pb.BlockLastAsk">BlockLastAsk</h3>
-<p>请求 最新区块高度</p>
+<p>请求体 最新区块高度</p>
 
 
 <table class="field-table">
@@ -408,7 +408,7 @@
 
 
 <h3 id="pb.BlockLastReply">BlockLastReply</h3>
-<p>返回 最新区块高度</p>
+<p>返回体 最新区块高度</p>
 
 
 <table class="field-table">
@@ -434,7 +434,7 @@
 
 
 <h3 id="pb.ComReply">ComReply</h3>
-<p></p>
+<p>返回体 通用任务回执</p>
 
 
 <table class="field-table">
@@ -452,14 +452,14 @@
         <td>result</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>任务回执结果，&#34;SUCCESS&#34; 或者&#34;FAILED&#34; </p></td>
     </tr>
 
     <tr>
         <td>msg</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>任务回执信息 </p></td>
     </tr>
 
     </tbody>
@@ -467,7 +467,7 @@
 
 
 <h3 id="pb.EventFilterAsk">EventFilterAsk</h3>
-<p>请求 过滤日志</p>
+<p>请求体 过滤日志</p>
 
 
 <table class="field-table">
@@ -485,7 +485,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -528,7 +528,7 @@
 
 
 <h3 id="pb.EventFilterReply">EventFilterReply</h3>
-<p>返回 过滤日志</p>
+<p>返回体 过滤日志</p>
 
 
 <table class="field-table">
@@ -615,7 +615,7 @@
 
 
 <h3 id="pb.EventLastAsk">EventLastAsk</h3>
-<p>请求 最新的event同步高度</p>
+<p>请求体 最新的event同步高度</p>
 
 
 <table class="field-table">
@@ -633,7 +633,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -648,7 +648,7 @@
 
 
 <h3 id="pb.EventLastReply">EventLastReply</h3>
-<p>返回 最新的event同步高度</p>
+<p>返回体 最新的event同步高度</p>
 
 
 <table class="field-table">
@@ -674,7 +674,7 @@
 
 
 <h3 id="pb.OracleDataAsk">OracleDataAsk</h3>
-<p>请求 价格变动数据</p>
+<p>请求体 价格变动数据</p>
 
 
 <table class="field-table">
@@ -692,7 +692,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -728,7 +728,7 @@
 
 
 <h3 id="pb.OracleDataReply">OracleDataReply</h3>
-<p>返回 价格变动数据</p>
+<p>返回体 价格变动数据</p>
 
 
 <table class="field-table">
@@ -746,7 +746,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -795,7 +795,7 @@
         <td>trades</td>
         <td><a href="#pb.OracleDataReply.Trades">OracleDataReply.Trades</a></td>
         <td>repeated</td>
-        <td><p></p></td>
+        <td><p>价格数据(在uniswap中为swap数据，在chainlink中为Answer数据) </p></td>
     </tr>
 
     </tbody>
@@ -803,7 +803,7 @@
 
 
 <h3 id="pb.OracleDataReply.Trades">OracleDataReply.Trades</h3>
-<p></p>
+<p>价格信息体</p>
 
 
 <table class="field-table">
@@ -821,21 +821,21 @@
         <td>price</td>
         <td><a href="#float">float</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>价格 </p></td>
     </tr>
 
     <tr>
         <td>volume</td>
         <td><a href="#float">float</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>交易量，chainlink中无法获取(即0) </p></td>
     </tr>
 
     <tr>
         <td>timestamp</td>
         <td><a href="#uint64">uint64</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>交易时间戳 </p></td>
     </tr>
 
     </tbody>
@@ -843,7 +843,7 @@
 
 
 <h3 id="pb.OraclePriceAsk">OraclePriceAsk</h3>
-<p>请求 喂价源最新价格</p>
+<p>请求体 喂价源最新价格</p>
 
 
 <table class="field-table">
@@ -861,7 +861,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -875,7 +875,7 @@
         <td>deadline</td>
         <td><a href="#uint64">uint64</a></td>
         <td></td>
-        <td><p>截止日期，返回的价格为截止时间时刻的最新价，该字段&lt;=0时，返回当前时刻最新价 </p></td>
+        <td><p>截止日期，返回体的价格为截止时间时刻的最新价，该字段&lt;=0时，返回体当前时刻最新价 </p></td>
     </tr>
 
     <tr>
@@ -890,7 +890,7 @@
 
 
 <h3 id="pb.OraclePriceChgAsk">OraclePriceChgAsk</h3>
-<p>请求 喂价源价格变化率</p>
+<p>请求体 喂价源价格变化率</p>
 
 
 <table class="field-table">
@@ -908,7 +908,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -944,7 +944,7 @@
 
 
 <h3 id="pb.OraclePriceChgReply">OraclePriceChgReply</h3>
-<p>返回 喂价源价格变化率</p>
+<p>返回体 喂价源价格变化率</p>
 
 
 <table class="field-table">
@@ -962,7 +962,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -991,7 +991,7 @@
 
 
 <h3 id="pb.OraclePriceReply">OraclePriceReply</h3>
-<p>返回 喂价源最新价格</p>
+<p>返回体 喂价源最新价格</p>
 
 
 <table class="field-table">
@@ -1009,7 +1009,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -1034,6 +1034,13 @@
     </tr>
 
     <tr>
+        <td>height</td>
+        <td><a href="#uint64">uint64</a></td>
+        <td></td>
+        <td><p>最新价区块高度 </p></td>
+    </tr>
+
+    <tr>
         <td>is_reverse</td>
         <td><a href="#bool">bool</a></td>
         <td></td>
@@ -1045,8 +1052,7 @@
 
 
 <h3 id="pb.StartSyncBlockAsk">StartSyncBlockAsk</h3>
-<p>Admin*******************************************Admin</p>
-<p>请求 同步block任务</p>
+<p>请求体 同步block任务</p>
 
 
 <table class="field-table">
@@ -1064,7 +1070,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -1085,7 +1091,14 @@
         <td>node</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>请求节点 </p></td>
+        <td><p>请求体节点 </p></td>
+    </tr>
+
+    <tr>
+        <td>webhook</td>
+        <td><a href="#string">string</a></td>
+        <td></td>
+        <td><p>飞书信息钩子，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
     </tr>
 
     </tbody>
@@ -1093,7 +1106,7 @@
 
 
 <h3 id="pb.StartSyncEventAsk">StartSyncEventAsk</h3>
-<p></p>
+<p>请求体 同步event out 数据</p>
 
 
 <table class="field-table">
@@ -1111,7 +1124,7 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p>网络 </p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
@@ -1149,12 +1162,19 @@
         <td><p>追逐模式下，每次最大的同步高度范围，默认500， </p></td>
     </tr>
 
+    <tr>
+        <td>webhook</td>
+        <td><a href="#string">string</a></td>
+        <td></td>
+        <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
+    </tr>
+
     </tbody>
 </table>
 
 
 <h3 id="pb.StartSyncOracleAsk">StartSyncOracleAsk</h3>
-<p></p>
+<p>请求体 同步oracle 数据</p>
 
 
 <table class="field-table">
@@ -1172,35 +1192,42 @@
         <td>netwrok</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>区块网络,eg:bsc </p></td>
+    </tr>
+
+    <tr>
+        <td>provider</td>
+        <td><a href="#string">string</a></td>
+        <td></td>
+        <td><p>供应商eg:chainlink,uniswapv2 </p></td>
     </tr>
 
     <tr>
         <td>target</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>喂价源地址 </p></td>
     </tr>
 
     <tr>
-        <td>origin</td>
+        <td>history</td>
         <td><a href="#uint64">uint64</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>历史数据，默认为0，即当前时刻开始同步。 </p></td>
     </tr>
 
     <tr>
         <td>node</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>访问节点，必须有 </p></td>
     </tr>
 
     <tr>
-        <td>reload</td>
-        <td><a href="#bool">bool</a></td>
+        <td>webhook</td>
+        <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
     </tr>
 
     </tbody>
@@ -1208,7 +1235,7 @@
 
 
 <h3 id="pb.StopSyncBlockAsk">StopSyncBlockAsk</h3>
-<p>返回 同步block启动结果</p>
+<p>返回体 同步block启动结果</p>
 
 
 <table class="field-table">
@@ -1233,7 +1260,7 @@
         <td>delete</td>
         <td><a href="#bool">bool</a></td>
         <td></td>
-        <td><p>是否停止同时删除同步数据，如果True，那么停止任务同时也会删除数据和缓存 </p></td>
+        <td><p>是否停止任务同时删除历史同步数据 </p></td>
     </tr>
 
     </tbody>
@@ -1241,7 +1268,7 @@
 
 
 <h3 id="pb.StopSyncEventAsk">StopSyncEventAsk</h3>
-<p></p>
+<p>返回体 同步event out 数据</p>
 
 
 <table class="field-table">
@@ -1259,14 +1286,21 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>区块网络 </p></td>
     </tr>
 
     <tr>
         <td>target</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>event out 合约地址 </p></td>
+    </tr>
+
+    <tr>
+        <td>delete</td>
+        <td><a href="#bool">bool</a></td>
+        <td></td>
+        <td><p>是否停止任务同时删除历史同步数据 </p></td>
     </tr>
 
     </tbody>
@@ -1292,14 +1326,28 @@
         <td>network</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>区块网络 </p></td>
+    </tr>
+
+    <tr>
+        <td>provider</td>
+        <td><a href="#string">string</a></td>
+        <td></td>
+        <td><p>供应商eg:chainlink,uniswapv2 </p></td>
     </tr>
 
     <tr>
         <td>target</td>
         <td><a href="#string">string</a></td>
         <td></td>
-        <td><p></p></td>
+        <td><p>喂价源地址 </p></td>
+    </tr>
+
+    <tr>
+        <td>delete</td>
+        <td><a href="#bool">bool</a></td>
+        <td></td>
+        <td><p>是否停止任务同时删除历史同步数据 </p></td>
     </tr>
 
     </tbody>
@@ -1307,7 +1355,7 @@
 
 
 <h3 id="pb.DataCenter">DataCenter</h3>
-<p></p>
+<p>Service for handling data center.</p>
 <table class="enum-table">
     <thead>
     <tr>
@@ -1323,91 +1371,91 @@
         <td>BlockLast</td>
         <td><a href="#pb.BlockLastAsk">BlockLastAsk</a></td>
         <td><a href="#pb.BlockLastReply">BlockLastReply</a></td>
-        <td><p>block 相关</p></td>
+        <td><p>获取最新block 高度</p></td>
     </tr>
 
     <tr>
         <td>BlockDetail</td>
         <td><a href="#pb.BlockDetailAsk">BlockDetailAsk</a></td>
         <td><a href="#pb.BlockDetailReply">BlockDetailReply</a></td>
-        <td><p></p></td>
+        <td><p>获取指定高度block详情</p></td>
     </tr>
 
     <tr>
         <td>EventLast</td>
         <td><a href="#pb.EventLastAsk">EventLastAsk</a></td>
         <td><a href="#pb.EventLastReply">EventLastReply</a></td>
-        <td><p>event 相关</p></td>
+        <td><p>获取event out 最新同步高度</p></td>
     </tr>
 
     <tr>
         <td>EventFilter</td>
         <td><a href="#pb.EventFilterAsk">EventFilterAsk</a></td>
         <td><a href="#pb.EventFilterReply">EventFilterReply</a></td>
-        <td><p></p></td>
+        <td><p>获取event 事件列表</p></td>
     </tr>
 
     <tr>
         <td>OraclePrice</td>
         <td><a href="#pb.OraclePriceAsk">OraclePriceAsk</a></td>
         <td><a href="#pb.OraclePriceReply">OraclePriceReply</a></td>
-        <td><p>喂价源相关</p></td>
+        <td><p>获取喂价源最新价格</p></td>
     </tr>
 
     <tr>
         <td>OraclePriceChg</td>
         <td><a href="#pb.OraclePriceChgAsk">OraclePriceChgAsk</a></td>
         <td><a href="#pb.OraclePriceChgReply">OraclePriceChgReply</a></td>
-        <td><p></p></td>
+        <td><p>获取喂价源价格变化率</p></td>
     </tr>
 
     <tr>
         <td>OracleData</td>
         <td><a href="#pb.OracleDataAsk">OracleDataAsk</a></td>
         <td><a href="#pb.OracleDataReply">OracleDataReply</a></td>
-        <td><p></p></td>
+        <td><p>获取喂价源价格变动数据集合(K线处理由其他服务完成，此处不处理)</p></td>
     </tr>
 
     <tr>
         <td>StartSyncBlock</td>
         <td><a href="#pb.StartSyncBlockAsk">StartSyncBlockAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>admin相关</p></td>
+        <td><p>新增同步一条block数据</p></td>
     </tr>
 
     <tr>
         <td>StopSyncBlock</td>
         <td><a href="#pb.StopSyncBlockAsk">StopSyncBlockAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p></p></td>
+        <td><p>停止同步一条block数据</p></td>
     </tr>
 
     <tr>
         <td>StartSyncEvent</td>
         <td><a href="#pb.StartSyncEventAsk">StartSyncEventAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p></p></td>
+        <td><p>新增同步一条event out数据</p></td>
     </tr>
 
     <tr>
         <td>StopSyncEvent</td>
         <td><a href="#pb.StopSyncEventAsk">StopSyncEventAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p></p></td>
+        <td><p>停止同步一条event out数据</p></td>
     </tr>
 
     <tr>
         <td>StartSyncOracle</td>
         <td><a href="#pb.StartSyncOracleAsk">StartSyncOracleAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p></p></td>
+        <td><p>新增同步一条oracle数据</p></td>
     </tr>
 
     <tr>
         <td>StopSyncOracle</td>
         <td><a href="#pb.StopSyncOracleAsk">StopSyncOracleAsk</a></td>
         <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p></p></td>
+        <td><p>停止同步一条oracle数据</p></td>
     </tr>
 
     </tbody>

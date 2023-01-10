@@ -8,10 +8,11 @@
 import logging as log
 import time
 
+import utils
 from tools.eth_api import EthApi
 from tools.mongo_api import MongoApi
 from tools.redis_api import RedisApi
-from uitls import is_dev_env
+from utils import is_dev_env
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -22,19 +23,17 @@ class Task(object):
         self.interval: int = kwargs.get("interval")
         self.origin: int = kwargs.get("origin")
         self.node: str = kwargs.get("node")
-        self.reload: bool = kwargs.get("reload")
+        self.webhook: bool = kwargs.get("webhook")
 
         self.conf: dict = conf
         self.eth: EthApi = self._conn_eth()
         self.redis: RedisApi = self._conn_redis()
         self.mongo: MongoApi = self._conn_mongo()
-        self.tag_height = f"block_{self.network}_height"
-        self.table_name = f"block_{self.network}"
+        self.tag_height = utils.gen_block_cache_name(network=self.network)
+        self.table_name = utils.gen_block_table_name(network=self.network)
 
     def run(self):
-        log.info(f"sync block:network:{self.network} origin:{self.origin} reload:{self.reload} node:{self.node}")
-        if self.reload:
-            self._clear_all()
+        log.info(f"sync block:network:{self.network} origin:{self.origin} webhook:{self.webhook} node:{self.node}")
 
         while True:
             time.sleep(self.interval)
@@ -107,10 +106,10 @@ class Task(object):
     def _conn_eth(self) -> EthApi:
         return EthApi.from_node(self.node)
 
-    # 清除全部数据，mongodb 和redis
-    def _clear_all(self):
-        log.info("clear all data in mongo ,and clear redis tag")
-        # 1.清除database
-        self.mongo.drop(self.table_name)
-        # 2.清除fredi标识
-        self.redis.delele(self.tag_height)
+    # # 清除全部数据，mongodb 和redis
+    # def _clear_all(self):
+    #     log.info("clear all data in mongo ,and clear redis tag")
+    #     # 1.清除database
+    #     self.mongo.drop(self.table_name)
+    #     # 2.清除fredi标识
+    #     self.redis.delele(self.tag_height)

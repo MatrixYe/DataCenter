@@ -9,7 +9,7 @@ import argparse
 import logging as log
 
 from server.rpc_server import RpcServer
-from uitls import load_config
+from utils import load_config
 
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
 parser.add_argument("--host", type=str, default='0.0.0.0')

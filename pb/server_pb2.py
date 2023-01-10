@@ -13,7 +13,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(
-    b'\n\x0cserver.proto\x12\x02pb\"\x1f\n\x0c\x42lockLastAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\" \n\x0e\x42lockLastReply\x12\x0e\n\x06height\x18\x01 \x01(\x04\"1\n\x0e\x42lockDetailAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06height\x18\x02 \x01(\x04\"T\n\x10\x42lockDetailReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06height\x18\x02 \x01(\x04\x12\x11\n\ttimestamp\x18\x03 \x01(\x04\x12\x0c\n\x04hash\x18\x04 \x01(\t\"/\n\x0c\x45ventLastAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\" \n\x0e\x45ventLastReply\x12\x0e\n\x06height\x18\x02 \x01(\x04\"^\n\x0e\x45ventFilterAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x04\x12\x0f\n\x07senders\x18\x05 \x03(\t\"\xb2\x01\n\x10\x45ventFilterReply\x12-\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x1d.pb.EventFilterReply.RawEvent\x1ao\n\x08RawEvent\x12\x14\n\x0c\x62lock_number\x18\x01 \x01(\x04\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0e\n\x06sender\x18\x03 \x01(\t\x12\r\n\x05itype\x18\x04 \x01(\r\x12\x0e\n\x06\x62value\x18\x05 \x01(\x0c\x12\x0f\n\x07tx_hash\x18\x06 \x01(\t\"T\n\x0eOraclePriceAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x10\n\x08\x64\x65\x61\x64line\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\"i\n\x10OraclePriceReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x11\n\ttimestamp\x18\x04 \x01(\x04\x12\x12\n\nis_reverse\x18\x05 \x01(\x08\"a\n\x11OraclePriceChgAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x04\x12\x0f\n\x07reverse\x18\x05 \x01(\x08\"W\n\x13OraclePriceChgReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0b\n\x03\x63hg\x18\x03 \x01(\x02\x12\x12\n\nis_reverse\x18\x04 \x01(\x08\"m\n\x0eOracleKlineAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05level\x18\x03 \x01(\x04\x12\r\n\x05start\x18\x04 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x05 \x01(\x04\x12\x0f\n\x07reverse\x18\x06 \x01(\x08\"\xfd\x01\n\x10OracleKlineReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05level\x18\x04 \x01(\r\x12\r\n\x05start\x18\x05 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x06 \x01(\x04\x12\x0c\n\x04pair\x18\x07 \x01(\t\x12,\n\x07\x63\x61ndles\x18\x08 \x03(\x0b\x32\x1b.pb.OracleKlineReply.Candle\x1aS\n\x06\x43\x61ndle\x12\x0c\n\x04open\x18\x01 \x01(\t\x12\r\n\x05\x63lose\x18\x02 \x01(\x02\x12\x0c\n\x04high\x18\x03 \x01(\x02\x12\x0b\n\x03low\x18\x04 \x01(\x02\x12\x11\n\ttimestamp\x18\x05 \x01(\x04\"d\n\x11StartSyncBlockAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06origin\x18\x02 \x01(\x04\x12\x10\n\x08interval\x18\x03 \x01(\r\x12\x0c\n\x04node\x18\x04 \x01(\t\x12\x0e\n\x06reload\x18\x05 \x01(\x08\"#\n\x10StopSyncBlockAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\"\x80\x01\n\x11StartSyncEventAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0e\n\x06origin\x18\x03 \x01(\x04\x12\x0c\n\x04node\x18\x04 \x01(\t\x12\r\n\x05\x64\x65lay\x18\x05 \x01(\r\x12\r\n\x05range\x18\x06 \x01(\r\x12\x0e\n\x06reload\x18\x07 \x01(\x08\"3\n\x10StopSyncEventAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\"c\n\x12StartSyncOracleAsk\x12\x0f\n\x07netwrok\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0e\n\x06origin\x18\x03 \x01(\x04\x12\x0c\n\x04node\x18\x04 \x01(\t\x12\x0e\n\x06reload\x18\x05 \x01(\x08\"4\n\x11StopSyncOracleAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\"\'\n\x08\x43omReply\x12\x0e\n\x06result\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t2\xe0\x05\n\nDataCenter\x12\x31\n\tBlockLast\x12\x10.pb.BlockLastAsk\x1a\x12.pb.BlockLastReply\x12\x37\n\x0b\x42lockDetail\x12\x12.pb.BlockDetailAsk\x1a\x14.pb.BlockDetailReply\x12\x31\n\tEventLast\x12\x10.pb.EventLastAsk\x1a\x12.pb.EventLastReply\x12\x37\n\x0b\x45ventFilter\x12\x12.pb.EventFilterAsk\x1a\x14.pb.EventFilterReply\x12\x37\n\x0bOraclePrice\x12\x12.pb.OraclePriceAsk\x1a\x14.pb.OraclePriceReply\x12@\n\x0eOraclePriceChg\x12\x15.pb.OraclePriceChgAsk\x1a\x17.pb.OraclePriceChgReply\x12\x37\n\x0bOracleKline\x12\x12.pb.OracleKlineAsk\x1a\x14.pb.OracleKlineReply\x12\x35\n\x0eStartSyncBlock\x12\x15.pb.StartSyncBlockAsk\x1a\x0c.pb.ComReply\x12\x33\n\rStopSyncBlock\x12\x14.pb.StopSyncBlockAsk\x1a\x0c.pb.ComReply\x12\x35\n\x0eStartSyncEvent\x12\x15.pb.StartSyncEventAsk\x1a\x0c.pb.ComReply\x12\x33\n\rStopSyncEvent\x12\x14.pb.StopSyncEventAsk\x1a\x0c.pb.ComReply\x12\x37\n\x0fStartSyncOracle\x12\x16.pb.StartSyncOracleAsk\x1a\x0c.pb.ComReply\x12\x35\n\x0eStopSyncOracle\x12\x15.pb.StopSyncOracleAsk\x1a\x0c.pb.ComReplyB\x07Z\x05./;pbb\x06proto3')
+    b'\n\x0cserver.proto\x12\x02pb\"\x1f\n\x0c\x42lockLastAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\" \n\x0e\x42lockLastReply\x12\x0e\n\x06height\x18\x01 \x01(\x04\"1\n\x0e\x42lockDetailAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06height\x18\x02 \x01(\x04\"T\n\x10\x42lockDetailReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06height\x18\x02 \x01(\x04\x12\x11\n\ttimestamp\x18\x03 \x01(\x04\x12\x0c\n\x04hash\x18\x04 \x01(\t\"/\n\x0c\x45ventLastAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\" \n\x0e\x45ventLastReply\x12\x0e\n\x06height\x18\x02 \x01(\x04\"l\n\x0e\x45ventFilterAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x04\x12\x0f\n\x07senders\x18\x05 \x03(\t\x12\x0c\n\x04\x64\x65sc\x18\x06 \x01(\x08\"\xb2\x01\n\x10\x45ventFilterReply\x12-\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x1d.pb.EventFilterReply.RawEvent\x1ao\n\x08RawEvent\x12\x14\n\x0c\x62lock_number\x18\x01 \x01(\x04\x12\r\n\x05index\x18\x02 \x01(\x04\x12\x0e\n\x06sender\x18\x03 \x01(\t\x12\r\n\x05itype\x18\x04 \x01(\r\x12\x0e\n\x06\x62value\x18\x05 \x01(\x0c\x12\x0f\n\x07tx_hash\x18\x06 \x01(\t\"T\n\x0eOraclePriceAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x10\n\x08\x64\x65\x61\x64line\x18\x03 \x01(\x04\x12\x0f\n\x07reverse\x18\x04 \x01(\x08\"y\n\x10OraclePriceReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05price\x18\x03 \x01(\x02\x12\x11\n\ttimestamp\x18\x04 \x01(\x04\x12\x0e\n\x06height\x18\x05 \x01(\x04\x12\x12\n\nis_reverse\x18\x06 \x01(\x08\"a\n\x11OraclePriceChgAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x04\x12\x0f\n\x07reverse\x18\x05 \x01(\x08\"W\n\x13OraclePriceChgReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0b\n\x03\x63hg\x18\x03 \x01(\x02\x12\x12\n\nis_reverse\x18\x04 \x01(\x08\"]\n\rOracleDataAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\r\n\x05start\x18\x03 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x04 \x01(\x04\x12\x0f\n\x07reverse\x18\x05 \x01(\x08\"\xe6\x01\n\x0fOracleDataReply\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\r\n\x05start\x18\x04 \x01(\x04\x12\x0b\n\x03\x65nd\x18\x05 \x01(\x04\x12\x0c\n\x04pair\x18\x06 \x01(\t\x12\x12\n\nis_reverse\x18\x07 \x01(\x08\x12*\n\x06trades\x18\x08 \x03(\x0b\x32\x1a.pb.OracleDataReply.Trades\x1a:\n\x06Trades\x12\r\n\x05price\x18\x01 \x01(\x02\x12\x0e\n\x06volume\x18\x02 \x01(\x02\x12\x11\n\ttimestamp\x18\x03 \x01(\x04\"e\n\x11StartSyncBlockAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06origin\x18\x02 \x01(\x04\x12\x10\n\x08interval\x18\x03 \x01(\r\x12\x0c\n\x04node\x18\x04 \x01(\t\x12\x0f\n\x07webhook\x18\x05 \x01(\t\"3\n\x10StopSyncBlockAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06\x64\x65lete\x18\x02 \x01(\x08\"\x81\x01\n\x11StartSyncEventAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0e\n\x06origin\x18\x03 \x01(\x04\x12\x0c\n\x04node\x18\x04 \x01(\t\x12\r\n\x05\x64\x65lay\x18\x05 \x01(\r\x12\r\n\x05range\x18\x06 \x01(\r\x12\x0f\n\x07webhook\x18\x07 \x01(\t\"C\n\x10StopSyncEventAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x0e\n\x06target\x18\x02 \x01(\t\x12\x0e\n\x06\x64\x65lete\x18\x03 \x01(\x08\"w\n\x12StartSyncOracleAsk\x12\x0f\n\x07netwrok\x18\x01 \x01(\t\x12\x10\n\x08provider\x18\x02 \x01(\t\x12\x0e\n\x06target\x18\x03 \x01(\t\x12\x0f\n\x07history\x18\x04 \x01(\x04\x12\x0c\n\x04node\x18\x05 \x01(\t\x12\x0f\n\x07webhook\x18\x06 \x01(\t\"V\n\x11StopSyncOracleAsk\x12\x0f\n\x07network\x18\x01 \x01(\t\x12\x10\n\x08provider\x18\x02 \x01(\t\x12\x0e\n\x06target\x18\x03 \x01(\t\x12\x0e\n\x06\x64\x65lete\x18\x04 \x01(\x08\"\'\n\x08\x43omReply\x12\x0e\n\x06result\x18\x01 \x01(\t\x12\x0b\n\x03msg\x18\x02 \x01(\t2\xdd\x05\n\nDataCenter\x12\x31\n\tBlockLast\x12\x10.pb.BlockLastAsk\x1a\x12.pb.BlockLastReply\x12\x37\n\x0b\x42lockDetail\x12\x12.pb.BlockDetailAsk\x1a\x14.pb.BlockDetailReply\x12\x31\n\tEventLast\x12\x10.pb.EventLastAsk\x1a\x12.pb.EventLastReply\x12\x37\n\x0b\x45ventFilter\x12\x12.pb.EventFilterAsk\x1a\x14.pb.EventFilterReply\x12\x37\n\x0bOraclePrice\x12\x12.pb.OraclePriceAsk\x1a\x14.pb.OraclePriceReply\x12@\n\x0eOraclePriceChg\x12\x15.pb.OraclePriceChgAsk\x1a\x17.pb.OraclePriceChgReply\x12\x34\n\nOracleData\x12\x11.pb.OracleDataAsk\x1a\x13.pb.OracleDataReply\x12\x35\n\x0eStartSyncBlock\x12\x15.pb.StartSyncBlockAsk\x1a\x0c.pb.ComReply\x12\x33\n\rStopSyncBlock\x12\x14.pb.StopSyncBlockAsk\x1a\x0c.pb.ComReply\x12\x35\n\x0eStartSyncEvent\x12\x15.pb.StartSyncEventAsk\x1a\x0c.pb.ComReply\x12\x33\n\rStopSyncEvent\x12\x14.pb.StopSyncEventAsk\x1a\x0c.pb.ComReply\x12\x37\n\x0fStartSyncOracle\x12\x16.pb.StartSyncOracleAsk\x1a\x0c.pb.ComReply\x12\x35\n\x0eStopSyncOracle\x12\x15.pb.StopSyncOracleAsk\x1a\x0c.pb.ComReplyB\x07Z\x05./;pbb\x06proto3')
 
 _BLOCKLASTASK = DESCRIPTOR.message_types_by_name['BlockLastAsk']
 _BLOCKLASTREPLY = DESCRIPTOR.message_types_by_name['BlockLastReply']
@@ -28,9 +28,9 @@ _ORACLEPRICEASK = DESCRIPTOR.message_types_by_name['OraclePriceAsk']
 _ORACLEPRICEREPLY = DESCRIPTOR.message_types_by_name['OraclePriceReply']
 _ORACLEPRICECHGASK = DESCRIPTOR.message_types_by_name['OraclePriceChgAsk']
 _ORACLEPRICECHGREPLY = DESCRIPTOR.message_types_by_name['OraclePriceChgReply']
-_ORACLEKLINEASK = DESCRIPTOR.message_types_by_name['OracleKlineAsk']
-_ORACLEKLINEREPLY = DESCRIPTOR.message_types_by_name['OracleKlineReply']
-_ORACLEKLINEREPLY_CANDLE = _ORACLEKLINEREPLY.nested_types_by_name['Candle']
+_ORACLEDATAASK = DESCRIPTOR.message_types_by_name['OracleDataAsk']
+_ORACLEDATAREPLY = DESCRIPTOR.message_types_by_name['OracleDataReply']
+_ORACLEDATAREPLY_TRADES = _ORACLEDATAREPLY.nested_types_by_name['Trades']
 _STARTSYNCBLOCKASK = DESCRIPTOR.message_types_by_name['StartSyncBlockAsk']
 _STOPSYNCBLOCKASK = DESCRIPTOR.message_types_by_name['StopSyncBlockAsk']
 _STARTSYNCEVENTASK = DESCRIPTOR.message_types_by_name['StartSyncEventAsk']
@@ -130,27 +130,27 @@ OraclePriceChgReply = _reflection.GeneratedProtocolMessageType('OraclePriceChgRe
 })
 _sym_db.RegisterMessage(OraclePriceChgReply)
 
-OracleKlineAsk = _reflection.GeneratedProtocolMessageType('OracleKlineAsk', (_message.Message,), {
-    'DESCRIPTOR': _ORACLEKLINEASK,
+OracleDataAsk = _reflection.GeneratedProtocolMessageType('OracleDataAsk', (_message.Message,), {
+    'DESCRIPTOR': _ORACLEDATAASK,
     '__module__': 'server_pb2'
-    # @@protoc_insertion_point(class_scope:pb.OracleKlineAsk)
+    # @@protoc_insertion_point(class_scope:pb.OracleDataAsk)
 })
-_sym_db.RegisterMessage(OracleKlineAsk)
+_sym_db.RegisterMessage(OracleDataAsk)
 
-OracleKlineReply = _reflection.GeneratedProtocolMessageType('OracleKlineReply', (_message.Message,), {
+OracleDataReply = _reflection.GeneratedProtocolMessageType('OracleDataReply', (_message.Message,), {
 
-    'Candle': _reflection.GeneratedProtocolMessageType('Candle', (_message.Message,), {
-        'DESCRIPTOR': _ORACLEKLINEREPLY_CANDLE,
+    'Trades': _reflection.GeneratedProtocolMessageType('Trades', (_message.Message,), {
+        'DESCRIPTOR': _ORACLEDATAREPLY_TRADES,
         '__module__': 'server_pb2'
-        # @@protoc_insertion_point(class_scope:pb.OracleKlineReply.Candle)
+        # @@protoc_insertion_point(class_scope:pb.OracleDataReply.Trades)
     })
     ,
-    'DESCRIPTOR': _ORACLEKLINEREPLY,
+    'DESCRIPTOR': _ORACLEDATAREPLY,
     '__module__': 'server_pb2'
-    # @@protoc_insertion_point(class_scope:pb.OracleKlineReply)
+    # @@protoc_insertion_point(class_scope:pb.OracleDataReply)
 })
-_sym_db.RegisterMessage(OracleKlineReply)
-_sym_db.RegisterMessage(OracleKlineReply.Candle)
+_sym_db.RegisterMessage(OracleDataReply)
+_sym_db.RegisterMessage(OracleDataReply.Trades)
 
 StartSyncBlockAsk = _reflection.GeneratedProtocolMessageType('StartSyncBlockAsk', (_message.Message,), {
     'DESCRIPTOR': _STARTSYNCBLOCKASK,
@@ -218,39 +218,39 @@ if _descriptor._USE_C_DESCRIPTORS == False:
     _EVENTLASTREPLY._serialized_start = 273
     _EVENTLASTREPLY._serialized_end = 305
     _EVENTFILTERASK._serialized_start = 307
-    _EVENTFILTERASK._serialized_end = 401
-    _EVENTFILTERREPLY._serialized_start = 404
-    _EVENTFILTERREPLY._serialized_end = 582
-    _EVENTFILTERREPLY_RAWEVENT._serialized_start = 471
-    _EVENTFILTERREPLY_RAWEVENT._serialized_end = 582
-    _ORACLEPRICEASK._serialized_start = 584
-    _ORACLEPRICEASK._serialized_end = 668
-    _ORACLEPRICEREPLY._serialized_start = 670
-    _ORACLEPRICEREPLY._serialized_end = 775
-    _ORACLEPRICECHGASK._serialized_start = 777
-    _ORACLEPRICECHGASK._serialized_end = 874
-    _ORACLEPRICECHGREPLY._serialized_start = 876
-    _ORACLEPRICECHGREPLY._serialized_end = 963
-    _ORACLEKLINEASK._serialized_start = 965
-    _ORACLEKLINEASK._serialized_end = 1074
-    _ORACLEKLINEREPLY._serialized_start = 1077
-    _ORACLEKLINEREPLY._serialized_end = 1330
-    _ORACLEKLINEREPLY_CANDLE._serialized_start = 1247
-    _ORACLEKLINEREPLY_CANDLE._serialized_end = 1330
-    _STARTSYNCBLOCKASK._serialized_start = 1332
-    _STARTSYNCBLOCKASK._serialized_end = 1432
-    _STOPSYNCBLOCKASK._serialized_start = 1434
-    _STOPSYNCBLOCKASK._serialized_end = 1469
-    _STARTSYNCEVENTASK._serialized_start = 1472
-    _STARTSYNCEVENTASK._serialized_end = 1600
-    _STOPSYNCEVENTASK._serialized_start = 1602
-    _STOPSYNCEVENTASK._serialized_end = 1653
-    _STARTSYNCORACLEASK._serialized_start = 1655
-    _STARTSYNCORACLEASK._serialized_end = 1754
-    _STOPSYNCORACLEASK._serialized_start = 1756
-    _STOPSYNCORACLEASK._serialized_end = 1808
-    _COMREPLY._serialized_start = 1810
-    _COMREPLY._serialized_end = 1849
-    _DATACENTER._serialized_start = 1852
-    _DATACENTER._serialized_end = 2588
+    _EVENTFILTERASK._serialized_end = 415
+    _EVENTFILTERREPLY._serialized_start = 418
+    _EVENTFILTERREPLY._serialized_end = 596
+    _EVENTFILTERREPLY_RAWEVENT._serialized_start = 485
+    _EVENTFILTERREPLY_RAWEVENT._serialized_end = 596
+    _ORACLEPRICEASK._serialized_start = 598
+    _ORACLEPRICEASK._serialized_end = 682
+    _ORACLEPRICEREPLY._serialized_start = 684
+    _ORACLEPRICEREPLY._serialized_end = 805
+    _ORACLEPRICECHGASK._serialized_start = 807
+    _ORACLEPRICECHGASK._serialized_end = 904
+    _ORACLEPRICECHGREPLY._serialized_start = 906
+    _ORACLEPRICECHGREPLY._serialized_end = 993
+    _ORACLEDATAASK._serialized_start = 995
+    _ORACLEDATAASK._serialized_end = 1088
+    _ORACLEDATAREPLY._serialized_start = 1091
+    _ORACLEDATAREPLY._serialized_end = 1321
+    _ORACLEDATAREPLY_TRADES._serialized_start = 1263
+    _ORACLEDATAREPLY_TRADES._serialized_end = 1321
+    _STARTSYNCBLOCKASK._serialized_start = 1323
+    _STARTSYNCBLOCKASK._serialized_end = 1424
+    _STOPSYNCBLOCKASK._serialized_start = 1426
+    _STOPSYNCBLOCKASK._serialized_end = 1477
+    _STARTSYNCEVENTASK._serialized_start = 1480
+    _STARTSYNCEVENTASK._serialized_end = 1609
+    _STOPSYNCEVENTASK._serialized_start = 1611
+    _STOPSYNCEVENTASK._serialized_end = 1678
+    _STARTSYNCORACLEASK._serialized_start = 1680
+    _STARTSYNCORACLEASK._serialized_end = 1799
+    _STOPSYNCORACLEASK._serialized_start = 1801
+    _STOPSYNCORACLEASK._serialized_end = 1887
+    _COMREPLY._serialized_start = 1889
+    _COMREPLY._serialized_end = 1928
+    _DATACENTER._serialized_start = 1931
+    _DATACENTER._serialized_end = 2664
 # @@protoc_insertion_point(module_scope)

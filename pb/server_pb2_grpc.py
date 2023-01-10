@@ -6,7 +6,9 @@ from . import server_pb2 as server__pb2
 
 
 class DataCenterStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """*
+    Service for handling data center.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -44,10 +46,10 @@ class DataCenterStub(object):
             request_serializer=server__pb2.OraclePriceChgAsk.SerializeToString,
             response_deserializer=server__pb2.OraclePriceChgReply.FromString,
         )
-        self.OracleKline = channel.unary_unary(
-            '/pb.DataCenter/OracleKline',
-            request_serializer=server__pb2.OracleKlineAsk.SerializeToString,
-            response_deserializer=server__pb2.OracleKlineReply.FromString,
+        self.OracleData = channel.unary_unary(
+            '/pb.DataCenter/OracleData',
+            request_serializer=server__pb2.OracleDataAsk.SerializeToString,
+            response_deserializer=server__pb2.OracleDataReply.FromString,
         )
         self.StartSyncBlock = channel.unary_unary(
             '/pb.DataCenter/StartSyncBlock',
@@ -82,86 +84,97 @@ class DataCenterStub(object):
 
 
 class DataCenterServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """*
+    Service for handling data center.
+    """
 
     def BlockLast(self, request, context):
-        """block 相关
+        """获取最新block 高度
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def BlockDetail(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """获取指定高度block详情
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def EventLast(self, request, context):
-        """event 相关
+        """获取event out 最新同步高度
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def EventFilter(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """获取event 事件列表
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def OraclePrice(self, request, context):
-        """喂价源相关
+        """获取喂价源最新价格
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def OraclePriceChg(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """获取喂价源价格变化率
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def OracleKline(self, request, context):
-        """admin相关
+    def OracleData(self, request, context):
+        """获取喂价源价格变动数据集合(K线处理由其他服务完成，此处不处理)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StartSyncBlock(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """新增同步一条block数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StopSyncBlock(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """停止同步一条block数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StartSyncEvent(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """新增同步一条event out数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StopSyncEvent(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """停止同步一条event out数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StartSyncOracle(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """新增同步一条oracle数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StopSyncOracle(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """停止同步一条oracle数据
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -199,10 +212,10 @@ def add_DataCenterServicer_to_server(servicer, server):
             request_deserializer=server__pb2.OraclePriceChgAsk.FromString,
             response_serializer=server__pb2.OraclePriceChgReply.SerializeToString,
         ),
-        'OracleKline': grpc.unary_unary_rpc_method_handler(
-            servicer.OracleKline,
-            request_deserializer=server__pb2.OracleKlineAsk.FromString,
-            response_serializer=server__pb2.OracleKlineReply.SerializeToString,
+        'OracleData': grpc.unary_unary_rpc_method_handler(
+            servicer.OracleData,
+            request_deserializer=server__pb2.OracleDataAsk.FromString,
+            response_serializer=server__pb2.OracleDataReply.SerializeToString,
         ),
         'StartSyncBlock': grpc.unary_unary_rpc_method_handler(
             servicer.StartSyncBlock,
@@ -242,7 +255,9 @@ def add_DataCenterServicer_to_server(servicer, server):
 
 # This class is part of an EXPERIMENTAL API.
 class DataCenter(object):
-    """Missing associated documentation comment in .proto file."""
+    """*
+    Service for handling data center.
+    """
 
     @staticmethod
     def BlockLast(request,
@@ -347,19 +362,19 @@ class DataCenter(object):
                                              insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def OracleKline(request,
-                    target,
-                    options=(),
-                    channel_credentials=None,
-                    call_credentials=None,
-                    insecure=False,
-                    compression=None,
-                    wait_for_ready=None,
-                    timeout=None,
-                    metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/OracleKline',
-                                             server__pb2.OracleKlineAsk.SerializeToString,
-                                             server__pb2.OracleKlineReply.FromString,
+    def OracleData(request,
+                   target,
+                   options=(),
+                   channel_credentials=None,
+                   call_credentials=None,
+                   insecure=False,
+                   compression=None,
+                   wait_for_ready=None,
+                   timeout=None,
+                   metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pb.DataCenter/OracleData',
+                                             server__pb2.OracleDataAsk.SerializeToString,
+                                             server__pb2.OracleDataReply.FromString,
                                              options, channel_credentials,
                                              insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

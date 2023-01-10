@@ -8,7 +8,7 @@
 import warnings
 
 from tools.docker_api import DockerApi
-from uitls import load_config
+from utils import load_config
 
 docker_api = DockerApi.from_env()
 

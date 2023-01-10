@@ -2,48 +2,46 @@ syntax = "proto3";
 package pb;
 option go_package = "./;pb";
 
-
+/**
+ * Service for handling data center.
+ */
 service DataCenter{
-  // block 相关
-  rpc BlockLast(BlockLastAsk) returns (BlockLastReply);
-  rpc BlockDetail(BlockDetailAsk) returns (BlockDetailReply);
+  rpc BlockLast(BlockLastAsk) returns (BlockLastReply); // 获取最新block 高度
+  rpc BlockDetail(BlockDetailAsk) returns (BlockDetailReply);// 获取指定高度block详情
 
-  // event 相关
-  rpc EventLast(EventLastAsk) returns (EventLastReply);
-  rpc EventFilter(EventFilterAsk) returns (EventFilterReply);
+  rpc EventLast(EventLastAsk) returns (EventLastReply); // 获取event out 最新同步高度
+  rpc EventFilter(EventFilterAsk) returns (EventFilterReply); // 获取event 事件列表
 
-  // 喂价源相关
-  rpc OraclePrice(OraclePriceAsk) returns (OraclePriceReply);
-  rpc OraclePriceChg(OraclePriceChgAsk) returns (OraclePriceChgReply);
-  rpc OracleData(OracleDataAsk) returns (OracleDataReply);
+  rpc OraclePrice(OraclePriceAsk) returns (OraclePriceReply);// 获取喂价源最新价格
+  rpc OraclePriceChg(OraclePriceChgAsk) returns (OraclePriceChgReply);//获取喂价源价格变化率
+  rpc OracleData(OracleDataAsk) returns (OracleDataReply); // 获取喂价源价格变动数据集合(K线处理由其他服务完成，此处不处理)
 
-  //  admin相关
-  rpc StartSyncBlock(StartSyncBlockAsk) returns (ComReply);
-  rpc StopSyncBlock(StopSyncBlockAsk) returns (ComReply);
-  rpc StartSyncEvent(StartSyncEventAsk) returns (ComReply);
-  rpc StopSyncEvent(StopSyncEventAsk) returns (ComReply);
-  rpc StartSyncOracle(StartSyncOracleAsk) returns (ComReply);
-  rpc StopSyncOracle(StopSyncOracleAsk) returns (ComReply);
+  rpc StartSyncBlock(StartSyncBlockAsk) returns (ComReply); // 新增同步一条block数据
+  rpc StopSyncBlock(StopSyncBlockAsk) returns (ComReply);  // 停止同步一条block数据
+  rpc StartSyncEvent(StartSyncEventAsk) returns (ComReply);// 新增同步一条event out数据
+  rpc StopSyncEvent(StopSyncEventAsk) returns (ComReply); // 停止同步一条event out数据
+  rpc StartSyncOracle(StartSyncOracleAsk) returns (ComReply);//新增同步一条oracle数据
+  rpc StopSyncOracle(StopSyncOracleAsk) returns (ComReply); // 停止同步一条oracle数据
 }
 
-// 请求 最新区块高度
+// 请求体 最新区块高度
 message BlockLastAsk{
   string network = 1; // 区块网络
 }
 
-// 返回 最新区块高度
+// 返回体 最新区块高度
 message BlockLastReply{
-  uint64 height = 1;// 高度
+  uint64 height = 1; // 高度
 }
 
-// 请求 区块详情
+// 请求体 区块详情
 message BlockDetailAsk{
   string network = 1; // 区块网络
-  uint64 height = 2;//高度
+  uint64 height = 2; //高度
 }
 
 
-// 返回 区块详情
+// 返回体 区块详情
 message BlockDetailReply{
   string network = 1; // 区块网络
   uint64 height = 2; // 高度
@@ -51,143 +49,154 @@ message BlockDetailReply{
   string hash = 4; // 区块哈希
 }
 
-// 请求 最新的event同步高度
+// 请求体 最新的event同步高度
 message EventLastAsk{
-  string network = 1; // 网络
+  string network = 1; // 区块网络
   string target = 2; // event out 地址
 }
 
-// 返回 最新的event同步高度
+// 返回体 最新的event同步高度
 message EventLastReply{
   uint64 height = 2; // event out最新同步高度
 }
 
-// 请求 过滤日志
+// 请求体 过滤日志
 message EventFilterAsk{
-  string network = 1; // 网络
+  string network = 1; // 区块网络
   string target = 2; // event out 地址
   uint64 start = 3; // 起始点高度
   uint64 end = 4; // 结束点高度
   repeated string senders = 5; // 过滤sender
   bool desc = 6;// 是否降序排列，默认为false
 }
-// 返回 过滤日志
+// 返回体 过滤日志
 message EventFilterReply{
   repeated RawEvent events = 1;// evnet数据集合
   message RawEvent{
     uint64 block_number = 1; // block高度
     uint64 index = 2;// event在block中的索引
     string sender = 3;// event发送者地址
-
     uint32 itype = 4;// event类型
     bytes bvalue = 5;// event数据
     string tx_hash = 6; // event transaction hash
   }
 }
 
-// 请求 喂价源最新价格
+// 请求体 喂价源最新价格
 message OraclePriceAsk{
-  string network = 1; //网络
+  string network = 1; //区块网络
   string target = 2; // 喂价源地址
-  uint64 deadline = 3; // 截止日期，返回的价格为截止时间时刻的最新价，该字段<=0时，返回当前时刻最新价
+  uint64 deadline = 3; // 截止日期，返回体的价格为截止时间时刻的最新价，该字段<=0时，返回体当前时刻最新价
   bool reverse = 4; // 是否价格取倒数
 }
 
-// 返回 喂价源最新价格
+// 返回体 喂价源最新价格
 message OraclePriceReply{
-  string network = 1; // 网络
+  string network = 1; // 区块网络
   string target = 2; // 喂价源地址
   float price = 3;// 最新价格
   uint64 timestamp = 4;// 最新价时间戳
-  bool is_reverse = 5;// 是否价格取倒数
+  uint64 height = 5; // 最新价区块高度
+  bool is_reverse = 6;// 是否价格取倒数
 
 }
 
-// 请求 喂价源价格变化率
+// 请求体 喂价源价格变化率
 message OraclePriceChgAsk{
-  string network = 1;// 网络
+  string network = 1;// 区块网络
   string target = 2; // 喂价源地址
   uint64 start = 3; //起始点，注意是时间戳起始点
   uint64 end = 4; // 结束点，注意是时间戳结束点
   bool reverse = 5; //是否价格取倒
 }
 
-// 返回 喂价源价格变化率
+// 返回体 喂价源价格变化率
 message OraclePriceChgReply{
-  string network = 1; //网络
+  string network = 1; //区块网络
   string target = 2;// 喂价源地址
   float chg = 3;//价格变化率
   bool is_reverse = 4;//价格是否已经倒数
 }
 
-// 请求 价格变动数据
+// 请求体 价格变动数据
 message OracleDataAsk{
-  string network = 1; // 网络
+  string network = 1; // 区块网络
   string target = 2; // 喂价源地址
   uint64 start = 3; //时间戳起始点
   uint64 end = 4; // 时间戳结束点
   bool reverse = 5; // 价格是否取倒数
 }
 
-// 返回 价格变动数据
+// 返回体 价格变动数据
 message OracleDataReply{
-  string network = 1;//网络
+  string network = 1;//区块网络
   string target = 2;//喂价源地址
   string name = 3;//喂价源名称
   uint64 start = 4;// 时间戳起始点
   uint64 end = 5; // 时间戳结束点
   string pair = 6;//标的
   bool is_reverse = 7;// 是否已经取倒数
-  repeated Trades trades = 8;
+  repeated Trades trades = 8; // 价格数据(在uniswap中为swap数据，在chainlink中为Answer数据)
+  // 价格信息体
   message Trades{
-    float price = 1;
-    float volume = 2;
-    uint64 timestamp = 3;
+    float price = 1; // 价格
+    float volume = 2;// 交易量，chainlink中无法获取(即0)
+    uint64 timestamp = 3; // 交易时间戳
   }
 }
-//*******************************************Admin*******************************************Admin
-// 请求 同步block任务
+// 请求体 同步block任务
 message StartSyncBlockAsk{
-  string network = 1;//网络
+  string network = 1;//区块网络
   uint64 origin = 2;// 区块高度起始点
   uint32 interval = 3;// 区块扫描周期，单位秒
-  string node = 4;// 请求节点
+  string node = 4;// 请求体节点
+  string webhook = 5;// 飞书信息钩子，error或者info级别的日志将回调发射到本地中，默认空
+
 }
-// 返回 同步block启动结果
+// 返回体 同步block启动结果
 message StopSyncBlockAsk{
   string network = 1; //需要停止同步的区块网络，如 'bsc'
-  bool delete = 2;// 是否停止同时删除同步数据，如果True，那么停止任务同时也会删除数据和缓存
+  bool delete = 2;// 是否停止任务同时删除历史同步数据
 }
 
+// 请求体 同步event out 数据
 message StartSyncEventAsk{
-  string network = 1;// 网络
+  string network = 1;// 区块网络
   string target = 2;// event out 地址
   uint64 origin = 3;// 同步起始点，仅首次开始同步时生效
   string node = 4;// 访问节点
   uint32 delay = 5;// 高度延迟，对于较快的链如bsc、op，延时1～3个区块可以避免数据丢失
   uint32 range = 6;// 追逐模式下，每次最大的同步高度范围，默认500，
+  string webhook = 7;// 飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空
 }
 
+// 返回体 同步event out 数据
 message StopSyncEventAsk{
-  string network = 1;
-  string target = 2;
+  string network = 1; // 区块网络
+  string target = 2;// event out 合约地址
+  bool delete = 3;// 是否停止任务同时删除历史同步数据
+
 }
 
+// 请求体 同步oracle 数据
 message StartSyncOracleAsk{
-  string netwrok = 1;
-  string target = 2;
-  uint64 origin = 3;
-  string node = 4;
-  bool reload = 5;
+  string netwrok = 1;// 区块网络,eg:bsc
+  string provider = 2;//供应商eg:chainlink,uniswapv2
+  string target = 3;// 喂价源地址
+  uint64 history = 4;// 历史数据，默认为0，即当前时刻开始同步。
+  string node = 5; // 访问节点，必须有
+  string webhook = 6;// 飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空
 }
 
 message StopSyncOracleAsk{
-  string network = 1;
-  string target = 2;
+  string network = 1;// 区块网络
+  string provider = 2;//供应商eg:chainlink,uniswapv2
+  string target = 3;// 喂价源地址
+  bool delete = 4;// 是否停止任务同时删除历史同步数据
 }
 
-
+// 返回体 通用任务回执
 message ComReply{
-  string result = 1;
-  string msg = 2;
+  string result = 1;// 任务回执结果，"SUCCESS" 或者"FAILED"
+  string msg = 2;//任务回执信息
 }

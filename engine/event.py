@@ -9,10 +9,11 @@ import logging as log
 import time
 from typing import List
 
+import utils
 from tools.eth_api import EthApi
 from tools.mongo_api import MongoApi
 from tools.redis_api import RedisApi
-from uitls import is_dev_env, load_abi
+from utils import is_dev_env, load_eventout_abi
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -28,28 +29,26 @@ class Task(object):
         self.node: str = kwargs.get("node")
         self.delay: int = kwargs.get('delay')
         self.range: int = kwargs.get('range')
-        self.reload: bool = kwargs.get("reload")
-        #
+        self.webhook: str = kwargs.get("webhook")
+
         self.eth: EthApi = self._conn_eth()
         self.redis: RedisApi = self._conn_redis()
         self.mongo: MongoApi = self._conn_mongo()
         if not self.eth.is_address(self.target):
             log.error(f"event out target:{self.target} is not a right address ")
             exit()
-        self.tag_event = f"event_{self.target[2:6]}_{self.target[-4:]}"
-        self.tag_block = f"block_{self.network}_height"
-        self.table_name = f"event_{self.target[2:6]}_{self.target[-4:]}"  # evet-77ba-ab12
+        self.table_name = utils.gen_event_table_name(network=self.network, target=self.target)  # event_bsc_77ba-ab12
+        self.tag_event = utils.gen_event_cache_name(network=self.network, target=self.target)
+        self.tag_block = utils.gen_block_cache_name(network=self.network)
         self.contract = self._gen_contract()
 
     def _gen_contract(self):
-        abi = load_abi()
+        abi = load_eventout_abi()
         return self.eth.contract_instance(address=self.target, abi=abi)
 
     def run(self):
         log.info(
             f"sync event:network:{self.network} target:{self.target} origin:{self.origin} reload:{self.reload} node:{self.node}")
-        if self.reload:
-            self._clear_all()
 
         while True:
             time.sleep(2)
@@ -122,9 +121,9 @@ class Task(object):
     def _conn_eth(self) -> EthApi:
         return EthApi.from_node(self.node)
 
-    def _clear_all(self):
-        log.info("clear all data in mongo ,and clear redis tag")
-        # 1.清除database
-        self.mongo.drop(self.table_name)
-        # 2.清除fredi标识
-        self.redis.delele(self.tag_event)
+    # def _clear_all(self):
+    #     log.info("clear all data in mongo ,and clear redis tag")
+    #     # 1.清除database
+    #     self.mongo.drop(self.table_name)
+    #     # 2.清除fredi标识
+    #     self.redis.delele(self.tag_event)

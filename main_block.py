@@ -10,7 +10,7 @@ import logging as log
 import platform
 
 from engine.block import Task
-from uitls import load_config
+from utils import load_config
 
 log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 

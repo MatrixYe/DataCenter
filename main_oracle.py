@@ -12,7 +12,7 @@ import logging as log
 import platform
 
 from engine.oracle import Task
-from uitls import load_config
+from utils import load_config
 
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
 # 1区块网络

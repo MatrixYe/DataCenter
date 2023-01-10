@@ -24,33 +24,6 @@
       "password": "@password"
     }
   },
-  "postgres": {
-    "docker": {
-      "name": "center_pg",
-      "port": "9004:5432",
-      "volume": "v_center_pg",
-      "network": "net_center",
-      "network-alias": "pghost",
-      "user": "user",
-      "password": "@password",
-      "restart": "always",
-      "img": "postgres:latest"
-    },
-    "inside": {
-      "host": "pghost",
-      "port": 5432,
-      "db": "postgres",
-      "user": "user",
-      "password": "@password"
-    },
-    "outside": {
-      "host": "127.0.0.1",
-      "port": 9004,
-      "db": "postgres",
-      "user": "user",
-      "password": "@password"
-    }
-  },
   "mongo": {
     "docker": {
       "name": "center_mongo",
@@ -77,6 +50,33 @@
       "host": "localhost",
       "port": 9003,
       "db": "data_center",
+      "user": "user",
+      "password": "@password"
+    }
+  },
+  "postgres": {
+    "docker": {
+      "name": "center_pg",
+      "port": "9004:5432",
+      "volume": "v_center_pg",
+      "network": "net_center",
+      "network-alias": "pghost",
+      "user": "user",
+      "password": "@password",
+      "restart": "always",
+      "img": "postgres:latest"
+    },
+    "inside": {
+      "host": "pghost",
+      "port": 5432,
+      "db": "postgres",
+      "user": "user",
+      "password": "@password"
+    },
+    "outside": {
+      "host": "127.0.0.1",
+      "port": 9004,
+      "db": "postgres",
       "user": "user",
       "password": "@password"
     }

@@ -9,12 +9,13 @@ from concurrent import futures
 
 import grpc
 
+import utils
+from ctrl import Ctrl
 from pb import server_pb2_grpc, server_pb2
 from tools.docker_api import DockerApi
 from tools.mongo_api import MongoApi
 from tools.redis_api import RedisApi
-from uitls import is_dev_env, is_address
-from . import ctrl
+from utils import is_dev_env, is_address
 
 NETWORKS = {
     "MAINNET": 1,
@@ -49,21 +50,35 @@ NETWORKS = {
 
 
 class DataCenterImp(server_pb2_grpc.DataCenterServicer):
-    def __init__(self, redis_api, mongo_api, docker_api):
-        self.redis_api: RedisApi = redis_api
-        self.mongo_api: MongoApi = mongo_api
-        self.docker_api: DockerApi = docker_api
+    def __init__(self, redis, mongo, docker):
+        self.redis: RedisApi = redis
+        self.mongo: MongoApi = mongo
+        self.docker: DockerApi = docker
+
+        self.control = Ctrl(redis=redis, mongo=mongo, docker=docker)
 
     @staticmethod
     def _error(context, code, msg):
         context.set_code(code)
         context.set_details(msg)
 
+    @staticmethod
+    def _gen_data(event):
+        return {
+            'sender': event['sender'],
+            'itype': event['itype'],
+            'bvalue': event['bvalue'],
+            'block_number': event['block_number'],
+            'index': event['index'],
+            'tx_hash': event['tx_hash']
+        }
+        pass
+
     # 获取最新区块高度
     def BlockLast(self, request, context):
         network = request.network
-        tag = f"block_{network}_height"
-        h = self.redis_api.get(tag)
+        tag = utils.gen_block_cache_name(network=network)
+        h = self.redis.get(tag)
         if h is None:
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.BlockLastReply()
@@ -76,7 +91,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         height = request.height
         target_colle = f"block_{network}"
         target_id = height
-        detail = self.mongo_api.find_one(target_colle, {'_id': target_id})
+        detail = self.mongo.find_one(target_colle, {'_id': target_id})
         if not detail:
             self._error(context, grpc.StatusCode.NOT_FOUND, "未找到相关区块，请检查网络或高度是否正确")
 
@@ -93,7 +108,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为Null或者地址长度错误")
             return server_pb2.EventLastReply()
         tag = f"event_{target[2:6]}_{target[-4:]}"
-        h = self.redis_api.get(name=tag)
+        h = self.redis.get(name=tag)
         if not h:
             self._error(context, grpc.StatusCode.NOT_FOUND, "未找到最新同步高度，请检查网络名称或目标地址是否正确")
             return server_pb2.EventLastReply()
@@ -133,19 +148,19 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             return server_pb2.EventFilterReply()
         colle = f"event_{target[2:6]}_{target[-4:]}"
         if senders:
-            events = self.mongo_api.find_all(colle,
-                                             {'sender':
-                                                 {
-                                                     '$in': senders
-                                                 },
-                                                 'block_number': {'$gte': start, '$lte': end}}
-                                             )
+            events = self.mongo.find_all(colle,
+                                         {'sender':
+                                             {
+                                                 '$in': senders
+                                             },
+                                             'block_number': {'$gte': start, '$lte': end}}
+                                         )
         else:
-            events = self.mongo_api.find_all(colle, {'block_number': {'$gte': start, '$lte': end}})
-        # f = lambda a: {'sender': a['sender'], 'itype': a['itype'], 'bvalue': a['bvalue'],'block_number': a['block_number'], 'index': a['index'], 'tx_hash': a['tx_hash']}
-        datas = [{'sender': a['sender'], 'itype': a['itype'], 'bvalue': a['bvalue'], 'block_number': a['block_number'],
-                  'index': a['index'], 'tx_hash': a['tx_hash']} for a in list(events)]
+            events = self.mongo.find_all(colle, {'block_number': {'$gte': start, '$lte': end}})
 
+        # datas = [{'sender': a['sender'], 'itype': a['itype'], 'bvalue': a['bvalue'], 'block_number': a['block_number'],
+        #           'index': a['index'], 'tx_hash': a['tx_hash']} for a in list(events)]
+        datas = [self._gen_data(e) for e in list(events)]
         return server_pb2.EventFilterReply(events=datas)
 
     def OraclePrice(self, request, context):
@@ -154,15 +169,15 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def OraclePriceChg(self, request, context):
         return super().OraclePriceChg(request, context)
 
-    def OracleKline(self, request, context):
-        return super().OracleKline(request, context)
+    def OracleData(self, request, context):
+        return super().OracleData(request, context)
 
     def StartSyncBlock(self, request, context):
         network = request.network
         origin = request.origin
         interval = request.interval
         node = request.node
-        reload = request.reload
+        webhook = request.webhook
         if not self.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
@@ -183,35 +198,28 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
             return server_pb2.ComReply(result='FAILED', msg=msg)
 
-        # network, origin: int, interval: int, node, reload: bool
-        msg = ctrl.run_sync_block_container(network, origin, interval, node, reload)
+        # network: str, origin: int, interval: int, node: str, webhook: str
+        msg = self.control.start_sync_block(network, origin, interval, node, webhook)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncBlock(self, request, context):
         #   string network = 1;
         network = request.network
+        delete = request.delete
         if not self.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.ComReply()
-        msg = ctrl.rm_sync_block_container(network)
-
+        msg = self.control.stop_sync_block(network, delete)
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncEvent(self, request, context):
-        #         "network": args.network.lower(),
-        #         "target": args.target,
-        #         "origin": args.origin,
-        #         "node": args.node,
-        #         "reload": args.reload,
-        #         "delay": args.delay,
-        #         "range": args.range
         network = request.network
         target = request.target
         origin = request.origin
         node = request.node
-        reload = request.reload
         delay = request.delay
         ranger = request.range
+        webhook = request.webhook
         if not self.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
@@ -241,13 +249,14 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             msg = f"ranger 的合法区间为[100,10000]"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
             return server_pb2.ComReply(result='FAILED', msg=msg)
-
-        msg = ctrl.run_sync_event_container(network, target, origin, node, reload, delay, ranger)
+        # network: str, target: str, origin: int, node: str, delay: int, ranger: int,webhook: str
+        msg = self.control.start_sync_event(network, target, origin, node, delay, ranger, webhook)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncEvent(self, request, context):
         network = request.network
         target = request.target
+        delete = request.delete
         if not self.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.ComReply()
@@ -256,8 +265,8 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             msg = f"无法识别的target：{target}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
             return server_pb2.ComReply(result='FAILED', msg=msg)
-
-        msg = ctrl.rm_sync_event_container(target=target)
+        #  network: str, target: str, delete: bool
+        msg = self.control.stop_sync_event(network=network, target=target, delete=delete)
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncOracle(self, request, context):
@@ -271,15 +280,16 @@ class RpcServer(object):
     def __init__(self, conf, **kwargs):
         self.conf = conf
         self.port = kwargs.get('port')
-        self.redis_api = self._conn_redis()
-        self.mongo_api = self._conn_mongo()
-        self.docker_api = self._conn_docker()
+        self.redis = self._conn_redis()
+        self.mongo = self._conn_mongo()
+        self.docker = self._conn_docker()
 
     def run(self):
         print("RPC 服务启动... ...")
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        data_center = DataCenterImp(self.redis_api, self.mongo_api, self.docker_api),
-        server_pb2_grpc.add_DataCenterServicer_to_server(data_center, server)
+        # data_center = DataCenterImp(self.redis, self.mongo, self.docker_api),
+        server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(self.redis, self.mongo, self.docker),
+                                                         server)
         server.add_insecure_port(f'[::]:{self.port}')
         server.start()
         server.wait_for_termination()
@@ -298,5 +308,6 @@ class RpcServer(object):
         else:
             return MongoApi.from_conf(**c['mongo']['inside'])
 
+    # noinspection PyMethodMayBeStatic
     def _conn_docker(self) -> DockerApi:
         return DockerApi.from_env()

@@ -23,6 +23,15 @@ server:
 stop:
 	echo "hello,this is server,stop it"
 	docker rm -f server
+
+## 生成grpc py file
+gen-rpc:
+	cd pb && python -m grpc_tools.protoc -I ./ --python_out=./ --grpc_python_out=. ./server.proto
+
+## 生成grpc doc文件
+gen-doc:
+	docker run --rm -v $(pwd)/doc:/out -v $(pwd)/pb:/protos pseudomuto/protoc-gen-doc
+
 ## Show help
 help:
 	@echo ''

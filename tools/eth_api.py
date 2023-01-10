@@ -28,6 +28,9 @@ class EthApi(object):
     def is_connected(self):
         return self.client.isConnected()
 
+    def chain_id(self) -> int:
+        return self.client.eth.chain_id
+
     @classmethod
     def from_node(cls, node: str):
         if not node:
