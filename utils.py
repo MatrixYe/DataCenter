@@ -9,6 +9,37 @@ import json
 import platform
 from typing import Union
 
+NETWORK_MAP = {
+    "MAINNET": 1,
+    "ROPSTEN": 3,
+    "RINKEBY": 4,
+    "GOERLI": 5,
+    "KOVAN": 42,
+    "MATIC": 137,
+    "MATIC_TESTNET": 80001,
+    "FANTOM": 250,
+    "FANTOM_TESTNET": 4002,
+    "XDAI": 100,
+    "BSC": 56,
+    "BSC_TESTNET": 97,
+    "ARBITRUM": 42161,
+    "ARBITRUM_TESTNET": 79377087078960,
+    "MOONBEAM_TESTNET": 1287,
+    "AVALANCHE": 43114,
+    "AVALANCHE_TESTNET": 43113,
+    "HECO": 128,
+    "HECO_TESTNET": 256,
+    "HARMONY": 1666600000,
+    "HARMONY_TESTNET": 1666700000,
+    "OKEX": 66,
+    "OKEX_TESTNET": 65,
+    "CELO": 42220,
+    "PALM": 11297108109,
+    "PALM_TESTNET": 11297108099,
+    "MOONRIVER": 1285,
+    "FUSE": 122,
+}
+
 
 def load_config(file_path=None) -> dict:
     """
@@ -86,6 +117,11 @@ def is_address(addr: str) -> bool:
 
 
 def gen_docker_net_alias(contailer_name: str) -> str:
+    """
+    获取docker 局域网 容器ip别名
+    :param contailer_name: 容器名
+    :return:
+    """
     return f"{contailer_name}host"
 
 
@@ -159,3 +195,31 @@ def gen_event_cache_name(network: str, target: str) -> str:
     :return:
     """
     return f"event_{network}_{target[2:6]}_{target[-4:]}"
+
+
+def check_network(network: str) -> bool:
+    """
+    检测 network是否合法
+
+    :param network:
+    :return:
+    """
+    if not network:
+        return False
+
+    if network.upper() not in NETWORK_MAP.keys():
+        return False
+    return True
+
+
+def get_chain_id(network: str) -> int:
+    """
+    获取network对应的chainID
+
+    :param network: 区块网络名称
+    :return: chain id
+    """
+    cid = NETWORK_MAP.get(network)
+    if not cid:
+        return -1
+    return cid

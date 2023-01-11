@@ -74,10 +74,9 @@ class MongoApi(object):
         else:
             return var.find_one(filter=filte)
 
-    def find_all(self, c: str, filte):
+    def find_all(self, c: str, filte, sort_k):
         var = self.database[c]
         if var is None:
             return None
         else:
             return var.find(filte)
-        pass

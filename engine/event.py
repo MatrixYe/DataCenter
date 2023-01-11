@@ -48,7 +48,7 @@ class Task(object):
 
     def run(self):
         log.info(
-            f"sync event:network:{self.network} target:{self.target} origin:{self.origin} reload:{self.reload} node:{self.node}")
+            f"sync event:network:{self.network} target:{self.target} origin:{self.origin} webhook:{self.webhook} node:{self.node}")
 
         while True:
             time.sleep(2)

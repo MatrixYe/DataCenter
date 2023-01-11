@@ -6,9 +6,9 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && 
 # 传递参数
 ENV NETWORK=""
 ENV ORIGIN=0
-ENV NODE=""
 ENV INTERVAL=0
-ENV RELOAD=False
+ENV NODE=""
+ENV WEBHOOK=""
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --reload $RELOAD --node $NODE"]
+ENTRYPOINT ["sh","-c","python main_block.py --network $NETWORK --origin $ORIGIN --interval $INTERVAL --node $NODE --webhook $WEBHOOK"]

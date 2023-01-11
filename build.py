@@ -38,6 +38,7 @@ if __name__ == '__main__':
         exit()
     if i == 0:
         for i, engine in enumerate(engines):
+            print(engine['desc'])
             print(engine['cmd'])
             os.system(engine['cmd'])
     else:

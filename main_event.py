@@ -25,8 +25,9 @@ parser.add_argument("--node", type=str)
 parser.add_argument("--delay", type=int, default=0)
 # 6 一次性最大同步的区块跨度
 parser.add_argument("--range", type=int, default=1000)
-# 7 是否重新同步(谨慎为True)
-parser.add_argument("--reload", type=lambda x: (str(x).lower() in ('true', '1', 't')), default=False)
+
+# 消息推送地址
+parser.add_argument("--webhook", type=str)
 
 args = parser.parse_args()
 
@@ -44,15 +45,12 @@ def check_args():
     if not args.node:
         log.error('node node in None!')
         exit()
-    if args.reload is None:
-        log.error('reload can not be none,must be True or False')
-        exit()
     if args.range < 100 or args.range > 10000:
         log.error("range must >100 and must <1w")
         exit()
     if args.delay > 5 or args.delay < 0:
         log.error("delay must <5 and >0")
-        pass
+        exit()
 
 
 if __name__ == '__main__':
@@ -68,9 +66,9 @@ if __name__ == '__main__':
         "target": args.target,
         "origin": args.origin,
         "node": args.node,
-        "reload": args.reload,
         "delay": args.delay,
-        "range": args.range
+        "range": args.range,
+        "webhook": args.webhook,
     }
     print(kwargs)
     task = Task(conf, **kwargs)

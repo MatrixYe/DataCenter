@@ -13,7 +13,7 @@ ENV ORIGIN=0
 ENV NODE=""
 ENV DELAY=0
 ENV RANGE=1000
-ENV RELOAD=False
+ENV WEBHOOK=""
 
 #运行python的命令
-ENTRYPOINT ["sh","-c","python main_event.py --network $NETWORK --target $TARGET --origin $ORIGIN --node $NODE --delay $DELAY --range $RANGE --reload $RELOAD"]
+ENTRYPOINT ["sh","-c","python main_event.py --network $NETWORK --target $TARGET --origin $ORIGIN --node $NODE --delay $DELAY --range $RANGE --webhook $WEBHOOK"]

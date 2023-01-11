@@ -32,7 +32,7 @@ class Ctrl(object):
         name = utils.gen_block_continal_name(network=network)
         net_alias = utils.gen_docker_net_alias(contailer_name=name)
         img = IMG_SYNC_BLOCK
-        restart = "always"
+        restart = "on-failure:3"
         st = self.docker.statu(name)
         if st == 0:
             print("container is not exist --> creating")
@@ -50,6 +50,9 @@ class Ctrl(object):
             cmd2 = f'docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE="{node}" -e WEBHOOK={webhook} --network {net} --network-alias {net_alias} --restart={restart} {img}'
             os.system(cmd1)
             os.system(cmd2)
+            print(cmd1)
+            print(cmd2)
+
             return f"container({name}) is exist,but not running -->  remove and creating"
 
     # 停止同步block data
@@ -87,11 +90,11 @@ class Ctrl(object):
         container_name = utils.gen_event_container_name(network, target)
         net_alias = utils.gen_docker_net_alias(contailer_name=container_name)
         img = IMG_SYNC_EVENT
-        restart = "always"
+        restart = "on-failure:3"
         st = self.docker.statu(container_name)
         if st == 0:
             print("container is not exist --> creating")
-            cmd = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK={webhook} -e DELAY={delay} -e RANGE={ranger} --network {net} --network-alias {net_alias} --restart={restart} {img}'
+            cmd = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK="{webhook}" -e DELAY={delay} -e RANGE={ranger} --network {net} --network-alias {net_alias} --restart={restart} {img}'
             print(cmd)
             os.system(cmd)
             return f"container({container_name}) is not exist --> creating"
@@ -105,6 +108,8 @@ class Ctrl(object):
             cmd2 = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK={webhook} -e DELAY={delay} -e RANGE={ranger} --network {net} --network-alias {net_alias} --restart={restart} {img}'
             os.system(cmd1)
             os.system(cmd2)
+            print(cmd1)
+            print(cmd2)
             return f"container({container_name}) is exist,but not running -->  remove and creating"
 
     # 停止同步event数据

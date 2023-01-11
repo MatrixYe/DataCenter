@@ -16,15 +16,15 @@ log.basicConfig(level=log.DEBUG, format='%(asctime)s - %(levelname)s: -%(filenam
 
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
 # 区块网络
-parser.add_argument("--network", type=str)
+parser.add_argument("--network", type=str, default='')
 # 起始点
-parser.add_argument("--origin", type=int)
+parser.add_argument("--origin", type=int, default=0)
 # 扫描周期
-parser.add_argument("--interval", type=int)
+parser.add_argument("--interval", type=int, default=10)
 # 连接节点
-parser.add_argument("--node", type=str)
-# 重新同步
-parser.add_argument("--reload", type=lambda x: (str(x).lower() in ('true', '1', 't')), default=False)
+parser.add_argument("--node", type=str, default='')
+# 消息推送地址
+parser.add_argument("--webhook", type=str, default='')
 
 args = parser.parse_args()
 
@@ -35,10 +35,6 @@ def check_args():
         exit()
     if not args.node:
         log.error('node node in None!')
-        exit()
-
-    if args.reload is None:
-        log.error('reload can not be none,must be True or False')
         exit()
 
     if args.origin < 0:
@@ -63,7 +59,7 @@ if __name__ == '__main__':
         "origin": args.origin,
         "interval": args.interval,
         "node": args.node,
-        "reload": args.reload
+        "webhook": args.webhook
     }
     print(kwargs)
     task = Task(conf, **kwargs)
