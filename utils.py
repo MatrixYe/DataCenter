@@ -9,6 +9,7 @@ import json
 import platform
 from typing import Union
 
+# 以太坊系列 区块网络名称及chain-id
 NETWORK_MAP = {
     "MAINNET": 1,
     "ROPSTEN": 3,
@@ -71,7 +72,7 @@ def load_pg_config() -> dict:
     return c['postgres']
 
 
-def load_docker_net():
+def load_docker_net() -> dict:
     """
     加载docker 默认局域网名称
     :return:
@@ -161,15 +162,17 @@ def gen_oracle_container_name(network: str, provider: str, target: str) -> str:
 def gen_block_table_name(network: str) -> str:
     """
     生成block同步数据的表，即mongodb中的collection
+
     :param network: 区块网络
-    :return: 表的名称
+    :return: 表的名称 eg: block_bsc
     """
     return f"block_{network}"
 
 
 def gen_block_cache_name(network: str) -> str:
     """
-    生成block同步数据高度缓存 redis key
+    生成block同步数据高度缓存rediskey
+
     :param network:
     :return:
     """
@@ -192,7 +195,7 @@ def gen_event_cache_name(network: str, target: str) -> str:
     生成 event out 在redis中的记录缓存
     :param network: 区块网络
     :param target: event out地址
-    :return:
+    :return: event的redis缓存key
     """
     return f"event_{network}_{target[2:6]}_{target[-4:]}"
 
@@ -202,7 +205,7 @@ def check_network(network: str) -> bool:
     检测 network是否合法
 
     :param network:
-    :return:
+    :return: bool：是否合法的network名称
     """
     if not network:
         return False
@@ -215,7 +218,6 @@ def check_network(network: str) -> bool:
 def get_chain_id(network: str) -> int:
     """
     获取network对应的chainID
-
     :param network: 区块网络名称
     :return: chain id
     """

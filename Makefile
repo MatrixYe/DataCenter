@@ -15,12 +15,13 @@ build:
 	python build.py
 
 ## 启动rpc服务
-server:
+start-server:
 	echo "hello,this is server,run it"
+	docker rm -f server
 	docker run -itd --name server -p 9005:9005 --network net_center -e HOST="0.0.0.0" -e PORT=9005 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker server
 
 ## 停止server
-stop:
+stop-server:
 	echo "hello,this is server,stop it"
 	docker rm -f server
 

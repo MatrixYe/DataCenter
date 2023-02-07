@@ -22,7 +22,6 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         self.redis: RedisApi = redis
         self.mongo: MongoApi = mongo
         self.docker: DockerApi = docker
-
         self.control = Ctrl(redis=redis, mongo=mongo, docker=docker)
 
     @staticmethod
@@ -57,7 +56,8 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def BlockDetail(self, request, context):
         network = request.network
         height = request.height
-        target_colle = f"block_{network}"
+        # target_colle = f"block_{network}"
+        target_colle = utils.gen_block_table_name(network=network)
         target_id = height
         detail = self.mongo.find_one(target_colle, {'_id': target_id})
         if not detail:
@@ -72,7 +72,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def EventLast(self, request, context):
         network = request.network
         target = request.target
-        if not target or len(target) <= 32:
+        if not utils.is_address(target):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为Null或者地址长度错误")
             return server_pb2.EventLastReply()
         tag = utils.gen_event_cache_name(network=network, target=target)
@@ -94,27 +94,27 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         start = request.start
         end = request.end
         senders = list(request.senders)
-        # print(f"接收到参数:{network} {target} {start} {end} {senders}")
+        desc = request.desc
+        print(f"接收到参数:{network} {target} {start} {end} {senders} {desc}")
         if not utils.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.EventFilterReply()
-        if not target or len(target) < 32:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为Null或者长度错误")
+        if not utils.is_address(target):
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为非法")
             return server_pb2.EventFilterReply()
-        if start < 0 or end < 0 or start >= end:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "查询高度范围错误，start must < end")
+        if start <= 0 or end <= 0 or start > end:
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "查询高度范围错误，start > end")
             return server_pb2.EventFilterReply()
         colle = utils.gen_event_table_name(network=network, target=target)
         if senders:
             events = self.mongo.find_all(colle,
-                                         filte={'sender': {
-                                             '$in': senders
-                                         },
-                                             'block_number': {'$gte': start, '$lte': end}},
-                                         sort_k=[('_id', 1)]
+                                         {
+                                             'sender': {'$in': senders},
+                                             'block_number': {'$gte': start, '$lte': end}
+                                         }, desc
                                          )
         else:
-            events = self.mongo.find_all(colle, {'block_number': {'$gte': start, '$lte': end}}, sort_k={'_id': 1})
+            events = self.mongo.find_all(colle, {'block_number': {'$gte': start, '$lte': end}}, desc)
 
         datas = [self._gen_data(e) for e in list(events)] if events else []
         return server_pb2.EventFilterReply(events=datas)
@@ -237,6 +237,10 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
 
 
 class RpcServer(object):
+    """
+    Rpc Server
+    """
+
     def __init__(self, conf, **kwargs):
         self.conf = conf
         self.port = kwargs.get('port')
@@ -255,6 +259,10 @@ class RpcServer(object):
         server.wait_for_termination()
 
     def _conn_redis(self) -> RedisApi:
+        """
+        连接redis
+        :return: redis client
+        """
         c = self.conf
         if utils.is_dev_env():
             return RedisApi.from_config(**c['redis']['outside'])
@@ -262,6 +270,10 @@ class RpcServer(object):
             return RedisApi.from_config(**c['redis']['inside'])
 
     def _conn_mongo(self) -> MongoApi:
+        """
+        连接mongo
+        :return: mongodb client
+        """
         c = self.conf
         if utils.is_dev_env():
             return MongoApi.from_conf(**c['mongo']['outside'])
@@ -270,4 +282,8 @@ class RpcServer(object):
 
     # noinspection PyMethodMayBeStatic
     def _conn_docker(self) -> DockerApi:
+        """
+        连接docker control
+        :return: docker client
+        """
         return DockerApi.from_env()

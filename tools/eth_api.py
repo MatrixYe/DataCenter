@@ -3,7 +3,7 @@
 # Name:         a 
 # Author:       yepeng
 # Date:         2021/10/22 2:44 下午
-# Description: 
+# Description: 以太坊链相关Api工具
 # -------------------------------------------------------------------------------
 import logging as log
 from typing import List
@@ -25,14 +25,27 @@ class EthApi(object):
             HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs=request_kwargs, session=session))
         self.client.middleware_onion.inject(geth_poa_middleware, layer=0)  # 注入poa中间件,兼容BSc、RInkeby等区块链网络
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
+        """
+        是否连接
+        :return:
+        """
         return self.client.isConnected()
 
     def chain_id(self) -> int:
+        """
+        返回链标识 chain-id
+        :return:
+        """
         return self.client.eth.chain_id
 
     @classmethod
     def from_node(cls, node: str):
+        """
+        通过节点构建eth客户端
+        :param node:
+        :return:
+        """
         if not node:
             raise Exception('creart eth client failed:node is empty')
         parmas = dict()
@@ -41,39 +54,69 @@ class EthApi(object):
         parmas['session'] = None
         return cls(**parmas)
 
-    # 获取当前最新区块高度
     def block_height(self) -> Union[int]:
+        """
+        获取当前最新区块高度
+        :return:
+        """
         try:
             return self.client.eth.block_number
         except Exception as e:
             log.error(e)
             return 0
 
-    # 获取区块头信息
     def block_head(self, height: int):
+        """
+        获取区块头信息
+        :param height:
+        :return:
+        """
         try:
             return self.client.eth.get_block(height)
         except Exception as e:
             log.error(e)
             return None
 
-    # 判断是否是正确的地址
     def is_address(self, addr) -> bool:
+        """
+        判断是否是正确的地址
+        :param addr:
+        :return:
+        """
         return self.client.isAddress(addr)
 
     def to_text(self, v) -> str:
+        """
+        获取客户端名称
+        :param v:
+        :return:
+        """
         return self.client.toText(v)
 
-    # 转化成16进制字符串
     def to_hex(self, v) -> str:
+        """
+        转化成16进制字符串
+
+        :param v:
+        :return:
+        """
         return self.client.toHex(v)
 
-    # 将地址字符串、字节数组转化成Address结构体
     def check_sum_address(self, address: Union[str, bytes]) -> ChecksumAddress:
+        """
+        将地址字符串、字节数组转化成Address结构体
+        :param address:
+        :return:
+        """
         return self.client.toChecksumAddress(address)
 
-    # 构造合约实例对象
     def contract_instance(self, address: str, abi) -> Union[Contract, None]:
+        """
+        构造合约实例对象
+        :param address:
+        :param abi:
+        :return:
+        """
         try:
             addr = self.client.toChecksumAddress(address)
             c = self.client.eth.contract(address=addr, abi=abi)

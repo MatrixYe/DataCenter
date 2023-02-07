@@ -14,6 +14,11 @@ docker_api = DockerApi.from_env()
 
 
 def start_redis(c):
+    """
+    启动并初始化本地redis 容器
+    :param c:
+    :return:
+    """
     name = c["name"]
     port = c["port"]
     volume = c["volume"]
@@ -73,10 +78,14 @@ def start_mongo(c):
 if __name__ == '__main__':
     print("---------- START ----------")
     # os.system('pip install -r requirements.txt')
+    print("正在加载python1.0镜像... ...")
     docker_api.pull_image('python:3.10')
+    print("正在加载系统配置... ...")
     conf = load_config()
-    start_redis(conf['redis']['docker'])
+    print("正在启动redis docker容器... ...")
+    start_redis(c=conf['redis']['docker'])
     # start_postgres(conf['postgres']['docker']) # 废除PG数据库
+    print("正在mongodb docker 容器... ...")
     start_mongo(c=conf['mongo']['docker'])
     print(docker_api.continers(True))
     print("----------- END -----------")

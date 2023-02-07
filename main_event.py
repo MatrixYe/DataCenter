@@ -27,7 +27,7 @@ parser.add_argument("--delay", type=int, default=0)
 parser.add_argument("--range", type=int, default=1000)
 
 # 消息推送地址
-parser.add_argument("--webhook", type=str)
+parser.add_argument("--webhook", type=str, default="None")
 
 args = parser.parse_args()
 

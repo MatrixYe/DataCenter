@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
+import warnings
 from typing import List
 
 import utils
@@ -43,13 +44,21 @@ class Task(object):
         self.contract = self._gen_contract()
 
     def _gen_contract(self):
+        """
+        创造智能合约操作对象实体
+        :return:
+        """
         abi = load_eventout_abi()
         return self.eth.contract_instance(address=self.target, abi=abi)
 
     def run(self):
+        """
+        核心方法，启动引擎
+        :return:
+        """
         log.info(
             f"sync event:network:{self.network} target:{self.target} origin:{self.origin} webhook:{self.webhook} node:{self.node}")
-
+        log.info("good luck")
         while True:
             time.sleep(2)
             x = self._local_height()
@@ -86,11 +95,21 @@ class Task(object):
             self.redis.set(self.tag_event, b)
 
     def _filte(self, a: int, b: int) -> List[dict]:
+        """
+        过滤日志
+        :param a: 起始点高度
+        :param b: 结束点高度
+        :return: event合集
+        """
         events = self.eth.filte_event(contract=self.contract, event_name=_EvEntName, from_block=a, to_block=b,
                                       arg_filters=None)
         return events
 
     def _local_height(self) -> int:
+        """
+        获取本地同步高度
+        :return: 当前event-out对应的同步高度
+        """
         h = self.redis.get(self.tag_event)
         if h is None:
             return 0
@@ -98,6 +117,10 @@ class Task(object):
             return int(h)
 
     def _remote_height(self) -> int:
+        """
+        远程区块高度
+        :return: block高度
+        """
         h = self.redis.get(self.tag_block)
         if h is None:
             return 0
@@ -105,6 +128,10 @@ class Task(object):
             return int(h)
 
     def _conn_redis(self) -> RedisApi:
+        """
+        连接本地redis数据库
+        :return:redis客户端
+        """
         c = self.conf
         if is_dev_env():
             return RedisApi.from_config(**c['redis']['outside'])
@@ -112,6 +139,10 @@ class Task(object):
             return RedisApi.from_config(**c['redis']['inside'])
 
     def _conn_mongo(self) -> MongoApi:
+        """
+        连接本地mongo数据库
+        :return: mongo客户端
+        """
         c = self.conf
         if is_dev_env():
             return MongoApi.from_conf(**c['mongo']['outside'])
@@ -119,11 +150,16 @@ class Task(object):
             return MongoApi.from_conf(**c['mongo']['inside'])
 
     def _conn_eth(self) -> EthApi:
+        """
+        连接以太坊客户端
+        :return: eth client
+        """
         return EthApi.from_node(self.node)
 
-    # def _clear_all(self):
-    #     log.info("clear all data in mongo ,and clear redis tag")
-    #     # 1.清除database
-    #     self.mongo.drop(self.table_name)
-    #     # 2.清除fredi标识
-    #     self.redis.delele(self.tag_event)
+    def _clear_all(self):
+        warnings.warn("this method is not support by engine")
+        log.info("clear all data in mongo ,and clear redis tag")
+        # 1.清除database
+        self.mongo.drop(self.table_name)
+        # 2.清除fredi标识
+        self.redis.delele(self.tag_event)

@@ -33,6 +33,10 @@ class Task(object):
         self.table_name = utils.gen_block_table_name(network=self.network)
 
     def run(self):
+        """
+        核心方法，执行引擎
+        :return:
+        """
         log.info(f"sync block:network:{self.network} origin:{self.origin} webhook:{self.webhook} node:{self.node}")
 
         while True:
