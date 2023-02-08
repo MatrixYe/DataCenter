@@ -1,7 +1,7 @@
 FROM python:3.10
 WORKDIR /app
 ADD . .
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip install -r requirements.txt && pip install -e . && python --version
+RUN pip install -r requirements.txt && pip install -e . && python --version
 
 # 区块网络名称
 ENV NETWORK=""
