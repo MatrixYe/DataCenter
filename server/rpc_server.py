@@ -5,6 +5,7 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
+import logging as log
 from concurrent import futures
 
 import grpc
@@ -44,6 +45,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     # 获取最新区块高度
     def BlockLast(self, request, context):
         network = request.network
+        log.info(f"[Ask] [BlockLast] -> network:{network}")
         tag = utils.gen_block_cache_name(network=network)
         h = self.redis.get(tag)
         if h is None:
@@ -56,7 +58,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def BlockDetail(self, request, context):
         network = request.network
         height = request.height
-        # target_colle = f"block_{network}"
+        log.info(f"[Ask] [BlockDetail] -> network:{network} height:{height}")
         target_colle = utils.gen_block_table_name(network=network)
         target_id = height
         detail = self.mongo.find_one(target_colle, {'_id': target_id})
@@ -72,6 +74,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def EventLast(self, request, context):
         network = request.network
         target = request.target
+        log.info(f"[Ask] [EventLast] -> network:{network} target:{target}")
         if not utils.is_address(target):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为Null或者地址长度错误")
             return server_pb2.EventLastReply()
@@ -83,19 +86,15 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return server_pb2.EventLastReply(height=int(h))
 
     def EventFilter(self, request, context):
-        #   string network = 1;
-        #   string target = 2;
-        #   uint64 start = 3;
-        #   uint64 end = 4;
-        #   repeated string senders = 5;
-        #   repeated int32 itypes = 6;
         network = request.network
         target = request.target
         start = request.start
         end = request.end
         senders = list(request.senders)
         desc = request.desc
-        print(f"接收到参数:{network} {target} {start} {end} {senders} {desc}")
+        log.info(
+            f"[Ask] [EventFilter] -> network:{network} target:{target} start:{start} end:{end} senders:{senders} desc:{desc}")
+
         if not utils.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.EventFilterReply()
@@ -120,12 +119,18 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return server_pb2.EventFilterReply(events=datas)
 
     def OraclePrice(self, request, context):
+        log.info(f"[Ask] [OraclePrice] ->")
+
         return super().OraclePrice(request, context)
 
     def OraclePriceChg(self, request, context):
+        log.info(f"[Ask] [OraclePriceChg] ->")
+
         return super().OraclePriceChg(request, context)
 
     def OracleData(self, request, context):
+        log.info(f"[Ask] [OracleData] ->")
+
         return super().OracleData(request, context)
 
     def StartSyncBlock(self, request, context):
@@ -134,6 +139,9 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         interval = request.interval
         node = request.node
         webhook = request.webhook
+        log.info(
+            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin} interval:{interval} node:{node} webhook{webhook}")
+
         if not utils.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
@@ -163,6 +171,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         #   string network = 1;
         network = request.network
         delete = request.delete
+        log.info(f"[Ask] [StopSyncBlock] -> network:{network} delete:{delete}")
         if not utils.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.ComReply()
@@ -177,6 +186,8 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         delay = request.delay
         ranger = request.range
         webhook = request.webhook
+        log.info(
+            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin}  node:{node} delay:{delay} ranger:{ranger} webhook{webhook}")
         if not utils.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
@@ -216,6 +227,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         network = request.network
         target = request.target
         delete = request.delete
+        log.info(f"[Ask] [StopSyncEvent] -> network:{network} target:{target} delete:{delete}")
         if not utils.check_network(network):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
             return server_pb2.ComReply()
@@ -230,9 +242,11 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncOracle(self, request, context):
+        log.info(f"[Ask] [StartSyncOracle] -> ")
         return super().StartSyncOracle(request, context)
 
     def StopSyncOracle(self, request, context):
+        log.info(f"[Ask] [StopSyncOracle] -> ")
         return super().StopSyncOracle(request, context)
 
 
@@ -247,16 +261,6 @@ class RpcServer(object):
         self.redis = self._conn_redis()
         self.mongo = self._conn_mongo()
         self.docker = self._conn_docker()
-
-    def run(self):
-        print("RPC 服务启动... ...")
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-        # data_center = DataCenterImp(self.redis, self.mongo, self.docker_api),
-        server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(self.redis, self.mongo, self.docker),
-                                                         server)
-        server.add_insecure_port(f'[::]:{self.port}')
-        server.start()
-        server.wait_for_termination()
 
     def _conn_redis(self) -> RedisApi:
         """
@@ -287,3 +291,18 @@ class RpcServer(object):
         :return: docker client
         """
         return DockerApi.from_env()
+
+    def run(self):
+        log.info("RPC Server StFart,Good Luck!... ...")
+        server = grpc.server(thread_pool=futures.ThreadPoolExecutor(max_workers=10),
+                             options=[
+                                 ('grpc.max_send_message_length', 5 * 1024 * 1024),
+                                 ('grpc.max_receive_message_length', 5 * 1024 * 1024),
+                                 ('grpc.max_connection_idle_ms', 5 * 60 * 1000),
+                             ])
+
+        # data_center = DataCenterImp(self.redis, self.mongo, self.docker_api),
+        server_pb2_grpc.add_DataCenterServicer_to_server(DataCenterImp(self.redis, self.mongo, self.docker), server)
+        server.add_insecure_port(f'[::]:{self.port}')
+        server.start()
+        server.wait_for_termination()

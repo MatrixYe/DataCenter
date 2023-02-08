@@ -11,13 +11,13 @@ import logging as log
 from server.rpc_server import RpcServer
 from utils import load_config
 
+log.getLogger().setLevel(log.INFO)
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
 parser.add_argument("--host", type=str, default='0.0.0.0')
 parser.add_argument("--port", type=int, default=9005)
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    print("hello ,this is server")
     port = args.port
     log.info(f"Args Input:{args}")
     conf = load_config()

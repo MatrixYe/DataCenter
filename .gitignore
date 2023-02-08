@@ -213,4 +213,5 @@ cython_debug/
 
 .idea
 
-test.py
+remote_test.py
+local_test.py
