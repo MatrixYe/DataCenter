@@ -48,13 +48,16 @@ class MongoApi(object):
         result = self.database.test.insert_one(value)
         return result
 
-    def insert(self, colle: str, data=None):
+    def insert(self, colle: str, data=None) -> bool:
         if data is None:
             log.warning("data is None,skip insert")
+            return True
         try:
             self.database[colle].insert_one(data)
+            return True
         except BaseException as e:
-            log.error(f"insert data failed:{str(e)}")
+            log.error(f"insert data failed:{e}")
+            return False
 
     def drop(self, colle: str):
         if self.database[colle] is None:

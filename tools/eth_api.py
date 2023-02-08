@@ -127,7 +127,7 @@ class EthApi(object):
 
     @staticmethod
     def filte_event(contract: Contract, event_name: str, from_block: int, to_block: int, arg_filters: dict = None) -> \
-            List[LogReceipt]:
+            (List[LogReceipt], bool):
         """
 
         :param contract: 合约实例
@@ -135,9 +135,15 @@ class EthApi(object):
         :param from_block: 开始区块高度
         :param to_block: 结束区块高度
         :param arg_filters: 参数过滤，eg: {'itype':2}
-        :return:
+        :return:List[LogReceipt]
         """
         # https://web3py.readthedocs.io/en/v5/contracts.html#web3.contract.Contract.events.your_event_name.createFilter
-        f = contract.events[event_name].createFilter(fromBlock=from_block, toBlock=to_block,
-                                                     argument_filters=arg_filters)
-        return f.get_all_entries()
+        try:
+            f = contract.events[event_name].createFilter(fromBlock=from_block,
+                                                         toBlock=to_block,
+                                                         argument_filters=arg_filters)
+            return f.get_all_entries(), True
+        except Exception as e:
+            log.error(
+                f"filter event failed: name={event_name} from = {from_block} to={to_block} arg={arg_filters}-> {e}")
+            return [], False

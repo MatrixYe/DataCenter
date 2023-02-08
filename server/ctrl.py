@@ -136,10 +136,11 @@ class Ctrl(object):
             print(f"container:{container_name} is not exist --> pass")
             msg = f"container:{container_name} is not exist --> PASS"
         if st == 1:
-            print(f"container:{container_name} is  exist and running --> stop&remove")
+            print(f"container:{container_name} is exist and running --> stop&remove")
             # cmd1 = f"docker stop {container_name}"
             cmd2 = f"docker rm -f {container_name}"
             # os.system(cmd1)
+            print(cmd2)
             os.system(cmd2)
             msg = f"container:{container_name} is exist and running --> stop&remove"
         if st == -1:

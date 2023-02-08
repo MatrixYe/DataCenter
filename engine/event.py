@@ -64,20 +64,25 @@ class Task(object):
             x = self._local_height()
             y = self._remote_height()
             # log.info(f"x={x} y={y}")
-            if y == 0:
-                log.warning("block height is Zero,please check network")
+            if y <= 0:
+                log.warning(f"block height is {y},please check network")
                 continue
-            if x == 0:
-                x = self.origin if self.origin else y - 5
+            if x <= 0:
+                if self.origin:
+                    x = self.origin
+                    log.info(f"x =0 event height = origin ={x}")
+                else:
+                    x = y - 100
+                    log.info(f"x=0 event height = (y-100) ={x}")
 
             y = y - self.delay  # 对y进行额外的延时处理,在快速链上，同步慢一个块，防止数据丢失
             if y <= x:
                 continue
 
-            a = x
-            b = y if (y - x) < self.range else (x + self.range)
-
-            events = self._filte(a, b)
+            a = x + 1
+            b = y if (y - x) <= self.range else (x + self.range)
+            log.info(f"filter event in ({a} , {b})")
+            events, complete = self._filte(a, b)
             for i, event in enumerate(events):
                 data = {
                     '_id': f"N{event.get('blockNumber')}I{event.get('logIndex')}",
@@ -90,20 +95,26 @@ class Task(object):
                 }
                 s = f"save raw event -> sender:{data['sender']} block:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']}"
                 log.info(s)
-                self.mongo.insert(self.table_name, data)
-            # 更新tag
-            self.redis.set(self.tag_event, b)
+                success = self.mongo.insert(self.table_name, data)
+                if success:
+                    # 每次插入event数据成功时，更新event local height为N点
+                    self.redis.set(self.tag_event, int(event.get('blockNumber')))
+                    log.info(f"update event local height success -> {int(event.get('blockNumber'))}")
+            if complete:
+                # 在本次访问区块链filter正常的情况下，更新event local height 为B点
+                self.redis.set(self.tag_event, b)
+                log.info(f"update event local height complete-> {b}")
 
-    def _filte(self, a: int, b: int) -> List[dict]:
+    def _filte(self, a: int, b: int) -> (List[dict], bool):
         """
         过滤日志
         :param a: 起始点高度
         :param b: 结束点高度
-        :return: event合集
+        :return: event合集，是否完成
         """
-        events = self.eth.filte_event(contract=self.contract, event_name=_EvEntName, from_block=a, to_block=b,
-                                      arg_filters=None)
-        return events
+        events, complete = self.eth.filte_event(contract=self.contract, event_name=_EvEntName, from_block=a, to_block=b,
+                                                arg_filters=None)
+        return events, complete
 
     def _local_height(self) -> int:
         """
