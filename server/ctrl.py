@@ -72,7 +72,7 @@ class Ctrl(object):
         """
         container_name = utils.gen_block_continal_name(network)
         table_name = utils.gen_block_table_name(network=network)
-        cache_name = utils.gen_block_cache_name(network=network)
+        tag_block = utils.gen_block_tag(network=network)
         st = self.docker.statu(container_name)
         if st == 0:
             print(f"container:{container_name} is not exist --> pass")
@@ -93,7 +93,7 @@ class Ctrl(object):
             return f"container:{container_name} is  exist and running --> stop&remove"
         if delete:
             self.mongo.drop(table_name)
-            self.redis.delele(cache_name)
+            self.redis.delele(tag_block)
 
     # 开始同步event out 数据
     def start_sync_event(self, network: str, target: str, origin: int, node: str, delay: int, ranger: int,
@@ -129,7 +129,7 @@ class Ctrl(object):
 
         container_name = utils.gen_event_container_name(network=network, target=target)
         table_name = utils.gen_event_table_name(network=network, target=target)
-        cache_name = utils.gen_event_cache_name(network=network, target=target)
+        tag_event = utils.gen_event_tag(network=network, target=target)
         st = self.docker.statu(container_name)
         msg = "done"
         if st == 0:
@@ -151,5 +151,5 @@ class Ctrl(object):
         if delete:
             print("删除event数据及缓存")
             self.mongo.drop(table_name)
-            self.redis.delele(cache_name)
+            self.redis.delele(tag_event)
         return msg

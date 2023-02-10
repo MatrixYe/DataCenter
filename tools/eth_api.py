@@ -100,7 +100,11 @@ class EthApi(object):
         :param v:
         :return:
         """
-        return self.client.toHex(v)
+        try:
+            return self.client.toHex(v)
+        except Exception as e:
+            log.error(f"to hex error:{e}")
+            return '0xUNKNOWN'
 
     def check_sum_address(self, address: Union[str, bytes]) -> ChecksumAddress:
         """

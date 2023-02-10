@@ -29,7 +29,7 @@ class Task(object):
         self.eth: EthApi = self._conn_eth()
         self.redis: RedisApi = self._conn_redis()
         self.mongo: MongoApi = self._conn_mongo()
-        self.tag_height = utils.gen_block_cache_name(network=self.network)
+        self.tag_block = utils.gen_block_tag(network=self.network)
         self.table_name = utils.gen_block_table_name(network=self.network)
 
     def run(self):
@@ -63,28 +63,31 @@ class Task(object):
     def _save_block(self, head):
         if head is None:
             return
+        block_height = head.get('number')
+        block_timestamp = head.get('timestamp')
+        block_hash = self.eth.to_hex(head.get('hash'))
+
         data = {
-            "_id": head.get('number'),
-            "hash": self.eth.to_hex(head.get('hash')),
-            "timestamp": head.get('timestamp'),
+            "_id": block_height,
+            "hash": block_hash,
+            "timestamp": block_timestamp,
         }
         log.info(f"sync {self.network} block success :{data}")
         self.mongo.insert(self.table_name, data)
-        self._set_local_height(data['_id'], data['timestamp'])
+        self._set_block_cache(height=block_height, timestamp=block_timestamp)
 
     # 设置block 同步最新高度缓存，写入redis
-    def _set_local_height(self, height, timestamp):
+    def _set_block_cache(self, height, timestamp):
         if height and timestamp:
-            self.redis.set(self.tag_height, height)
-            # print(f"write block height：{height} timestamp：{timestamp}")
+            self.redis.setdict(self.tag_block, {'height': height, 'timestamp': timestamp})
 
     # 获取本地block最新高度缓存，读取redis
     def _local_height(self) -> int:
-        h = self.redis.get(self.tag_height)
-        if h is None:
+        b = self.redis.getdict(self.tag_block)
+        if b is None:
             return 0
         else:
-            return int(h)
+            return int(b.get('height'))
 
     # 获取远程block高度
     def _remote_height(self) -> int:

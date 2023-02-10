@@ -7,7 +7,6 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
-import warnings
 from typing import List
 
 import utils
@@ -39,8 +38,8 @@ class Task(object):
             log.error(f"event out target:{self.target} is not a right address ")
             exit()
         self.table_name = utils.gen_event_table_name(network=self.network, target=self.target)  # event_bsc_77ba-ab12
-        self.tag_event = utils.gen_event_cache_name(network=self.network, target=self.target)
-        self.tag_block = utils.gen_block_cache_name(network=self.network)
+        self.tag_event = utils.gen_event_tag(network=self.network, target=self.target)
+        self.tag_block = utils.gen_block_tag(network=self.network)
         self.contract = self._gen_contract()
 
     def _gen_contract(self):
@@ -61,8 +60,8 @@ class Task(object):
         log.info("good luck")
         while True:
             time.sleep(2)
-            x = self._local_height()
-            y = self._remote_height()
+            x = self._local_event_height()
+            y = self._local_block_height()
             # log.info(f"x={x} y={y}")
             if y <= 0:
                 log.warning(f"block height is {y},please check network")
@@ -84,26 +83,39 @@ class Task(object):
             log.info(f"filter event in ({a} , {b})")
             events, complete = self._filte(a, b)
             for i, event in enumerate(events):
+                eid = f"N{event.get('blockNumber')}I{event.get('logIndex')}"
+                block_number = event.get('blockNumber')
+                index = event.get('logIndex')
+                tx_hash = self.eth.to_hex(event.get('transactionHash'))
+                sender = event['args']['sender']
+                itype = event['args']['itype']
+                bvalue = event['args']['bvalue']
+                # 根据block高度查询block集合，获取时间戳
+                block_timestamp = self._get_block_timestamp(block_number)
                 data = {
-                    '_id': f"N{event.get('blockNumber')}I{event.get('logIndex')}",
-                    'block_number': event.get('blockNumber'),
-                    'index': event.get('logIndex'),
-                    'tx_hash': self.eth.to_hex(event.get('transactionHash')),
-                    'sender': event['args']['sender'],
-                    'itype': event['args']['itype'],
-                    'bvalue': event['args']['bvalue']
+                    '_id': eid,
+                    'block_number': block_number,
+                    'block_timestamp': block_timestamp,
+                    'index': index,
+                    'tx_hash': tx_hash,
+                    'sender': sender,
+                    'itype': itype,
+                    'bvalue': bvalue
                 }
-                s = f"save raw event -> sender:{data['sender']} block:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']}"
+                s = f"save event -> sender:{data['sender']} heigh:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']} time:{data['block_timestamp']}"
                 log.info(s)
                 success = self.mongo.insert(self.table_name, data)
                 if success:
                     # 每次插入event数据成功时，更新event local height为N点
-                    self.redis.set(self.tag_event, int(event.get('blockNumber')))
-                    log.info(f"update event local height success -> {int(event.get('blockNumber'))}")
+                    cache = {'height': block_number, 'timestamp': block_timestamp}
+                    self.redis.setdict(self.tag_event, cache)
+                    log.info(f"insert success,update event local height -> {cache}")
             if complete:
                 # 在本次访问区块链filter正常的情况下，更新event local height 为B点
-                self.redis.set(self.tag_event, b)
-                log.info(f"update event local height complete-> {b}")
+                t = self._get_block_timestamp(b)
+                cache = {'height': b, 'timestamp': t}
+                self.redis.setdict(self.tag_event, cache)
+                log.info(f"filter complete,update event local height -> {cache}")
 
     def _filte(self, a: int, b: int) -> (List[dict], bool):
         """
@@ -116,27 +128,27 @@ class Task(object):
                                                 arg_filters=None)
         return events, complete
 
-    def _local_height(self) -> int:
+    def _local_event_height(self) -> int:
         """
         获取本地同步高度
         :return: 当前event-out对应的同步高度
         """
-        h = self.redis.get(self.tag_event)
-        if h is None:
+        cache = self.redis.getdict(self.tag_event)
+        if cache is None:
             return 0
         else:
-            return int(h)
+            return cache.get('height')
 
-    def _remote_height(self) -> int:
+    def _local_block_height(self) -> int:
         """
-        远程区块高度
+        区块高度
         :return: block高度
         """
-        h = self.redis.get(self.tag_block)
-        if h is None:
+        block = self.redis.getdict(self.tag_block)
+        if block is None or not block.get('height'):
             return 0
         else:
-            return int(h)
+            return int(block.get('height'))
 
     def _conn_redis(self) -> RedisApi:
         """
@@ -167,10 +179,28 @@ class Task(object):
         """
         return EthApi.from_node(self.node)
 
-    def _clear_all(self):
-        warnings.warn("this method is not support by engine")
-        log.info("clear all data in mongo ,and clear redis tag")
-        # 1.清除database
-        self.mongo.drop(self.table_name)
-        # 2.清除fredi标识
-        self.redis.delele(self.tag_event)
+    # def _clear_all(self):
+    #     warnings.warn("this method is not support by engine")
+    #     log.info("clear all data in mongo ,and clear redis tag")
+    #     # 1.清除database
+    #     self.mongo.drop(self.table_name)
+    #     # 2.清除fredi标识
+    #     self.redis.delele(self.tag_event)
+
+    def _get_block_timestamp(self, h: int) -> int:
+        """
+        获取block高度对应的时间戳
+        :param h:
+        :return:
+        """
+        block_coll = utils.gen_block_table_name(network=self.network)
+        block = self.mongo.find_one(c=block_coll, filte={'_id': h})
+        if block:
+            return block.get('timestamp')
+        else:
+            head = self.eth.block_head(h)
+            log.warning("can not find block in database,so to net")
+            if head:
+                return head.get('timestamp')
+            else:
+                return int(time.time())

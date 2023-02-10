@@ -38,7 +38,6 @@ def start_postgres(c):
     warnings.warn("postgres database 已废弃", DeprecationWarning)
     name = c['name']
     port = c['port']
-    name = c['name']
     volume = c['volume']
     network = c['network']
     network_alias = c['network-alias']
@@ -56,7 +55,6 @@ def start_postgres(c):
 def start_mongo(c):
     name = c['name']
     port = c['port']
-    name = c['name']
     volume = c['volume']
     network = c['network']
     network_alias = c['network-alias']

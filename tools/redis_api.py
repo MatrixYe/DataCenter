@@ -72,6 +72,17 @@ class RedisApi(object):
     def get(self, name):
         return self.redis.get(name)
 
+    def setdict(self, name, d: dict):
+        return self.set(name, json.dumps(d))
+        pass
+
+    def getdict(self, name) -> dict:
+        v = self.get(name)
+        if v:
+            return json.loads(v)
+        else:
+            return {}
+
     def set(self, name, value):
         return self.redis.set(name, value)
 

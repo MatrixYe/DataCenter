@@ -37,6 +37,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             'itype': event['itype'],
             'bvalue': event['bvalue'],
             'block_number': event['block_number'],
+            'block_timestamp': event['block_timestamp'],
             'index': event['index'],
             'tx_hash': event['tx_hash']
         }
@@ -46,13 +47,14 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
     def BlockLast(self, request, context):
         network = request.network
         log.info(f"[Ask] [BlockLast] -> network:{network}")
-        tag = utils.gen_block_cache_name(network=network)
-        h = self.redis.get(tag)
-        if h is None:
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
+        if not utils.check_network(network=network):
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "network error,错误的区块网络")
             return server_pb2.BlockLastReply()
-        else:
-            return server_pb2.BlockLastReply(height=int(h))
+
+        tag_block = utils.gen_block_tag(network=network)
+        cache = self.redis.getdict(tag_block)
+        log.info(f"[Reply] [BlockLast] -> network:{network} cache:{cache}")
+        return server_pb2.BlockLastReply(height=cache['height'], timestamp=cache['timestamp'])
 
     # 获取区块详情
     def BlockDetail(self, request, context):
@@ -68,6 +70,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         else:
             timestamp = detail['timestamp']
             hashs = detail['hash']
+            log.info(f"[Reply][BlockDetail] -> network:{network} height:{height} timestamp:{timestamp} hash:{hashs}")
             return server_pb2.BlockDetailReply(network=network, height=height, timestamp=timestamp, hash=hashs)
 
     # 获取raw event最新同步高度
@@ -75,15 +78,20 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         network = request.network
         target = request.target
         log.info(f"[Ask] [EventLast] -> network:{network} target:{target}")
+        if not utils.check_network(network):
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "network error,错误的区块网络")
+            return server_pb2.EventLastReply()
+
         if not utils.is_address(target):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为Null或者地址长度错误")
             return server_pb2.EventLastReply()
-        tag = utils.gen_event_cache_name(network=network, target=target)
-        h = self.redis.get(name=tag)
-        if not h:
+        tag_event = utils.gen_event_tag(network=network, target=target)
+        cache = self.redis.getdict(name=tag_event)
+        if not cache:
             self._error(context, grpc.StatusCode.NOT_FOUND, "未找到最新同步高度，请检查网络名称或目标地址是否正确")
             return server_pb2.EventLastReply()
-        return server_pb2.EventLastReply(height=int(h))
+        log.info(f"[Reply] [EventLast] -> network:{network} target:{target} cache:{cache}")
+        return server_pb2.EventLastReply(height=cache['height'], timestamp=cache['timestamp'])
 
     def EventFilter(self, request, context):
         network = request.network
@@ -96,7 +104,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             f"[Ask] [EventFilter] -> network:{network} target:{target} start:{start} end:{end} senders:{senders} desc:{desc}")
 
         if not utils.check_network(network):
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "network error,错误的区块网络")
             return server_pb2.EventFilterReply()
         if not utils.is_address(target):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "目标地址为非法")
@@ -173,7 +181,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         delete = request.delete
         log.info(f"[Ask] [StopSyncBlock] -> network:{network} delete:{delete}")
         if not utils.check_network(network):
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "network error,错误的区块网络")
             return server_pb2.ComReply()
         msg = self.control.stop_sync_block(network, delete)
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
@@ -229,7 +237,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         delete = request.delete
         log.info(f"[Ask] [StopSyncEvent] -> network:{network} target:{target} delete:{delete}")
         if not utils.check_network(network):
-            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "未识别的区块网络")
+            self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "network error,错误的区块网络")
             return server_pb2.ComReply()
 
         if not utils.is_address(target):

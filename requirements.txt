@@ -2,5 +2,5 @@ docker~=6.0.1
 web3~=5.31.3
 redis~=4.4.0
 pymongo~=4.3.3
-setuptools==65.5.0
+setuptools==67.2.0
 grpcio

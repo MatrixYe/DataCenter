@@ -169,15 +169,28 @@ def gen_block_table_name(network: str) -> str:
     return f"block_{network}"
 
 
-def gen_block_cache_name(network: str) -> str:
-    """
-    生成block同步数据高度缓存rediskey
+def gen_block_tag(network: str):
+    return f"block_{network}"
 
-    :param network:
-    :return:
-    """
-    return f"block_{network}_height"
 
+# def gen_block_height_tag(network: str) -> str:
+#     """
+#     生成block同步数据高度缓存rediskey
+#
+#     :param network:
+#     :return:最新高度
+#     """
+#     return f"block_{network}_height"
+#
+#
+# def gen_block_timestamp_tag(network: str) -> str:
+#     """
+#     生成block 同步 时间戳缓存redis key
+#     :param network:
+#     :return: 最新时间戳
+#     """
+#     return f"block_{network}_timestamp"
+#
 
 def gen_event_table_name(network: str, target: str) -> str:
     """
@@ -190,7 +203,7 @@ def gen_event_table_name(network: str, target: str) -> str:
     return f"event_{network}_{target[2:6]}_{target[-4:]}"
 
 
-def gen_event_cache_name(network: str, target: str) -> str:
+def gen_event_tag(network: str, target: str) -> str:
     """
     生成 event out 在redis中的记录缓存
     :param network: 区块网络

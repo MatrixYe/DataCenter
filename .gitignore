@@ -212,6 +212,4 @@ dmypy.json
 cython_debug/
 
 .idea
-
-remote_test.py
-local_test.py
+test*.py

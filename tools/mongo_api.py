@@ -8,7 +8,7 @@
 
 import logging as log
 import urllib.parse
-from typing import List
+from typing import List, Optional, Any
 
 from pymongo import MongoClient
 
@@ -70,7 +70,7 @@ class MongoApi(object):
     def colle_exist(self, c: str) -> bool:
         return c in self.list_colle_names()
 
-    def find_one(self, c: str, filte: dict):
+    def find_one(self, c: str, filte: Optional[Any]):
         var = self.database[c]
         if var is None:
             return None

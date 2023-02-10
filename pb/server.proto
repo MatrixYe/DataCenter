@@ -32,6 +32,7 @@ message BlockLastAsk{
 // 返回体 最新区块高度
 message BlockLastReply{
   uint64 height = 1; // 高度
+  uint64 timestamp = 2;//时间戳
 }
 
 // 请求体 区块详情
@@ -58,6 +59,7 @@ message EventLastAsk{
 // 返回体 最新的event同步高度
 message EventLastReply{
   uint64 height = 2; // event out最新同步高度
+  uint64 timestamp = 3;//event out 最新同步高度对应的block时间戳
 }
 
 // 请求体 过滤日志
@@ -79,6 +81,7 @@ message EventFilterReply{
     uint32 itype = 4;// event类型
     bytes bvalue = 5;// event数据
     string tx_hash = 6; // event transaction hash
+    uint64 block_timestamp = 7;//block 时间戳
   }
 }
 
