@@ -1,1674 +1,1625 @@
 <!DOCTYPE html>
 
 <html>
-<head>
+  <head>
     <title>Protocol Documentation</title>
     <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
     <style>
-        body {
-            width: 60em;
-            margin: 1em auto;
-            color: #222;
-            font-family: "Ubuntu", sans-serif;
-            padding-bottom: 4em;
-        }
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
 
-        h1 {
-            font-weight: normal;
-            border-bottom: 1px solid #aaa;
-            padding-bottom: 0.5ex;
-        }
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
 
-        h2 {
-            border-bottom: 1px solid #aaa;
-            padding-bottom: 0.5ex;
-            margin: 1.5em 0;
-        }
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
 
-        h3 {
-            font-weight: normal;
-            border-bottom: 1px solid #aaa;
-            padding-bottom: 0.5ex;
-        }
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
 
-        a {
-            text-decoration: none;
-            color: #567e25;
-        }
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
 
-        table {
-            width: 100%;
-            font-size: 80%;
-            border-collapse: collapse;
-        }
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
 
-        thead {
-            font-weight: 700;
-            background-color: #dcdcdc;
-        }
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
 
-        tbody tr:nth-child(even) {
-            background-color: #fbfbfb;
-        }
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
 
-        td {
-            border: 1px solid #ccc;
-            padding: 0.5ex 2ex;
-        }
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
 
-        td p {
-            text-indent: 1em;
-            margin: 0;
-        }
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
 
-        td p:nth-child(1) {
-            text-indent: 0;
-        }
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
 
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
 
-        .field-table td:nth-child(1) {
-            width: 10em;
-        }
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
 
-        .field-table td:nth-child(2) {
-            width: 10em;
-        }
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
 
-        .field-table td:nth-child(3) {
-            width: 6em;
-        }
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
 
-        .field-table td:nth-child(4) {
-            width: auto;
-        }
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
 
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
 
-        .extension-table td:nth-child(1) {
-            width: 10em;
-        }
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
 
-        .extension-table td:nth-child(2) {
-            width: 10em;
-        }
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
 
-        .extension-table td:nth-child(3) {
-            width: 10em;
-        }
+        color: #89ba48;
+        background-color: #dff0c8;
 
-        .extension-table td:nth-child(4) {
-            width: 5em;
-        }
-
-        .extension-table td:nth-child(5) {
-            width: auto;
-        }
-
-
-        .enum-table td:nth-child(1) {
-            width: 10em;
-        }
-
-        .enum-table td:nth-child(2) {
-            width: 10em;
-        }
-
-        .enum-table td:nth-child(3) {
-            width: auto;
-        }
-
-
-        .scalar-value-types-table tr {
-            height: 3em;
-        }
-
-
-        #toc-container ul {
-            list-style-type: none;
-            padding-left: 1em;
-            line-height: 180%;
-            margin: 0;
-        }
-
-        #toc > li > a {
-            font-weight: bold;
-        }
-
-
-        .file-heading {
-            width: 100%;
-            display: table;
-            border-bottom: 1px solid #aaa;
-            margin: 4em 0 1.5em 0;
-        }
-
-        .file-heading h2 {
-            border: none;
-            display: table-cell;
-        }
-
-        .file-heading a {
-            text-align: right;
-            display: table-cell;
-        }
-
-
-        .badge {
-            width: 1.6em;
-            height: 1.6em;
-            display: inline-block;
-
-            line-height: 1.6em;
-            text-align: center;
-            font-weight: bold;
-            font-size: 60%;
-
-            color: #89ba48;
-            background-color: #dff0c8;
-
-            margin: 0.5ex 1em 0.5ex -1em;
-            border: 1px solid #fbfbfb;
-            border-radius: 1ex;
-        }
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
     </style>
 
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
 
-    <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
-</head>
+  <body>
 
-<body>
+    <h1 id="title">Protocol Documentation</h1>
 
-<h1 id="title">Protocol Documentation</h1>
+    <h2>Table of Contents</h2>
 
-<h2>Table of Contents</h2>
-
-<div id="toc-container">
-    <ul id="toc">
-
-
-        <li>
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
             <a href="#server.proto">server.proto</a>
             <ul>
-
+              
                 <li>
-                    <a href="#pb.BlockDetailAsk"><span class="badge">M</span>BlockDetailAsk</a>
+                  <a href="#pb.BlockDetailAsk"><span class="badge">M</span>BlockDetailAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.BlockDetailReply"><span class="badge">M</span>BlockDetailReply</a>
+                  <a href="#pb.BlockDetailReply"><span class="badge">M</span>BlockDetailReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.BlockLastAsk"><span class="badge">M</span>BlockLastAsk</a>
+                  <a href="#pb.BlockLastAsk"><span class="badge">M</span>BlockLastAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.BlockLastReply"><span class="badge">M</span>BlockLastReply</a>
+                  <a href="#pb.BlockLastReply"><span class="badge">M</span>BlockLastReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.ComReply"><span class="badge">M</span>ComReply</a>
+                  <a href="#pb.ComReply"><span class="badge">M</span>ComReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.EventFilterAsk"><span class="badge">M</span>EventFilterAsk</a>
+                  <a href="#pb.EventFilterAsk"><span class="badge">M</span>EventFilterAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.EventFilterReply"><span class="badge">M</span>EventFilterReply</a>
+                  <a href="#pb.EventFilterReply"><span class="badge">M</span>EventFilterReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.EventFilterReply.RawEvent"><span class="badge">M</span>EventFilterReply.RawEvent</a>
+                  <a href="#pb.EventFilterReply.RawEvent"><span class="badge">M</span>EventFilterReply.RawEvent</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.EventLastAsk"><span class="badge">M</span>EventLastAsk</a>
+                  <a href="#pb.EventLastAsk"><span class="badge">M</span>EventLastAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.EventLastReply"><span class="badge">M</span>EventLastReply</a>
+                  <a href="#pb.EventLastReply"><span class="badge">M</span>EventLastReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OracleDataAsk"><span class="badge">M</span>OracleDataAsk</a>
+                  <a href="#pb.OracleDataAsk"><span class="badge">M</span>OracleDataAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OracleDataReply"><span class="badge">M</span>OracleDataReply</a>
+                  <a href="#pb.OracleDataReply"><span class="badge">M</span>OracleDataReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OracleDataReply.Trades"><span class="badge">M</span>OracleDataReply.Trades</a>
+                  <a href="#pb.OracleDataReply.Trades"><span class="badge">M</span>OracleDataReply.Trades</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OraclePriceAsk"><span class="badge">M</span>OraclePriceAsk</a>
+                  <a href="#pb.OraclePriceAsk"><span class="badge">M</span>OraclePriceAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OraclePriceChgAsk"><span class="badge">M</span>OraclePriceChgAsk</a>
+                  <a href="#pb.OraclePriceChgAsk"><span class="badge">M</span>OraclePriceChgAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OraclePriceChgReply"><span class="badge">M</span>OraclePriceChgReply</a>
+                  <a href="#pb.OraclePriceChgReply"><span class="badge">M</span>OraclePriceChgReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.OraclePriceReply"><span class="badge">M</span>OraclePriceReply</a>
+                  <a href="#pb.OraclePriceReply"><span class="badge">M</span>OraclePriceReply</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StartSyncBlockAsk"><span class="badge">M</span>StartSyncBlockAsk</a>
+                  <a href="#pb.StartSyncBlockAsk"><span class="badge">M</span>StartSyncBlockAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StartSyncEventAsk"><span class="badge">M</span>StartSyncEventAsk</a>
+                  <a href="#pb.StartSyncEventAsk"><span class="badge">M</span>StartSyncEventAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StartSyncOracleAsk"><span class="badge">M</span>StartSyncOracleAsk</a>
+                  <a href="#pb.StartSyncOracleAsk"><span class="badge">M</span>StartSyncOracleAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StopSyncBlockAsk"><span class="badge">M</span>StopSyncBlockAsk</a>
+                  <a href="#pb.StopSyncBlockAsk"><span class="badge">M</span>StopSyncBlockAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StopSyncEventAsk"><span class="badge">M</span>StopSyncEventAsk</a>
+                  <a href="#pb.StopSyncEventAsk"><span class="badge">M</span>StopSyncEventAsk</a>
                 </li>
-
+              
                 <li>
-                    <a href="#pb.StopSyncOracleAsk"><span class="badge">M</span>StopSyncOracleAsk</a>
+                  <a href="#pb.StopSyncOracleAsk"><span class="badge">M</span>StopSyncOracleAsk</a>
                 </li>
-
-
+              
+              
+              
+              
                 <li>
-                    <a href="#pb.DataCenter"><span class="badge">S</span>DataCenter</a>
+                  <a href="#pb.DataCenter"><span class="badge">S</span>DataCenter</a>
                 </li>
-
+              
             </ul>
-        </li>
-
+          </li>
+        
         <li><a href="#scalar-value-types">Scalar Value Types</a></li>
-    </ul>
-</div>
-
-
-<div class="file-heading">
-    <h2 id="server.proto">server.proto</h2><a href="#title">Top</a>
-</div>
-<p></p>
-
-
-<h3 id="pb.BlockDetailAsk">BlockDetailAsk</h3>
-<p>请求体 区块详情</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>height</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>高度 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.BlockDetailReply">BlockDetailReply</h3>
-<p>返回体 区块详情</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>height</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>高度 </p></td>
-    </tr>
-
-    <tr>
-        <td>timestamp</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>时间戳 </p></td>
-    </tr>
-
-    <tr>
-        <td>hash</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块哈希 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.BlockLastAsk">BlockLastAsk</h3>
-<p>请求体 最新区块高度</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.BlockLastReply">BlockLastReply</h3>
-<p>返回体 最新区块高度</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>height</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>高度 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.ComReply">ComReply</h3>
-<p>返回体 通用任务回执</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>result</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>任务回执结果，&#34;SUCCESS&#34; 或者&#34;FAILED&#34; </p></td>
-    </tr>
-
-    <tr>
-        <td>msg</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>任务回执信息 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.EventFilterAsk">EventFilterAsk</h3>
-<p>请求体 过滤日志</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event out 地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>start</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>起始点高度 </p></td>
-    </tr>
-
-    <tr>
-        <td>end</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>结束点高度 </p></td>
-    </tr>
-
-    <tr>
-        <td>senders</td>
-        <td><a href="#string">string</a></td>
-        <td>repeated</td>
-        <td><p>过滤sender </p></td>
-    </tr>
-
-    <tr>
-        <td>desc</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否降序排列，默认为false </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.EventFilterReply">EventFilterReply</h3>
-<p>返回体 过滤日志</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>events</td>
-        <td><a href="#pb.EventFilterReply.RawEvent">EventFilterReply.RawEvent</a></td>
-        <td>repeated</td>
-        <td><p>evnet数据集合 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.EventFilterReply.RawEvent">EventFilterReply.RawEvent</h3>
-<p></p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>block_number</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>block高度 </p></td>
-    </tr>
-
-    <tr>
-        <td>index</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>event在block中的索引 </p></td>
-    </tr>
-
-    <tr>
-        <td>sender</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event发送者地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>itype</td>
-        <td><a href="#uint32">uint32</a></td>
-        <td></td>
-        <td><p>event类型 </p></td>
-    </tr>
-
-    <tr>
-        <td>bvalue</td>
-        <td><a href="#bytes">bytes</a></td>
-        <td></td>
-        <td><p>event数据 </p></td>
-    </tr>
-
-    <tr>
-        <td>tx_hash</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event transaction hash </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.EventLastAsk">EventLastAsk</h3>
-<p>请求体 最新的event同步高度</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event out 地址 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.EventLastReply">EventLastReply</h3>
-<p>返回体 最新的event同步高度</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>height</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>event out最新同步高度 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OracleDataAsk">OracleDataAsk</h3>
-<p>请求体 价格变动数据</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>start</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>时间戳起始点 </p></td>
-    </tr>
-
-    <tr>
-        <td>end</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>时间戳结束点 </p></td>
-    </tr>
-
-    <tr>
-        <td>reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>价格是否取倒数 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OracleDataReply">OracleDataReply</h3>
-<p>返回体 价格变动数据</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>name</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源名称 </p></td>
-    </tr>
-
-    <tr>
-        <td>start</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>时间戳起始点 </p></td>
-    </tr>
-
-    <tr>
-        <td>end</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>时间戳结束点 </p></td>
-    </tr>
-
-    <tr>
-        <td>pair</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>标的 </p></td>
-    </tr>
-
-    <tr>
-        <td>is_reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否已经取倒数 </p></td>
-    </tr>
-
-    <tr>
-        <td>trades</td>
-        <td><a href="#pb.OracleDataReply.Trades">OracleDataReply.Trades</a></td>
-        <td>repeated</td>
-        <td><p>价格数据(在uniswap中为swap数据，在chainlink中为Answer数据) </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OracleDataReply.Trades">OracleDataReply.Trades</h3>
-<p>价格信息体</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>price</td>
-        <td><a href="#float">float</a></td>
-        <td></td>
-        <td><p>价格 </p></td>
-    </tr>
-
-    <tr>
-        <td>volume</td>
-        <td><a href="#float">float</a></td>
-        <td></td>
-        <td><p>交易量，chainlink中无法获取(即0) </p></td>
-    </tr>
-
-    <tr>
-        <td>timestamp</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>交易时间戳 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OraclePriceAsk">OraclePriceAsk</h3>
-<p>请求体 喂价源最新价格</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>deadline</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>截止日期，返回体的价格为截止时间时刻的最新价，该字段&lt;=0时，返回体当前时刻最新价 </p></td>
-    </tr>
-
-    <tr>
-        <td>reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否价格取倒数 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OraclePriceChgAsk">OraclePriceChgAsk</h3>
-<p>请求体 喂价源价格变化率</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>start</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>起始点，注意是时间戳起始点 </p></td>
-    </tr>
-
-    <tr>
-        <td>end</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>结束点，注意是时间戳结束点 </p></td>
-    </tr>
-
-    <tr>
-        <td>reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否价格取倒 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OraclePriceChgReply">OraclePriceChgReply</h3>
-<p>返回体 喂价源价格变化率</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>chg</td>
-        <td><a href="#float">float</a></td>
-        <td></td>
-        <td><p>价格变化率 </p></td>
-    </tr>
-
-    <tr>
-        <td>is_reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>价格是否已经倒数 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.OraclePriceReply">OraclePriceReply</h3>
-<p>返回体 喂价源最新价格</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>price</td>
-        <td><a href="#float">float</a></td>
-        <td></td>
-        <td><p>最新价格 </p></td>
-    </tr>
-
-    <tr>
-        <td>timestamp</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>最新价时间戳 </p></td>
-    </tr>
-
-    <tr>
-        <td>height</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>最新价区块高度 </p></td>
-    </tr>
-
-    <tr>
-        <td>is_reverse</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否价格取倒数 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StartSyncBlockAsk">StartSyncBlockAsk</h3>
-<p>请求体 同步block任务</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>origin</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>区块高度起始点 </p></td>
-    </tr>
-
-    <tr>
-        <td>interval</td>
-        <td><a href="#uint32">uint32</a></td>
-        <td></td>
-        <td><p>区块扫描周期，单位秒 </p></td>
-    </tr>
-
-    <tr>
-        <td>node</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>请求体节点 </p></td>
-    </tr>
-
-    <tr>
-        <td>webhook</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>飞书信息钩子，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StartSyncEventAsk">StartSyncEventAsk</h3>
-<p>请求体 同步event out 数据</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event out 地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>origin</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>同步起始点，仅首次开始同步时生效 </p></td>
-    </tr>
-
-    <tr>
-        <td>node</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>访问节点 </p></td>
-    </tr>
-
-    <tr>
-        <td>delay</td>
-        <td><a href="#uint32">uint32</a></td>
-        <td></td>
-        <td><p>高度延迟，对于较快的链如bsc、op，延时1～3个区块可以避免数据丢失 </p></td>
-    </tr>
-
-    <tr>
-        <td>range</td>
-        <td><a href="#uint32">uint32</a></td>
-        <td></td>
-        <td><p>追逐模式下，每次最大的同步高度范围，默认500， </p></td>
-    </tr>
-
-    <tr>
-        <td>webhook</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StartSyncOracleAsk">StartSyncOracleAsk</h3>
-<p>请求体 同步oracle 数据</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>netwrok</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络,eg:bsc </p></td>
-    </tr>
-
-    <tr>
-        <td>provider</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>供应商eg:chainlink,uniswapv2 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>history</td>
-        <td><a href="#uint64">uint64</a></td>
-        <td></td>
-        <td><p>历史数据，默认为0，即当前时刻开始同步。 </p></td>
-    </tr>
-
-    <tr>
-        <td>node</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>访问节点，必须有 </p></td>
-    </tr>
-
-    <tr>
-        <td>webhook</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StopSyncBlockAsk">StopSyncBlockAsk</h3>
-<p>返回体 同步block启动结果</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>需要停止同步的区块网络，如 &#39;bsc&#39; </p></td>
-    </tr>
-
-    <tr>
-        <td>delete</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否停止任务同时删除历史同步数据 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StopSyncEventAsk">StopSyncEventAsk</h3>
-<p>返回体 同步event out 数据</p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>event out 合约地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>delete</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否停止任务同时删除历史同步数据 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.StopSyncOracleAsk">StopSyncOracleAsk</h3>
-<p></p>
-
-
-<table class="field-table">
-    <thead>
-    <tr>
-        <td>Field</td>
-        <td>Type</td>
-        <td>Label</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>network</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>区块网络 </p></td>
-    </tr>
-
-    <tr>
-        <td>provider</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>供应商eg:chainlink,uniswapv2 </p></td>
-    </tr>
-
-    <tr>
-        <td>target</td>
-        <td><a href="#string">string</a></td>
-        <td></td>
-        <td><p>喂价源地址 </p></td>
-    </tr>
-
-    <tr>
-        <td>delete</td>
-        <td><a href="#bool">bool</a></td>
-        <td></td>
-        <td><p>是否停止任务同时删除历史同步数据 </p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h3 id="pb.DataCenter">DataCenter</h3>
-<p>Service for handling data center.</p>
-<table class="enum-table">
-    <thead>
-    <tr>
-        <td>Method Name</td>
-        <td>Request Type</td>
-        <td>Response Type</td>
-        <td>Description</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr>
-        <td>BlockLast</td>
-        <td><a href="#pb.BlockLastAsk">BlockLastAsk</a></td>
-        <td><a href="#pb.BlockLastReply">BlockLastReply</a></td>
-        <td><p>获取最新block 高度</p></td>
-    </tr>
-
-    <tr>
-        <td>BlockDetail</td>
-        <td><a href="#pb.BlockDetailAsk">BlockDetailAsk</a></td>
-        <td><a href="#pb.BlockDetailReply">BlockDetailReply</a></td>
-        <td><p>获取指定高度block详情</p></td>
-    </tr>
-
-    <tr>
-        <td>EventLast</td>
-        <td><a href="#pb.EventLastAsk">EventLastAsk</a></td>
-        <td><a href="#pb.EventLastReply">EventLastReply</a></td>
-        <td><p>获取event out 最新同步高度</p></td>
-    </tr>
-
-    <tr>
-        <td>EventFilter</td>
-        <td><a href="#pb.EventFilterAsk">EventFilterAsk</a></td>
-        <td><a href="#pb.EventFilterReply">EventFilterReply</a></td>
-        <td><p>获取event 事件列表</p></td>
-    </tr>
-
-    <tr>
-        <td>OraclePrice</td>
-        <td><a href="#pb.OraclePriceAsk">OraclePriceAsk</a></td>
-        <td><a href="#pb.OraclePriceReply">OraclePriceReply</a></td>
-        <td><p>获取喂价源最新价格</p></td>
-    </tr>
-
-    <tr>
-        <td>OraclePriceChg</td>
-        <td><a href="#pb.OraclePriceChgAsk">OraclePriceChgAsk</a></td>
-        <td><a href="#pb.OraclePriceChgReply">OraclePriceChgReply</a></td>
-        <td><p>获取喂价源价格变化率</p></td>
-    </tr>
-
-    <tr>
-        <td>OracleData</td>
-        <td><a href="#pb.OracleDataAsk">OracleDataAsk</a></td>
-        <td><a href="#pb.OracleDataReply">OracleDataReply</a></td>
-        <td><p>获取喂价源价格变动数据集合(K线处理由其他服务完成，此处不处理)</p></td>
-    </tr>
-
-    <tr>
-        <td>StartSyncBlock</td>
-        <td><a href="#pb.StartSyncBlockAsk">StartSyncBlockAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>新增同步一条block数据</p></td>
-    </tr>
-
-    <tr>
-        <td>StopSyncBlock</td>
-        <td><a href="#pb.StopSyncBlockAsk">StopSyncBlockAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>停止同步一条block数据</p></td>
-    </tr>
-
-    <tr>
-        <td>StartSyncEvent</td>
-        <td><a href="#pb.StartSyncEventAsk">StartSyncEventAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>新增同步一条event out数据</p></td>
-    </tr>
-
-    <tr>
-        <td>StopSyncEvent</td>
-        <td><a href="#pb.StopSyncEventAsk">StopSyncEventAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>停止同步一条event out数据</p></td>
-    </tr>
-
-    <tr>
-        <td>StartSyncOracle</td>
-        <td><a href="#pb.StartSyncOracleAsk">StartSyncOracleAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>新增同步一条oracle数据</p></td>
-    </tr>
-
-    <tr>
-        <td>StopSyncOracle</td>
-        <td><a href="#pb.StopSyncOracleAsk">StopSyncOracleAsk</a></td>
-        <td><a href="#pb.ComReply">ComReply</a></td>
-        <td><p>停止同步一条oracle数据</p></td>
-    </tr>
-
-    </tbody>
-</table>
-
-
-<h2 id="scalar-value-types">Scalar Value Types</h2>
-<table class="scalar-value-types-table">
-    <thead>
-    <tr>
-        <td>.proto Type</td>
-        <td>Notes</td>
-        <td>C++</td>
-        <td>Java</td>
-        <td>Python</td>
-        <td>Go</td>
-        <td>C#</td>
-        <td>PHP</td>
-        <td>Ruby</td>
-    </tr>
-    </thead>
-    <tbody>
-
-    <tr id="double">
-        <td>double</td>
-        <td></td>
-        <td>double</td>
-        <td>double</td>
-        <td>float</td>
-        <td>float64</td>
-        <td>double</td>
-        <td>float</td>
-        <td>Float</td>
-    </tr>
-
-    <tr id="float">
-        <td>float</td>
-        <td></td>
-        <td>float</td>
-        <td>float</td>
-        <td>float</td>
-        <td>float32</td>
-        <td>float</td>
-        <td>float</td>
-        <td>Float</td>
-    </tr>
-
-    <tr id="int32">
-        <td>int32</td>
-        <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have
-            negative values, use sint32 instead.
-        </td>
-        <td>int32</td>
-        <td>int</td>
-        <td>int</td>
-        <td>int32</td>
-        <td>int</td>
-        <td>integer</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="int64">
-        <td>int64</td>
-        <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have
-            negative values, use sint64 instead.
-        </td>
-        <td>int64</td>
-        <td>long</td>
-        <td>int/long</td>
-        <td>int64</td>
-        <td>long</td>
-        <td>integer/string</td>
-        <td>Bignum</td>
-    </tr>
-
-    <tr id="uint32">
-        <td>uint32</td>
-        <td>Uses variable-length encoding.</td>
-        <td>uint32</td>
-        <td>int</td>
-        <td>int/long</td>
-        <td>uint32</td>
-        <td>uint</td>
-        <td>integer</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="uint64">
-        <td>uint64</td>
-        <td>Uses variable-length encoding.</td>
-        <td>uint64</td>
-        <td>long</td>
-        <td>int/long</td>
-        <td>uint64</td>
-        <td>ulong</td>
-        <td>integer/string</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="sint32">
-        <td>sint32</td>
-        <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular
-            int32s.
-        </td>
-        <td>int32</td>
-        <td>int</td>
-        <td>int</td>
-        <td>int32</td>
-        <td>int</td>
-        <td>integer</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="sint64">
-        <td>sint64</td>
-        <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular
-            int64s.
-        </td>
-        <td>int64</td>
-        <td>long</td>
-        <td>int/long</td>
-        <td>int64</td>
-        <td>long</td>
-        <td>integer/string</td>
-        <td>Bignum</td>
-    </tr>
-
-    <tr id="fixed32">
-        <td>fixed32</td>
-        <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
-        <td>uint32</td>
-        <td>int</td>
-        <td>int</td>
-        <td>uint32</td>
-        <td>uint</td>
-        <td>integer</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="fixed64">
-        <td>fixed64</td>
-        <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
-        <td>uint64</td>
-        <td>long</td>
-        <td>int/long</td>
-        <td>uint64</td>
-        <td>ulong</td>
-        <td>integer/string</td>
-        <td>Bignum</td>
-    </tr>
-
-    <tr id="sfixed32">
-        <td>sfixed32</td>
-        <td>Always four bytes.</td>
-        <td>int32</td>
-        <td>int</td>
-        <td>int</td>
-        <td>int32</td>
-        <td>int</td>
-        <td>integer</td>
-        <td>Bignum or Fixnum (as required)</td>
-    </tr>
-
-    <tr id="sfixed64">
-        <td>sfixed64</td>
-        <td>Always eight bytes.</td>
-        <td>int64</td>
-        <td>long</td>
-        <td>int/long</td>
-        <td>int64</td>
-        <td>long</td>
-        <td>integer/string</td>
-        <td>Bignum</td>
-    </tr>
-
-    <tr id="bool">
-        <td>bool</td>
-        <td></td>
-        <td>bool</td>
-        <td>boolean</td>
-        <td>boolean</td>
-        <td>bool</td>
-        <td>bool</td>
-        <td>boolean</td>
-        <td>TrueClass/FalseClass</td>
-    </tr>
-
-    <tr id="string">
-        <td>string</td>
-        <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
-        <td>string</td>
-        <td>String</td>
-        <td>str/unicode</td>
-        <td>string</td>
-        <td>string</td>
-        <td>string</td>
-        <td>String (UTF-8)</td>
-    </tr>
-
-    <tr id="bytes">
-        <td>bytes</td>
-        <td>May contain any arbitrary sequence of bytes.</td>
-        <td>string</td>
-        <td>ByteString</td>
-        <td>str</td>
-        <td>[]byte</td>
-        <td>ByteString</td>
-        <td>string</td>
-        <td>String (ASCII-8BIT)</td>
-    </tr>
-
-    </tbody>
-</table>
-</body>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="server.proto">server.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="pb.BlockDetailAsk">BlockDetailAsk</h3>
+        <p>请求体 区块详情</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>height</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>高度 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.BlockDetailReply">BlockDetailReply</h3>
+        <p>返回体 区块详情</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>height</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>hash</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块哈希 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.BlockLastAsk">BlockLastAsk</h3>
+        <p>请求体 最新区块高度</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.BlockLastReply">BlockLastReply</h3>
+        <p>返回体 最新区块高度</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>height</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.ComReply">ComReply</h3>
+        <p>返回体 通用任务回执</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>result</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>任务回执结果，&#34;SUCCESS&#34; 或者&#34;FAILED&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>msg</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>任务回执信息 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.EventFilterAsk">EventFilterAsk</h3>
+        <p>请求体 过滤日志</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event out 地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>start</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>起始点高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>结束点高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>senders</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>过滤sender </p></td>
+                </tr>
+              
+                <tr>
+                  <td>desc</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否降序排列，默认为false </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.EventFilterReply">EventFilterReply</h3>
+        <p>返回体 过滤日志</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>events</td>
+                  <td><a href="#pb.EventFilterReply.RawEvent">EventFilterReply.RawEvent</a></td>
+                  <td>repeated</td>
+                  <td><p>evnet数据集合 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.EventFilterReply.RawEvent">EventFilterReply.RawEvent</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>block_number</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>block高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>block_timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>block 时间戳 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>index</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>event在block中的索引 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>sender</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event发送者地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>itype</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>event类型 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bvalue</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>event数据 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tx_hash</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event transaction hash </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.EventLastAsk">EventLastAsk</h3>
+        <p>请求体 最新的event同步高度</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event out 地址 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.EventLastReply">EventLastReply</h3>
+        <p>返回体 最新的event同步高度</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>height</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>event out最新同步高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>event out 最新同步高度对应的block时间戳 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OracleDataAsk">OracleDataAsk</h3>
+        <p>请求体 价格变动数据</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>start</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳起始点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳结束点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>价格是否取倒数 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OracleDataReply">OracleDataReply</h3>
+        <p>返回体 价格变动数据</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源名称 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>start</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳起始点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>时间戳结束点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>pair</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>标的 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否已经取倒数 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>trades</td>
+                  <td><a href="#pb.OracleDataReply.Trades">OracleDataReply.Trades</a></td>
+                  <td>repeated</td>
+                  <td><p>价格数据(在uniswap中为swap数据，在chainlink中为Answer数据) </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OracleDataReply.Trades">OracleDataReply.Trades</h3>
+        <p>价格信息体</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>price</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p>价格 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>volume</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p>交易量，chainlink中无法获取(即0) </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>交易时间戳 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OraclePriceAsk">OraclePriceAsk</h3>
+        <p>请求体 喂价源最新价格</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>deadline</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>截止日期，返回体的价格为截止时间时刻的最新价，该字段&lt;=0时，返回体当前时刻最新价 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否价格取倒数 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OraclePriceChgAsk">OraclePriceChgAsk</h3>
+        <p>请求体 喂价源价格变化率</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>start</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>起始点，注意是时间戳起始点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>end</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>结束点，注意是时间戳结束点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否价格取倒 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OraclePriceChgReply">OraclePriceChgReply</h3>
+        <p>返回体 喂价源价格变化率</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>chg</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p>价格变化率 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>价格是否已经倒数 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.OraclePriceReply">OraclePriceReply</h3>
+        <p>返回体 喂价源最新价格</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>price</td>
+                  <td><a href="#float">float</a></td>
+                  <td></td>
+                  <td><p>最新价格 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>timestamp</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>最新价时间戳 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>height</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>最新价区块高度 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>is_reverse</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否价格取倒数 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StartSyncBlockAsk">StartSyncBlockAsk</h3>
+        <p>请求体 同步block任务</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>origin</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>区块高度起始点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>interval</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>区块扫描周期，单位秒 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>node</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>请求体节点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>webhook</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>飞书信息钩子，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StartSyncEventAsk">StartSyncEventAsk</h3>
+        <p>请求体 同步event out 数据</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event out 地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>origin</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>同步起始点，仅首次开始同步时生效 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>node</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>访问节点 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>delay</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>高度延迟，对于较快的链如bsc、op，延时1～3个区块可以避免数据丢失 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>range</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>追逐模式下，每次最大的同步高度范围，默认500， </p></td>
+                </tr>
+              
+                <tr>
+                  <td>webhook</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StartSyncOracleAsk">StartSyncOracleAsk</h3>
+        <p>请求体 同步oracle 数据</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>netwrok</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络,eg:bsc </p></td>
+                </tr>
+              
+                <tr>
+                  <td>provider</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>供应商eg:chainlink,uniswapv2 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>history</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>历史数据，默认为0，即当前时刻开始同步。 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>node</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>访问节点，必须有 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>webhook</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>飞书信息钩子地址，error或者info级别的日志将回调发射到本地中，默认空 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StopSyncBlockAsk">StopSyncBlockAsk</h3>
+        <p>返回体 同步block启动结果</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>需要停止同步的区块网络，如 &#39;bsc&#39; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>delete</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否停止任务同时删除历史同步数据 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StopSyncEventAsk">StopSyncEventAsk</h3>
+        <p>返回体 同步event out 数据</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>event out 合约地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>delete</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否停止任务同时删除历史同步数据 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="pb.StopSyncOracleAsk">StopSyncOracleAsk</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>network</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>区块网络 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>provider</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>供应商eg:chainlink,uniswapv2 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>target</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>喂价源地址 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>delete</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>是否停止任务同时删除历史同步数据 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+        <h3 id="pb.DataCenter">DataCenter</h3>
+        <p>Service for handling data center.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>BlockLast</td>
+                <td><a href="#pb.BlockLastAsk">BlockLastAsk</a></td>
+                <td><a href="#pb.BlockLastReply">BlockLastReply</a></td>
+                <td><p>获取最新block 高度</p></td>
+              </tr>
+            
+              <tr>
+                <td>BlockDetail</td>
+                <td><a href="#pb.BlockDetailAsk">BlockDetailAsk</a></td>
+                <td><a href="#pb.BlockDetailReply">BlockDetailReply</a></td>
+                <td><p>获取指定高度block详情</p></td>
+              </tr>
+            
+              <tr>
+                <td>EventLast</td>
+                <td><a href="#pb.EventLastAsk">EventLastAsk</a></td>
+                <td><a href="#pb.EventLastReply">EventLastReply</a></td>
+                <td><p>获取event out 最新同步高度</p></td>
+              </tr>
+            
+              <tr>
+                <td>EventFilter</td>
+                <td><a href="#pb.EventFilterAsk">EventFilterAsk</a></td>
+                <td><a href="#pb.EventFilterReply">EventFilterReply</a></td>
+                <td><p>获取event 事件列表</p></td>
+              </tr>
+            
+              <tr>
+                <td>OraclePrice</td>
+                <td><a href="#pb.OraclePriceAsk">OraclePriceAsk</a></td>
+                <td><a href="#pb.OraclePriceReply">OraclePriceReply</a></td>
+                <td><p>获取喂价源最新价格</p></td>
+              </tr>
+            
+              <tr>
+                <td>OraclePriceChg</td>
+                <td><a href="#pb.OraclePriceChgAsk">OraclePriceChgAsk</a></td>
+                <td><a href="#pb.OraclePriceChgReply">OraclePriceChgReply</a></td>
+                <td><p>获取喂价源价格变化率</p></td>
+              </tr>
+            
+              <tr>
+                <td>OracleData</td>
+                <td><a href="#pb.OracleDataAsk">OracleDataAsk</a></td>
+                <td><a href="#pb.OracleDataReply">OracleDataReply</a></td>
+                <td><p>获取喂价源价格变动数据集合(K线处理由其他服务完成，此处不处理)</p></td>
+              </tr>
+            
+              <tr>
+                <td>StartSyncBlock</td>
+                <td><a href="#pb.StartSyncBlockAsk">StartSyncBlockAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>新增同步一条block数据</p></td>
+              </tr>
+            
+              <tr>
+                <td>StopSyncBlock</td>
+                <td><a href="#pb.StopSyncBlockAsk">StopSyncBlockAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>停止同步一条block数据</p></td>
+              </tr>
+            
+              <tr>
+                <td>StartSyncEvent</td>
+                <td><a href="#pb.StartSyncEventAsk">StartSyncEventAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>新增同步一条event out数据</p></td>
+              </tr>
+            
+              <tr>
+                <td>StopSyncEvent</td>
+                <td><a href="#pb.StopSyncEventAsk">StopSyncEventAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>停止同步一条event out数据</p></td>
+              </tr>
+            
+              <tr>
+                <td>StartSyncOracle</td>
+                <td><a href="#pb.StartSyncOracleAsk">StartSyncOracleAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>新增同步一条oracle数据</p></td>
+              </tr>
+            
+              <tr>
+                <td>StopSyncOracle</td>
+                <td><a href="#pb.StopSyncOracleAsk">StopSyncOracleAsk</a></td>
+                <td><a href="#pb.ComReply">ComReply</a></td>
+                <td><p>停止同步一条oracle数据</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
 </html>
 

@@ -31,7 +31,7 @@ gen-rpc:
 
 ## 生成grpc doc文件
 gen-doc:
-	docker run --rm -v $(pwd)/doc:/out -v $(pwd)/pb:/protos pseudomuto/protoc-gen-doc
+	docker run --rm -v $(PWD)/doc:/out -v $(PWD)/pb:/protos pseudomuto/protoc-gen-doc
 
 ## Show help
 help:
