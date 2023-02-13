@@ -26,7 +26,7 @@ parser.add_argument("--history", type=int, default=0)
 # 5 访问节点
 parser.add_argument("--node", type=str, default=0)
 # 6 消息推送地址
-parser.add_argument("--webhook", type=str, default='')
+parser.add_argument("--webhook", type=str, default='None')
 
 args = parser.parse_args()
 

@@ -62,7 +62,7 @@ class Task(object):
             time.sleep(2)
             x = self._local_event_height()
             y = self._local_block_height()
-            # log.info(f"x={x} y={y}")
+            log.info(f"local event height={x} local block height={y}")
             if y <= 0:
                 log.warning(f"block height is {y},please check network")
                 continue
@@ -134,7 +134,7 @@ class Task(object):
         :return: 当前event-out对应的同步高度
         """
         cache = self.redis.getdict(self.tag_event)
-        if cache is None:
+        if not cache or not cache.get('height'):
             return 0
         else:
             return cache.get('height')
@@ -145,7 +145,7 @@ class Task(object):
         :return: block高度
         """
         block = self.redis.getdict(self.tag_block)
-        if block is None or not block.get('height'):
+        if not block or not block.get('height'):
             return 0
         else:
             return int(block.get('height'))

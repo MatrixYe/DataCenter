@@ -76,12 +76,12 @@ message EventFilterReply{
   repeated RawEvent events = 1;// evnet数据集合
   message RawEvent{
     uint64 block_number = 1; // block高度
+    uint64 block_timestamp = 7;//block 时间戳
     uint64 index = 2;// event在block中的索引
     string sender = 3;// event发送者地址
     uint32 itype = 4;// event类型
     bytes bvalue = 5;// event数据
     string tx_hash = 6; // event transaction hash
-    uint64 block_timestamp = 7;//block 时间戳
   }
 }
 

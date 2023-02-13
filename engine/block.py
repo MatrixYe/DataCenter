@@ -43,7 +43,7 @@ class Task(object):
             time.sleep(self.interval)
             x = self._local_height()
             y = self._remote_height()
-            # print(f"{self.network} local height:{x} removte height:{y}")
+            log.info(f"{self.network} local height:{x} removte height:{y}")
             if y == 0:
                 log.error("get remote block height =0")
                 time.sleep(5)
@@ -55,14 +55,16 @@ class Task(object):
             for i in range(y - x):
                 n = x + i + 1
                 head = self.eth.block_head(n)
-                self._save_block(head)
+                success = self._save_block(head)
+                log.info(
+                    f"[progress:{round(100 * (i + 1) / (y - x), 1)}%] sync {self.network} block {n} {'success' if success else 'falied'} ")
                 time.sleep(0.5)
         print("----------END----------")
 
     # 保存block head数据
-    def _save_block(self, head):
+    def _save_block(self, head) -> bool:
         if head is None:
-            return
+            return False
         block_height = head.get('number')
         block_timestamp = head.get('timestamp')
         block_hash = self.eth.to_hex(head.get('hash'))
@@ -72,9 +74,10 @@ class Task(object):
             "hash": block_hash,
             "timestamp": block_timestamp,
         }
-        log.info(f"sync {self.network} block success :{data}")
-        self.mongo.insert(self.table_name, data)
-        self._set_block_cache(height=block_height, timestamp=block_timestamp)
+        success = self.mongo.insert(self.table_name, data)
+        if success:
+            self._set_block_cache(height=block_height, timestamp=block_timestamp)
+        return success
 
     # 设置block 同步最新高度缓存，写入redis
     def _set_block_cache(self, height, timestamp):

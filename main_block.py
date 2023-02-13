@@ -24,7 +24,7 @@ parser.add_argument("--interval", type=int, default=10)
 # 连接节点
 parser.add_argument("--node", type=str, default='')
 # 消息推送地址
-parser.add_argument("--webhook", type=str, default='')
+parser.add_argument("--webhook", type=str, default='None')
 
 args = parser.parse_args()
 

@@ -173,25 +173,6 @@ def gen_block_tag(network: str):
     return f"block_{network}"
 
 
-# def gen_block_height_tag(network: str) -> str:
-#     """
-#     生成block同步数据高度缓存rediskey
-#
-#     :param network:
-#     :return:最新高度
-#     """
-#     return f"block_{network}_height"
-#
-#
-# def gen_block_timestamp_tag(network: str) -> str:
-#     """
-#     生成block 同步 时间戳缓存redis key
-#     :param network:
-#     :return: 最新时间戳
-#     """
-#     return f"block_{network}_timestamp"
-#
-
 def gen_event_table_name(network: str, target: str) -> str:
     """
     生成event out 数据 表名
