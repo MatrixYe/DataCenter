@@ -12,4 +12,4 @@ ENV PORT=9005
 EXPOSE 9005
 
 #启动main
-ENTRYPOINT ["sh","-c","python main_server.py --host $HOST --port $PORT"]
+ENTRYPOINT ["sh","-c","python main_rpcs.py --host $HOST --port $PORT"]

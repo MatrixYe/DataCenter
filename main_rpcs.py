@@ -8,7 +8,7 @@
 import argparse
 import logging as log
 
-from server.rpc_server import RpcServer
+from rpcs.rpc_server import RpcServer
 from utils import load_config
 
 log.getLogger().setLevel(log.INFO)

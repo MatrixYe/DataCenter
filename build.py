@@ -25,25 +25,31 @@ engines = [
     },
     {
         'name': 'Rpc Server',
-        'cmd': 'docker build -t server . -f imager/server.Dockerfile',
+        'cmd': 'docker build -t server-rpc . -f imager/server_rpc.Dockerfile',
         'desc': '构建RPC服务镜像'
+    },
+    {
+        'name': 'Web python FastApi',
+        'cmd': 'docker build -t server-web . -f imager/server_web.Dockerfile',
+        'desc': '构建Http FastApi web 服务'
     }
 ]
 if __name__ == '__main__':
     print("-------- START --------")
     for i, e in enumerate(engines):
         print(f"{i + 1}: {e['name']} {e['desc']}")
-    i = int(input("Pleace chose image of engine:  "))
-    if i < 0:
+    try:
+        i = int(input("Pleace chose image of engine:  "))
+        if i == 0:
+            for _, engine in enumerate(engines):
+                print(engine['desc'])
+                print(engine['cmd'])
+                os.system(engine['cmd'])
+        else:
+            cmd = engines[i - 1]['cmd']
+            print(cmd)
+            os.system(cmd)
+        print("--------- END ---------")
+    except Exception as e:
+        print(f"{e} -> error,exit")
         exit()
-    if i == 0:
-        for i, engine in enumerate(engines):
-            print(engine['desc'])
-            print(engine['cmd'])
-            os.system(engine['cmd'])
-    else:
-        cmd = engines[i - 1]['cmd']
-        print(cmd)
-        os.system(cmd)
-
-    print("--------- END ---------")
