@@ -87,7 +87,7 @@ class Task(object):
     # 获取本地block最新高度缓存，读取redis
     def _local_height(self) -> int:
         b = self.redis.getdict(self.tag_block)
-        if b is None:
+        if not b or not b.get('height'):
             return 0
         else:
             return int(b.get('height'))

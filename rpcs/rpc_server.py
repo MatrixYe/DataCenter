@@ -172,7 +172,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         if not webhook:
             webhook = 'None'
         # network: str, origin: int, interval: int, node: str, webhook: str
-        msg = self.control.start_sync_block(network, origin, interval, node, webhook)
+        msg = self.control.start_sync_block(network.lower(), origin, interval, node, webhook)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncBlock(self, request, context):
@@ -228,7 +228,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         if not webhook:
             webhook = 'None'
         # network: str, target: str, origin: int, node: str, delay: int, ranger: int,webhook: str
-        msg = self.control.start_sync_event(network, target, origin, node, delay, ranger, webhook)
+        msg = self.control.start_sync_event(network.lower(), target, origin, node, delay, ranger, webhook)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncEvent(self, request, context):
@@ -246,7 +246,7 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             return server_pb2.ComReply(result='FAILED', msg=msg)
 
         #  network: str, target: str, delete: bool
-        msg = self.control.stop_sync_event(network=network, target=target, delete=delete)
+        msg = self.control.stop_sync_event(network=network.lower(), target=target, delete=delete)
         return server_pb2.ComReply(result="SUCCESS", msg=msg)
 
     def StartSyncOracle(self, request, context):
