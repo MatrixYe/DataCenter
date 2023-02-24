@@ -6,18 +6,17 @@
 # Description: 
 # -------------------------------------------------------------------------------
 
-from typing import Union
+import argparse
+import logging as log
+import os
 
-from fastapi import FastAPI
+log.getLogger().setLevel(log.INFO)
+parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
+parser.add_argument("--host", type=str, default='0.0.0.0')
+parser.add_argument("--port", type=int, default=9006)
+args = parser.parse_args()
 
-app = FastAPI()
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+if __name__ == '__main__':
+    port = args.port
+    log.info(f"Args Input:{args}")
+    os.system(f"uvicorn web.fast_web:app --port {port}")

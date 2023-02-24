@@ -74,7 +74,6 @@ class RedisApi(object):
 
     def setdict(self, name, d: dict):
         return self.set(name, json.dumps(d))
-        pass
 
     def getdict(self, name) -> dict:
         v = self.get(name)

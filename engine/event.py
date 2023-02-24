@@ -82,6 +82,12 @@ class Task(object):
             b = y if (y - x) <= self.range else (x + self.range)
             log.info(f"filter event in ({a} , {b})")
             events, complete = self._filte(a, b)
+            # 1。检测是否访问远程数据成功，如果不成功，跳过本次执行
+            if not complete:
+                # 如访问区块，过滤日志失败，那么陷入
+                time.sleep(1)
+                continue
+            # 2。遍历events，存入数据库
             for i, event in enumerate(events):
                 eid = f"N{event.get('blockNumber')}I{event.get('logIndex')}"
                 block_number = event.get('blockNumber')
@@ -102,20 +108,25 @@ class Task(object):
                     'itype': itype,
                     'bvalue': bvalue
                 }
-                s = f"save event -> sender:{data['sender']} heigh:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']} time:{data['block_timestamp']}"
-                log.info(s)
-                success = self.mongo.insert(self.table_name, data)
-                if success:
-                    # 每次插入event数据成功时，更新event local height为N点
-                    cache = {'height': block_number, 'timestamp': block_timestamp}
-                    self.redis.setdict(self.tag_event, cache)
-                    log.info(f"insert success,update event local height -> {cache}")
-            if complete:
-                # 在本次访问区块链filter正常的情况下，更新event local height 为B点
-                t = self._get_block_timestamp(b)
-                cache = {'height': b, 'timestamp': t}
-                self.redis.setdict(self.tag_event, cache)
-                log.info(f"filter complete,update event local height -> {cache}")
+
+                if self.mongo.insert(self.table_name, data):
+                    s = f"SUCCESS save event -> sender:{data['sender']} heigh:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']} time:{data['block_timestamp']}"
+                    log.info(s)
+                else:
+                    s = f"FAILED save event -> sender:{data['sender']} heigh:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']} time:{data['block_timestamp']}"
+                    log.error(s)
+                # suc = self.mongo.insert(self.table_name, data)
+                # if suc:
+                #     # 每次插入event数据成功时，更新event local height为N点
+                #     cache = {'height': block_number, 'timestamp': block_timestamp}
+                #     self.redis.setdict(self.tag_event, cache)
+                #     log.info(f"insert success,update event local height -> {cache}")
+
+            # 3。更新本地高度缓存
+            t = self._get_block_timestamp(b)
+            cache = {'height': b, 'timestamp': t}
+            self.redis.setdict(self.tag_event, cache)
+            log.info(f"filter complete,update event local height -> {cache}")
 
     def _filte(self, a: int, b: int) -> (List[dict], bool):
         """

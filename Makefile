@@ -1,4 +1,4 @@
-.PHONY: base clear build stop server destroy help
+.PHONY: base clear build start gen-doc gen-rpc help
 IMAGE = imager
 ## 初始化系统
 base:
