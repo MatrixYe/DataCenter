@@ -1,0 +1,25 @@
+POST http://localhost:9006/fuck/you
+Content-Type: application/json
+
+{
+  "start": "20:22"
+}
+
+###
+GET http://localhost:9006/fuck/iterm?cup=C&height=1.88&is_cn=True
+Accept: application/json
+
+###
+GET http://localhost:9006/fuck/iterm?cup=C&height=99.99&is_cn=1
+Accept: application/json
+
+###
+GET http://localhost:9006/fuck
+
+###
+GET http://localhost:9006/fuck/stop/9999
+
+###
+GET http://localhost:9006/fuck/stop/jiji
+
+

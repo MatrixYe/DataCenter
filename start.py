@@ -5,24 +5,47 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
+import logging as log
 import os
 
 from tools.docker_api import DockerApi
 
 docker = DockerApi.from_env()
 
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
+
 
 def start_rpc_server():
-    print("正在启动rpc服务...")
-    os.system("docker rm -f server-rpc")
-    os.system(
-        'docker run -itd --name server-rpc -p 9005:9005 --network net_center -e HOST="0.0.0.0" -e PORT=9005 -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker server-rpc')
+    log.info("正在启动rpc服务... ...")
+    cmd1 = 'docker rm -f server-rpc'
+    c_name = 'server-rpc'
+    c_port = '9005:9005'
+    c_network = 'net_center'
+    c_volume = '/var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
+    c_img = 'server-rpc'
+    c_e_host = 'HOST="0.0.0.0"'
+    c_e_port = '9005'
+    cmd2 = f'docker run -itd --name {c_name} -p {c_port} --network {c_network} -e {c_e_host} -e PORT={c_e_port} -v {c_volume} {c_img}'
+    os.system(cmd1)
+    os.system(cmd2)
 
 
 def start_web_server():
-    print("正在启动web服务... ...")
-    os.system("docker rm -f server-web")
-    os.system("docker run -itd --name server-web -p 9006:8000 server-web")
+    # log.info("正在启动Http服务... ...")
+    # os.system("docker rm -f server-web")
+    # os.system("docker run -itd --name server-http -p 9006:8000 server-web")
+    log.info("正在启动HTTP服务... ...")
+    cmd1 = 'docker rm -f server-http'
+    c_name = 'server-http'
+    c_port = '9006:8000'
+    c_network = 'net_center'
+    c_volume = '/var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
+    c_img = 'server-http'
+    c_e_host = 'HOST="0.0.0.0"'
+    c_e_port = '9006'
+    cmd2 = f'docker run -itd --name {c_name} -p {c_port} --network {c_network} -e {c_e_host} -e PORT={c_e_port} -v {c_volume} {c_img}'
+    os.system(cmd1)
+    os.system(cmd2)
 
 
 tasks = [

@@ -12,6 +12,7 @@ from typing import Union
 from web3 import Web3, HTTPProvider
 from web3.eth import LogReceipt, Contract, ChecksumAddress
 from web3.middleware import geth_poa_middleware
+from web3.middleware import simple_cache_middleware
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -23,7 +24,10 @@ class EthApi(object):
             raise "can not init eth client,endpoint_uri is None"
         self.client: Web3 = Web3(
             HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs=request_kwargs, session=session))
-        self.client.middleware_onion.inject(geth_poa_middleware, layer=0)  # 注入poa中间件,兼容BSc、RInkeby等区块链网络
+        #  注入poa中间件,兼容BSc、RInkeby等区块链网络
+        self.client.middleware_onion.inject(geth_poa_middleware, layer=0)  #
+        # 此属性在验证中间件中频繁调用， 但默认情况下chain_id会添加到 中。 将simple_cache_middleware添加到 以提高性能：simple_cache_middlewaremiddleware_onion
+        self.client.middleware_onion.add(simple_cache_middleware)
 
     def is_connected(self) -> bool:
         """
@@ -38,6 +42,10 @@ class EthApi(object):
         :return:
         """
         return self.client.eth.chain_id
+
+    def chain_name(self):
+        # self.client.eth
+        pass
 
     @classmethod
     def from_node(cls, node: str):

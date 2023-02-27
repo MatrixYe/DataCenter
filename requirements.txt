@@ -3,6 +3,6 @@ web3~=5.31.3
 redis~=4.4.0
 pymongo~=4.3.3
 setuptools==67.2.0
-grpcio==1.51.1
 uvicorn==0.20.0
 fastapi==0.92.0
+pydantic==1.10.5

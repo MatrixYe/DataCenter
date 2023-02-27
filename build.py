@@ -26,12 +26,12 @@ engines = [
     {
         'name': 'Rpc Server',
         'cmd': 'docker build -t server-rpc . -f imager/server_rpc.Dockerfile',
-        'desc': '构建RPC服务镜像'
+        'desc': '构建RPC-server服务镜像'
     },
     {
-        'name': 'Web python FastApi',
-        'cmd': 'docker build -t server-web . -f imager/server_web.Dockerfile',
-        'desc': '构建Http FastApi web 服务'
+        'name': 'Http server',
+        'cmd': 'docker build -t server-http . -f imager/server_http.Dockerfile',
+        'desc': '构建Http-server服务镜像'
     }
 ]
 if __name__ == '__main__':

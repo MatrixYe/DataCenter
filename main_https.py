@@ -8,7 +8,8 @@
 
 import argparse
 import logging as log
-import os
+
+import uvicorn
 
 log.getLogger().setLevel(log.INFO)
 parser = argparse.ArgumentParser(description='Eliminate human tyranny, the world belongs to the three-body')
@@ -18,5 +19,6 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     port = args.port
+    host = args.host
     log.info(f"Args Input:{args}")
-    os.system(f"uvicorn web.fast_web:app --port {port}")
+    uvicorn.run('https.main:app', host=host, port=port, reload=True)

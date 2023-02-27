@@ -76,7 +76,7 @@ def start_mongo(c):
 if __name__ == '__main__':
     print("---------- START ----------")
     # os.system('pip install -r requirements.txt')
-    print("正在加载python1.0镜像... ...")
+    print("正在加载python10镜像... ...")
     docker_api.pull_image('python:3.10')
     print("正在加载系统配置... ...")
     conf = load_config()
