@@ -10,37 +10,11 @@ import platform
 from typing import Union
 
 # 以太坊系列 区块网络名称及chain-id
-NETWORK_MAP = {
-    "MAINNET": 1,
-    "ROPSTEN": 3,
-    "RINKEBY": 4,
-    "GOERLI": 5,
-    "KOVAN": 42,
-    "MATIC": 137,
-    "MATIC_TESTNET": 80001,
-    "FANTOM": 250,
-    "FANTOM_TESTNET": 4002,
-    "XDAI": 100,
-    "BSC": 56,
-    "BSC_TESTNET": 97,
-    "ARBITRUM": 42161,
-    "ARBITRUM_GOERLI": 42163,
-    "ARBITRUM_TESTNET": 79377087078960,
-    "MOONBEAM_TESTNET": 1287,
-    "AVALANCHE": 43114,
-    "AVALANCHE_TESTNET": 43113,
-    "HECO": 128,
-    "HECO_TESTNET": 256,
-    "HARMONY": 1666600000,
-    "HARMONY_TESTNET": 1666700000,
-    "OKEX": 66,
-    "OKEX_TESTNET": 65,
-    "CELO": 42220,
-    "PALM": 11297108109,
-    "PALM_TESTNET": 11297108099,
-    "MOONRIVER": 1285,
-    "FUSE": 122,
-}
+with open('networks.json', 'r') as f:
+    _networks = json.load(f)
+
+with open('config.json', 'r') as f:
+    _config = json.load(f)
 
 
 def load_config(file_path=None) -> dict:
@@ -49,10 +23,7 @@ def load_config(file_path=None) -> dict:
     :param file_path:
     :return:
     """
-    if file_path is None:
-        file_path = "config.json"
-    with open(file_path, 'r') as f:
-        return json.load(f)
+    return _config
 
 
 def load_redis_config() -> dict:
@@ -205,7 +176,7 @@ def check_network(network: str) -> bool:
     if not network:
         return False
 
-    if network.upper() not in NETWORK_MAP.keys():
+    if network.lower() not in _networks.keys():
         return False
     return True
 
@@ -216,7 +187,27 @@ def get_chain_id(network: str) -> int:
     :param network: 区块网络名称
     :return: chain id
     """
-    cid = NETWORK_MAP.get(network)
+    if not network:
+        return 0
+    cid = _networks.get(network.lower())
     if not cid:
-        return -1
+        return 0
     return cid
+
+
+def get_network_name(chain_id: int) -> Union[str, None]:
+    """
+    通过chainid获取区块链网络名称
+    :rtype: object
+    :param chain_id:
+    :return: 
+    """
+
+    for k, v in _networks.items():
+        if v == chain_id:
+            return k
+    return None
+
+
+def support_network() -> Union[dict, None]:
+    return _networks

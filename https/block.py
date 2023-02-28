@@ -25,5 +25,45 @@ class StartBlockReq(BaseModel):
 
 
 @router.post(path="/start")
-async def start_sync_event():
-    pass
+async def start_sync_block():
+    """
+        启动一条新的block链同步的
+    :return:
+    """
+    return "TODO"
+
+
+@router.post(path="/stop")
+async def stop_sync_block():
+    """
+
+    :return:
+    """
+    return "TODO"
+
+
+@router.post(path="/restart")
+async def restart_sync_block():
+    """
+
+    :return:
+    """
+    return "TODO"
+
+
+@router.post(path="/last")
+async def last_block():
+    """
+
+    :return:
+    """
+    return "TODO"
+
+
+@router.post(path="/detail")
+async def detail_block():
+    """
+
+    :return:
+    """
+    return "TODO"
