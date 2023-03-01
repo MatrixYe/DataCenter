@@ -7,7 +7,7 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
-from typing import List
+from typing import List, Union
 
 import utils
 from tools.eth_api import EthApi
@@ -37,7 +37,8 @@ class Task(object):
         if not self.eth.is_address(self.target):
             log.error(f"event out target:{self.target} is not a right address ")
             exit()
-        self.table_name = utils.gen_event_table_name(network=self.network, target=self.target)  # event_bsc_77ba-ab12
+        self.event_table_name = utils.gen_event_table_name(self.network, self.target)  # event_bsc_77ba-ab12
+        self.block_table_name = utils.gen_block_table_name(self.network)
         self.tag_event = utils.gen_event_tag(network=self.network, target=self.target)
         self.tag_block = utils.gen_block_tag(network=self.network)
         self.contract = self._gen_contract()
@@ -109,7 +110,7 @@ class Task(object):
                     'bvalue': bvalue
                 }
 
-                if self.mongo.insert(self.table_name, data):
+                if self.mongo.insert(self.event_table_name, data):
                     s = f"SUCCESS save event -> sender:{data['sender']} heigh:{data['block_number']} index:{data['index']} tx_hash:{data['tx_hash']} time:{data['block_timestamp']}"
                     log.info(s)
                 else:
@@ -209,9 +210,23 @@ class Task(object):
         if block:
             return block.get('timestamp')
         else:
-            head = self.eth.block_head(h)
             log.warning("can not find block in database,so to net")
+            head = self.eth.block_head(h)
             if head:
-                return head.get('timestamp')
-            else:
-                return int(time.time())
+                self._save_block(head)
+            return head.get('timestamp') if head else int(time.time())
+
+    # 保存block head数据
+    def _save_block(self, head) -> Union[dict, None]:
+        if head is None:
+            return None
+        block_height = head.get('number')
+        block_timestamp = head.get('timestamp')
+        block_hash = self.eth.to_hex(head.get('hash'))
+        data = {
+            "_id": block_height,
+            "hash": block_hash,
+            "timestamp": block_timestamp,
+        }
+        success = self.mongo.insert(self.block_table_name, data)
+        return data if success else None

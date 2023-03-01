@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import logging as log
 import time
+from typing import Union
 
 import utils
 from tools.eth_api import EthApi
@@ -51,24 +52,32 @@ class Task(object):
             if x == 0:
                 x = self.origin if self.origin else y - 3
             if x >= y:
+                log.warning("can not sync block ,because local height > remote height")
                 continue
-            for i in range(y - x):
-                n = x + i + 1
-                head = self.eth.block_head(n)
-                success = self._save_block(head)
-                log.info(
-                    f"[progress:{round(100 * (i + 1) / (y - x), 1)}%] sync {self.network} block {n} {'success' if success else 'falied'} ")
-                time.sleep(0.5)
+            # 更换block同步策略,间隔性同步，block非重要数据，只保存缓存
+            head = self.eth.block_head(y)
+            data = self._save_block(head)
+            if data:
+                self._set_block_cache(height=y, timestamp=data['timestamp'])
+                log.info(f"save block Success -> height={y}")
+            else:
+                log.warning(f"save block Failed -> height={y}")
+            # for i in range(y - x):
+            #     n = x + i + 1
+            #     head = self.eth.block_head(n)
+            #     success = self._save_block(head)
+            #     log.info(
+            #         f"[progress:{round(100 * (i + 1) / (y - x), 1)}%] sync {self.network} block {n} {'success' if success else 'falied'} ")
+            #     time.sleep(0.2)
         print("----------END----------")
 
     # 保存block head数据
-    def _save_block(self, head) -> bool:
+    def _save_block(self, head) -> Union[dict, None]:
         if head is None:
-            return False
+            return None
         block_height = head.get('number')
         block_timestamp = head.get('timestamp')
         block_hash = self.eth.to_hex(head.get('hash'))
-
         data = {
             "_id": block_height,
             "hash": block_hash,
@@ -76,8 +85,9 @@ class Task(object):
         }
         success = self.mongo.insert(self.table_name, data)
         if success:
-            self._set_block_cache(height=block_height, timestamp=block_timestamp)
-        return success
+            return data
+        else:
+            return None
 
     # 设置block 同步最新高度缓存，写入redis
     def _set_block_cache(self, height, timestamp):
