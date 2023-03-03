@@ -52,7 +52,7 @@ class Task(object):
             if x == 0:
                 x = self.origin if self.origin else y - 3
             if x >= y:
-                log.warning("can not sync block ,because local height > remote height")
+                log.warning(f"can not sync block ,because local height {x} >= remote height {y}")
                 continue
             # 更换block同步策略,间隔性同步，block非重要数据，只保存缓存
             head = self.eth.block_head(y)

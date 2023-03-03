@@ -7,7 +7,8 @@
 # -------------------------------------------------------------------------------
 import os
 
-import docker
+# import docker
+from docker import DockerClient, from_env
 
 
 class DockerApi(object):
@@ -16,13 +17,37 @@ class DockerApi(object):
     """
 
     def __init__(self, client):
-        self.client = client
+        self.client: DockerClient = client
         pass
 
     @classmethod
     def from_env(cls):
-        c = docker.from_env()
+        c = from_env()
         return cls(c)
+
+    def run_container(self):
+        self.client.containers.run()
+        pass
+
+    def _all_container(self):
+        return self.client.containers.list(all=True)
+
+    def stop_container(self, name_or_id: str):
+        for a in self._all_container():
+            if a.name == name_or_id or a.short_id == name_or_id:
+                a.stop()
+                return True, "success"
+        return False, "stop container failed,can not find it by name or short_id"
+
+    def remove_container(self, name_or_id, force=True):
+        for a in self._all_container():
+            # print(f"{a.name} {a.status} {a.image.tags} {a.labels} {a.ports}")
+            if a.name == name_or_id or a.short_id == name_or_id:
+                if not force and a.status == 'running':
+                    return False, "remove container failed,it is running ,but force = fasle"
+                a.remove(force=force)
+                return True, "success"
+        return False, "remove container failed,can not find it by name or short_id"
 
     def images(self) -> list:
         """

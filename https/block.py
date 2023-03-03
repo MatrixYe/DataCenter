@@ -54,6 +54,7 @@ async def start_sync_block(ask: AskStartBlock):
     coll = utils.gen_block_table_name(network)
     container = utils.gen_block_continal_name(network)
     tag = utils.gen_block_tag(network)
+
     return Reply.suc(
         {
             "chain_id": ask.chain_id,
