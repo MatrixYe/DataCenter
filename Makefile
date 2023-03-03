@@ -13,6 +13,7 @@ clear:
 build:
 	echo "hello ,this is build"
 	python build.py
+
 ## 启动相关服务容器
 start:
 	python start.py

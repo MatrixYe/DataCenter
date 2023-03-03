@@ -54,8 +54,8 @@ class EthApi(object):
         :param node:
         :return:
         """
-        if not node:
-            raise Exception('creart eth client failed:node is empty')
+        # if not node:
+        #     raise Exception('creart eth client failed:node is empty')
         parmas = dict()
         parmas['endpoint_uri'] = node
         parmas['request_kwargs'] = None

@@ -31,19 +31,17 @@ def start_rpc_server():
 
 
 def start_web_server():
-    # log.info("正在启动Http服务... ...")
-    # os.system("docker rm -f server-web")
-    # os.system("docker run -itd --name server-http -p 9006:8000 server-web")
     log.info("正在启动HTTP服务... ...")
     cmd1 = 'docker rm -f server-http'
     c_name = 'server-http'
-    c_port = '9006:8000'
+    c_port = '9006:9006'
     c_network = 'net_center'
     c_volume = '/var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
     c_img = 'server-http'
     c_e_host = 'HOST="0.0.0.0"'
     c_e_port = '9006'
     cmd2 = f'docker run -itd --name {c_name} -p {c_port} --network {c_network} -e {c_e_host} -e PORT={c_e_port} -v {c_volume} {c_img}'
+    log.info(cmd2)
     os.system(cmd1)
     os.system(cmd2)
 

@@ -16,7 +16,6 @@ def create_app() -> FastAPI:
     _app.include_router(block.router, prefix="/block")
     _app.include_router(event.router, prefix="/event")
     _app.include_router(fuck.router, prefix='/fuck')
-    _app.include_router(fuck.router, prefix='/fuck')
     _app.include_router(tool.router, prefix='/tool')
     return _app
 

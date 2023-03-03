@@ -25,7 +25,4 @@ class Reply(object):
 
     @classmethod
     def com(cls, data, msg=None):
-        if data:
-            return cls.suc(data)
-        else:
-            return cls.err(msg)
+        return cls.suc(data) if data else cls.err(msg)

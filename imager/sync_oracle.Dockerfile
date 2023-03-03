@@ -1,9 +1,8 @@
-FROM python:3.10
+FROM basic-py:latest
 WORKDIR /app
 ADD . .
-RUN python --version  \
-    && pip install -r requirements.txt  \
-    && pip install -e .
+RUN pip install -e .
+
 
 # 区块网络
 ENV NETWORK=""
