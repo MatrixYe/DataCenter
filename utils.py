@@ -9,12 +9,15 @@ import json
 import platform
 from typing import Union
 
-# 以太坊系列 区块网络名称及chain-id
-with open('networks.json', 'r') as f:
-    _networks = json.load(f)
+import toml
 
-with open('config.json', 'r') as f:
-    _config = json.load(f)
+# 以太坊系列 区块网络名称及chain-id
+with open('networks.toml', 'r') as f:
+    _networks = toml.load(f, _dict=dict)
+    # _networks = json.load(f)
+
+with open('config.toml', 'r') as f:
+    _config = toml.load(f, _dict=dict)
 
 
 def load_config(file_path=None) -> dict:
@@ -33,15 +36,6 @@ def load_redis_config() -> dict:
     """
     c = load_config()
     return c['redis']
-
-
-def load_pg_config() -> dict:
-    """
-    加载postgres配置
-    :return:
-    """
-    c = load_config()
-    return c['postgres']
 
 
 def load_docker_net() -> dict:
@@ -69,8 +63,8 @@ def load_eventout_abi(file_path: str = None) -> Union[dict, None]:
     """
     if file_path is None:
         file_path = './source/EventOut.json'
-    with open(file_path, 'r') as f:
-        return json.load(f)
+    with open(file_path, 'r') as fs:
+        return json.load(fs)
 
 
 def is_address(addr: str) -> bool:

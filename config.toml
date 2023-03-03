@@ -1,0 +1,59 @@
+# docker 虚拟网，所有容器需要加入此网络
+network = "net_center"
+
+# redis 容器配置
+[redis.docker]
+img = "redis:latest"
+name = "center_redis"
+network = "net_center"
+network-alias = "redishost"
+password = "@password"
+port = "9002:6379"
+restart = "always"
+volume = "v_center_redis"
+
+# redis对内访问配置
+[redis.inside]
+db = 0
+host = "redishost"
+password = "@password"
+port = 6379
+
+# redis对外访问配置
+[redis.outside]
+db = 0
+host = "localhost"
+password = "@password"
+port = 9002
+
+# mongo容器配置
+[mongo.docker]
+img = "mongo:latest" # 镜像源
+name = "center_mongo" # 容器名
+network = "net_center" # 加入虚拟网
+network-alias = "mongohost"# 在虚拟网中的别名
+port = "9003:27017" # 端口映射
+restart = "always"# 重启策略
+user = "user" # 用户名，-e 时传入
+password = "@password"# 数据库密码,-e 时传入
+volume = "v_center_mongo" # 数据库数据挂载
+cache = 1 # 容器使用缓存大小，默认1g
+memory = "1G" # 最大内存占用-物理内存
+memory_swap = "1G" #最大内存占用-虚拟内存
+
+# mongo对内开放
+[mongo.inside]
+db = "data_center" # db名称
+host = "mongohost" # 访问地址
+password = "@password"# 访问密码
+port = 27017 # 访问端口
+user = "user" # 用户名
+
+# mongo容器对外开放接口
+[mongo.outside]
+db = "data_center"
+host = "localhost"
+password = "@password"
+port = 9003
+user = "user"
+

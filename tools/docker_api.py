@@ -145,7 +145,7 @@ class DockerApi(object):
             if name in self.continers(True):
                 print(f"container:{name} is exist bud not run --> remove it")
                 os.system(f"docker rm {name}")
-            print(f"container{name} --> creating")
+            print(f"container:{name} --> creating")
             cmd = f"docker run -itd -p {port} --name {name} --network {network} --network-alias {network_alias} -v {volume}:/data --restart={restart} {img} --requirepass {password} "
             print(f"CMD: {cmd}")
             os.system(cmd)
