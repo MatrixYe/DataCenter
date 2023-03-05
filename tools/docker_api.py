@@ -6,11 +6,14 @@
 # Description: 
 # -------------------------------------------------------------------------------
 import os
+from typing import Union, List
 
 # import docker
 from docker import DockerClient, from_env
+from docker.models.containers import Container
 
 
+# noinspection PyBroadException
 class DockerApi(object):
     """
     Docker Client Api
@@ -25,12 +28,42 @@ class DockerApi(object):
         c = from_env()
         return cls(c)
 
-    def run_container(self):
-        self.client.containers.run()
-        pass
+    # ------------Container----------------
+    def test(self):
+        c = self.client.containers.run('alpine', 'echo hello world')
 
-    def _all_container(self):
+    def run_container(self, image, name, network, volumes: Union[List[dict], None] = None,
+                      ports: Union[dict, None] = None,
+                      environment: Union[dict, None] = None, restart: Union[dict, None] = None,
+                      commond=None) -> Union[Container, None]:
+        # docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE="{node}" -e WEBHOOK={webhook} --network {net} --network-alias {net_alias} --restart={restart} {img}'
+
+        #               {'/home/user1/': {'bind': '/mnt/vol2', 'mode': 'rw'},
+        #                      '/var/www': {'bind': '/mnt/vol1', 'mode': 'ro'}}
+        #          environment (dict or list): Environment variables to set inside
+        #                 the container, as a dictionary or a list of strings in the
+        #                 format ``["SOMEVARIABLE=xxx"]``.
+
+        # ``{"Name": "on-failure", "MaximumRetryCount": 5}``
+        try:
+            container = self.client.containers.run(image=image, detach=True, name=name, network=network,
+                                                   volumes=volumes,
+                                                   ports=ports,
+                                                   environment=environment, restart_policy=restart,
+                                                   command=commond)
+            return container
+        except Exception as e:
+            print(f"ERROR:run container failed:{e}")
+            return None
+
+    def _all_container(self) -> List[Container]:
         return self.client.containers.list(all=True)
+
+    def get_container(self, name_or_id) -> Union[Container, None]:
+        for c in self._all_container():
+            if c.name == name_or_id:
+                return c
+        return None
 
     def stop_container(self, name_or_id: str):
         for a in self._all_container():
@@ -39,7 +72,7 @@ class DockerApi(object):
                 return True, "success"
         return False, "stop container failed,can not find it by name or short_id"
 
-    def remove_container(self, name_or_id, force=True):
+    def remove_container(self, name_or_id, force=True) -> (bool, str):
         for a in self._all_container():
             # print(f"{a.name} {a.status} {a.image.tags} {a.labels} {a.ports}")
             if a.name == name_or_id or a.short_id == name_or_id:
@@ -49,6 +82,15 @@ class DockerApi(object):
                 return True, "success"
         return False, "remove container failed,can not find it by name or short_id"
 
+    def continers(self, flag=False) -> list:
+        """
+        获取docker容器列表
+        :param flag:
+        :return:
+        """
+        return [a.name for a in self.client.containers.list(all=flag)]
+
+    # ------------Image----------------
     def images(self) -> list:
         """
         获取docker镜像列表
@@ -62,42 +104,6 @@ class DockerApi(object):
                 result.append(image)
         return result
 
-    #
-    def networks(self) -> list:
-        """
-        获取docker网络列表
-        :return:
-        """
-        return [a.name for a in self.client.networks.list()]
-
-    #
-    def create_network(self, name: str):
-        """
-        创建docker网络
-        :param name:
-        :return:
-        """
-        if name not in self.networks():
-            print(f"network:{name} --> creating")
-            self.client.networks.create(name)
-        else:
-            print(f"network:{name} is exited --> pass")
-
-    def continers(self, flag=False) -> list:
-        """
-        获取docker容器列表
-        :param flag:
-        :return:
-        """
-        return [a.name for a in self.client.containers.list(all=flag)]
-
-    def volumes(self) -> list:
-        """
-        获取docker挂载列表
-        :return:
-        """
-        return [a.name for a in self.client.volumes.list()]
-
     def pull_image(self, img_name: str):
         """
         拉取docker镜像
@@ -110,7 +116,7 @@ class DockerApi(object):
         else:
             print(f"image:{img_name} is exited --> pass")
 
-    def rm_image(self, img_name: str, force: bool):
+    def remove_image(self, img_name: str, force: bool):
         """
         移除镜像
         :param img_name:
@@ -124,21 +130,27 @@ class DockerApi(object):
                 return
         print(f"image:{img_name} is not find ")
 
-    def rm_container(self, name, force: bool):
+    # ------------Network----------------
+    def networks(self) -> list:
         """
-        移除容器
-        :param name:
-        :param force:
+        获取docker网络列表
         :return:
         """
-        cs = self.client.containers.list(all=True)
-        for i, c in enumerate(cs):
-            if c.name == name or c.short_id == name:
-                print(f"find container:{c.name} --> remove it")
-                c.remove(force=force)
-                return
-        print(f"container:{name} is not finded")
+        return [a.name for a in self.client.networks.list()]
 
+    def create_network(self, name: str):
+        """
+        创建docker网络
+        :param name:
+        :return:
+        """
+        if name not in self.networks():
+            print(f"network:{name} --> creating")
+            self.client.networks.create(name)
+        else:
+            print(f"network:{name} is exited --> pass")
+
+    # ------------Volume----------------
     def create_volume(self, name: str):
         """
         创建docker挂载
@@ -151,6 +163,13 @@ class DockerApi(object):
             self.client.volumes.create(name)
         else:
             print(f"volume:{name} is exited --> pass")
+
+    def volumes(self) -> list:
+        """
+        获取docker挂载列表
+        :return:
+        """
+        return [a.name for a in self.client.volumes.list()]
 
     # 创建并运行redis容器
     def run_redis_container(self, name, port, network, network_alias, volume, restart, img, password):
