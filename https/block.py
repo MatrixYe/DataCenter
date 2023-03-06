@@ -34,10 +34,20 @@ class AskStartBlock(BaseModel):
     check_node: bool = True
 
 
+class AskRestartBlock(BaseModel):
+    network: Union[str, None] = None
+    chain_id: Union[int, None] = None
+    node: str
+    interval: int = 10
+    webhook: Union[str, None] = 'None'
+    check_node: bool = True
+    clear: bool = False
+
+
 class AskRemoveBlock(BaseModel):
     network: Union[str, None] = None
     chain_id: Union[int, None] = None
-    delete: bool = False
+    clear: bool = False
 
 
 @router.post(path="/start")
@@ -87,7 +97,7 @@ async def start_sync_block(ask: AskStartBlock):
 
 
 @router.post(path="/restart")
-async def restart_sync_block(ask: AskStartBlock):
+async def restart_sync_block(ask: AskRestartBlock):
     """
 
     :return:
@@ -113,8 +123,8 @@ async def restart_sync_block(ask: AskStartBlock):
 
     coll = utils.gen_block_table_name(_network)
     tag = utils.gen_block_tag(_network)
-    cn, ac = block_ctrl.start_block(network=_network, origin=0, interval=ask.interval, node=ask.node,
-                                    webhook=ask.webhook, restart=True)
+    cn, ac = block_ctrl.restart_block(network=_network, origin=0, interval=ask.interval, node=ask.node,
+                                      webhook=ask.webhook, clear=ask.clear)
     if 'failed' in ac or cn is None:
         return Reply.err("start container failed!!")
     if 'pass' in ac:
@@ -138,7 +148,7 @@ async def remove_sync_block(ask: AskRemoveBlock):
     """
     network = ask.network
     cid = ask.chain_id
-    delete = ask.delete
+    delete = ask.clear
 
     _network = utils.get_network_name(cid) if cid else network
     if not _network:
@@ -147,11 +157,11 @@ async def remove_sync_block(ask: AskRemoveBlock):
     cname, msg = block_ctrl.remove_block(network=_network, delete=delete)
     if 'remove' not in msg:
         return Reply.err(f'can not remove {cname},container is not exist')
-    return Reply.suc(data={"network": _network, "container": cname, "removedb": delete, "result": msg})
+    return Reply.suc(data={"network": _network, "container": cname, "clear": delete, "result": msg})
 
 
 @router.get(path="/last")
 async def last_block(network: Union[str, None] = None, chain_id: Union[int, None] = None):
-    network_ = utils.get_network_name(chain_id) if chain_id else network
-    last = block_ctrl.last_block(network_)
-    return Reply.com(last, f'can not fint last block by network {network_}')
+    _network = utils.get_network_name(chain_id) if chain_id else network
+    last = block_ctrl.last_block(_network)
+    return Reply.com(last, f'can not fint last block by network {_network}')

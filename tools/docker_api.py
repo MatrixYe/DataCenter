@@ -35,7 +35,7 @@ class DockerApi(object):
     def run_container(self, image, name, network, volumes: Union[List[dict], None] = None,
                       ports: Union[dict, None] = None,
                       environment: Union[dict, None] = None, restart: Union[dict, None] = None,
-                      commond=None) -> Union[Container, None]:
+                      commond=None) -> (Union[Container, None], Union[Exception, None]):
         # docker run -itd --name {name} -e NETWORK={network} -e ORIGIN={origin} -e INTERVAL={interval} -e NODE="{node}" -e WEBHOOK={webhook} --network {net} --network-alias {net_alias} --restart={restart} {img}'
 
         #               {'/home/user1/': {'bind': '/mnt/vol2', 'mode': 'rw'},
@@ -51,10 +51,10 @@ class DockerApi(object):
                                                    ports=ports,
                                                    environment=environment, restart_policy=restart,
                                                    command=commond)
-            return container
+            return container, None
         except Exception as e:
             print(f"ERROR:run container failed:{e}")
-            return None
+            return None, e
 
     def _all_container(self) -> List[Container]:
         return self.client.containers.list(all=True)

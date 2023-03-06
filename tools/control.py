@@ -57,20 +57,24 @@ class BlockCtrl(_Ctrl):
         super().__init__(conf)
 
     def _start_sync_block(self, c_name, c_net, c_env, c_restart) -> Union[Container, None]:
-        container = self.docker.run_container(image=IMG_SYNC_BLOCK,
-                                              name=c_name,
-                                              network=c_net,
-                                              volumes=None,
-                                              ports=None,
-                                              environment=c_env, restart=c_restart, commond=None)
+        container, _ = self.docker.run_container(image=IMG_SYNC_BLOCK,
+                                                 name=c_name,
+                                                 network=c_net,
+                                                 volumes=None,
+                                                 ports=None,
+                                                 environment=c_env, restart=c_restart, commond=None)
         return container
 
+    def _drop_block_data(self, network):
+        table_name = utils.gen_block_table_name(network)
+        tag_block = utils.gen_block_tag(network)
+        self.mongo.drop(table_name)
+        self.redis.delele(tag_block)
+
     # 开始同步block区块高度
-    def start_block(self, network: str, origin: int, interval: int, node: str, webhook: str,
-                    restart: bool = False) -> (Container, str):
+    def start_block(self, network: str, origin: int, interval: int, node: str, webhook: str) -> (Container, str):
         """
         新增同步block链,运行容器
-        :param restart:
         :param network:
         :param origin:
         :param interval:
@@ -80,7 +84,6 @@ class BlockCtrl(_Ctrl):
         """
         c_net = utils.load_docker_net()
         c_name = utils.gen_block_continal_name(network=network)
-        # c_restart = {"Name": "on-failure", "MaximumRetryCount": 3}
         c_restart = {"Name": "always"}
         c_env = {
             "NETWORK": network,
@@ -94,22 +97,42 @@ class BlockCtrl(_Ctrl):
         # 容器不存在->创建
         if old_container is None:
             print("container is not exist --> creating")
-            new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            new_container, err = self._start_sync_block(c_name, c_net, c_env, c_restart)
             return (new_container, 'create') if new_container else (None, 'failed')
-        # 容器存在+重启->移除&创建
-        if old_container and restart:
-            self.remove_block(network, delete=False)
-            new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
-            return (new_container, 'remove&retart&create') if new_container else (None, 'failed')
         # 容器存在+运行状态+不重启 -> 跳过
-        if old_container and old_container.status == 'running':
+        elif old_container.status == 'running':
             return old_container, 'pass'
         # 容器存在+停止状态+不重启 -> 移除+创建
-        if old_container and old_container.status != 'running':
+        else:
             self.remove_block(network, delete=False)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
-            return (new_container, 'remove&create') if new_container else (None, 'failed')
-        return None, 'unknow'
+            return (new_container, 'remove|create') if new_container else (None, 'failed')
+
+    def restart_block(self, network: str, origin: int, interval: int, node: str, webhook: str, clear=False):
+        c_net = utils.load_docker_net()
+        c_name = utils.gen_block_continal_name(network=network)
+        c_restart = {"Name": "always"}
+        c_env = {
+            "NETWORK": network,
+            "ORIGIN": origin,
+            "INTERVAL": interval,
+            "NODE": node,
+            "WEBHOOK": webhook,
+        }
+        old_container = self.docker.get_container(c_name)
+        # 容器不存在->创建
+        if old_container is None:
+            print("container is not exist --> creating")
+            if clear:
+                self._drop_block_data(network)
+            new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            return (new_container, 'create') if new_container else (None, 'failed')
+        # 容器存在
+        else:
+            self.remove_block(network, delete=clear)
+            new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            _act = 'remove|clear|create' if clear else 'remove|create'
+            return (new_container, _act) if new_container else (None, 'failed')
 
     # 停止同步block data
     def remove_block(self, network: str, delete: bool) -> (str, str):
@@ -120,18 +143,17 @@ class BlockCtrl(_Ctrl):
         :return:
         """
         container_name = utils.gen_block_continal_name(network)
-        table_name = utils.gen_block_table_name(network=network)
-        tag_block = utils.gen_block_tag(network=network)
         container = self.docker.get_container(container_name)
+        ret_act = ''
         if container is None:
-            return container_name, 'noexist&pass'
-        _, _ = self.docker.remove_container(container_name, force=True)
-
+            ret_act += 'noexist|pass'
+        else:
+            _, _ = self.docker.remove_container(container_name, force=True)
+            ret_act += 'remove'
         if delete:
-            self.mongo.drop(table_name)
-            self.redis.delele(tag_block)
-            return container_name, 'remove&clear'
-        return container_name, 'remove'
+            self._drop_block_data(network)
+            ret_act += '|clear'
+        return container_name, ret_act
 
     # 获取最新同步的block高度
     def last_block(self, network) -> Union[dict, None]:
@@ -143,13 +165,92 @@ class EventCtrl(_Ctrl):
     def __init__(self, conf):
         super().__init__(conf)
 
-    def start_event(self):
-        pass
+    def _start_event(self, c_name, c_net, c_env, c_restart) -> Union[Container, None]:
+        container, _ = self.docker.run_container(image=IMG_SYNC_EVENT,
+                                                 name=c_name,
+                                                 network=c_net,
+                                                 volumes=None,
+                                                 ports=None,
+                                                 environment=c_env,
+                                                 restart=c_restart,
+                                                 commond=None)
+        return container
 
-    def remove_event(self):
-        pass
+    def start_event(self, network, target, origin, node, delay, ranger, webhook) -> (Container, str):
+        c_net = utils.load_docker_net()
+        c_name = utils.gen_event_container_name(network=network, target=target)
+        c_restart = {"Name": "always"}
+        c_env = {
+            "NETWORK": network,
+            "TARGET": target,
+            "ORIGIN": origin,
+            "NODE": node,
+            "DELAY": delay,
+            "RANGE": ranger,
+            "WEBHOOK": webhook,
+        }
+        old_container = self.docker.get_container(c_name)
+        # 容器不存在->创建
+        if old_container is None:
+            print("container is not exist --> creating")
+            new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            return (new_container, 'create') if new_container else (None, 'failed')
+        # 容器存在+运行状态 -> 跳过
+        elif old_container.status == 'running':
+            return old_container, 'pass'
+        # 容器存在+停止状态+不重启 -> 移除+创建
+        else:
+            self.remove_event(network, target, delete=False)
+            new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            return (new_container, 'remove|create') if new_container else (None, 'failed')
 
-    def restart_event(self):
-        pass
+    def restart_event(self, network, target, origin, node, delay, ranger, webhook, cleardb):
+        c_net = utils.load_docker_net()
+        c_name = utils.gen_event_container_name(network=network, target=target)
+        c_restart = {"Name": "always"}
+        c_env = {
+            "NETWORK": network,
+            "TARGET": target,
+            "ORIGIN": origin,
+            "NODE": node,
+            "DELAY": delay,
+            "RANGE": ranger,
+            "WEBHOOK": webhook,
+        }
+        old_container = self.docker.get_container(c_name)
+        # 容器不存在->创建
+        if old_container is None:
+            print("container is not exist --> creating")
+            if cleardb:
+                self._drop_event_data(network, target)
+            new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            return (new_container, 'create') if new_container else (None, 'failed')
+        # 容器存在+停止状态+不重启 -> 移除+创建
+        else:
+            self.remove_event(network, target, delete=cleardb)
+            new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            return (new_container, 'remove|create') if new_container else (None, 'failed')
 
-    pass
+    def _drop_event_data(self, network, target):
+        table_name = utils.gen_event_table_name(network, target)
+        tag_block = utils.gen_event_tag(network, target)
+        self.mongo.drop(table_name)
+        self.redis.delele(tag_block)
+
+    def remove_event(self, network, target, delete):
+        container_name = utils.gen_event_container_name(network, target)
+        container = self.docker.get_container(container_name)
+        ret_act = ''
+        if container is None:
+            ret_act += 'noexist|pass'
+        else:
+            _, _ = self.docker.remove_container(container_name, force=True)
+            ret_act += 'remove'
+        if delete:
+            self._drop_event_data(network, target)
+            ret_act += '|clear'
+        return container_name, ret_act
+
+    def last_event(self, network, target):
+        tag = utils.gen_event_tag(network, target)
+        return self.redis.getdict(tag)
