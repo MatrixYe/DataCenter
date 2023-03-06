@@ -20,8 +20,8 @@ class Reply(object):
         return cls(200, data, "success")
 
     @classmethod
-    def err(cls, msg="undefined error message"):
-        return cls(0, None, msg=msg)
+    def err(cls, msg: str = "undefined error message", code: int = 0):
+        return cls(code, None, msg=msg)
 
     @classmethod
     def com(cls, data, msg=None):

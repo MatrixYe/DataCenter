@@ -5,6 +5,8 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
+from typing import Union
+
 from fastapi import APIRouter
 
 # from utils import support_network, get_chain_id
@@ -18,8 +20,11 @@ router = APIRouter()
 
 
 @router.get("/networks")
-async def networks():
+async def networks(search: Union[str, int, None] = None):
     values = utils.support_network()
+    if search:
+        ks = values.keys()
+        pass
     return Reply.com(values)
 
 
