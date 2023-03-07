@@ -189,18 +189,38 @@ def get_chain_id(network: str) -> int:
     return cid
 
 
-def get_network_name(chain_id: int) -> Union[str, None]:
+def get_network_and_cid(network: Union[str, None], chain_id: Union[int, None]) -> (Union[str, None], Union[int, None]):
+    """
+    通过输入的network和chainid 返回合法的network和chainid
+    :param network: 输入的network
+    :param chain_id: 输入的chainid
+    :return: 返回符合配置文件的network和chainid
+    """
+    if not network and not chain_id:
+        return None, None
+    # 优先chain id判断
+    if chain_id:
+        for k, v in _networks.items():
+            if v == chain_id:
+                return k, v
+    elif network:
+        v = _networks.get(network)
+        if v:
+            return network, v
+    return None, None
+
+
+# def get_network_byid
+def get_network_name(chain_id: Union[int, None]) -> Union[str, None]:
     """
     通过chainid获取区块链网络名称
     :rtype: object
     :param chain_id:
     :return: 
     """
-
     for k, v in _networks.items():
         if v == chain_id:
             return k
-    return None
 
 
 def support_network() -> Union[dict, None]:

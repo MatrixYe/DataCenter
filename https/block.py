@@ -61,12 +61,9 @@ async def start_sync_block(ask: AskStartBlock):
     if ask.chain_id == 4:
         return Reply.err("rinkeby(chain_id=4) is abandoned network,forbid sync this blockchain")
 
-    _network = utils.get_network_name(ask.chain_id) if ask.chain_id else ask.network
-    _cid = ask.chain_id if ask.chain_id else utils.get_chain_id(_network)
-
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
     if not _network or not _cid:
-        return Reply.err(
-            f"can not sync,unsupport chain_id={_cid} or network={_network},please update 'networks.json'")
+        Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
 
     if ask.check_node:
         eth: EthApi = EthApi.from_node(ask.node)
@@ -107,11 +104,9 @@ async def restart_sync_block(ask: AskRestartBlock):
     if ask.chain_id == 4:
         return Reply.err("rinkeby(chain_id=4) is abandoned network,forbid sync this blockchain")
 
-    _network = utils.get_network_name(ask.chain_id) if ask.chain_id else ask.network
-    _cid = ask.chain_id if ask.chain_id else utils.get_chain_id(_network)
-
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
     if not _network or not _cid:
-        return Reply.err(f"can not sync,unsupport chain_id={_cid} or network={_network},update 'networks.json'")
+        Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
 
     if ask.check_node:
         eth: EthApi = EthApi.from_node(ask.node)
@@ -146,22 +141,20 @@ async def remove_sync_block(ask: AskRemoveBlock):
 
     :return:
     """
-    network = ask.network
-    cid = ask.chain_id
-    delete = ask.clear
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
+    if not _network or not _cid:
+        Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
 
-    _network = utils.get_network_name(cid) if cid else network
-    if not _network:
-        return Reply.err(f"can not remove {_network}-block,network or cid is None")
-
-    cname, msg = block_ctrl.remove_block(network=_network, delete=delete)
+    cname, msg = block_ctrl.remove_block(network=_network, delete=ask.clear)
     if 'remove' not in msg:
         return Reply.err(f'can not remove {cname},container is not exist')
-    return Reply.suc(data={"network": _network, "container": cname, "clear": delete, "result": msg})
+    return Reply.suc(data={"network": _network, "container": cname, "clear": ask.clear, "result": msg})
 
 
 @router.get(path="/last")
 async def last_block(network: Union[str, None] = None, chain_id: Union[int, None] = None):
-    _network = utils.get_network_name(chain_id) if chain_id else network
+    _network, _cid = utils.get_network_and_cid(network=network, chain_id=chain_id)
+    if not _network or not _cid:
+        Reply.err(f'network {network} not match chainid {chain_id},please input a right network or chainid')
     last = block_ctrl.last_block(_network)
     return Reply.com(last, f'can not fint last block by network {_network}')

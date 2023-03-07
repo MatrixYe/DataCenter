@@ -54,11 +54,9 @@ class AskRemoveEvent(BaseModel):
 
 @router.post(path="/start")
 async def start_sync_event(ask: AskStartEvent):
-    _network = utils.get_network_name(ask.chain_id) if ask.chain_id else ask.network
-    _cid = ask.chain_id if ask.chain_id else utils.get_chain_id(_network)
-
-    if not _network:
-        return Reply.err(f"can not sync event,illegal network {_network}")
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
+    if not _network or not _cid:
+        Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
     if not utils.is_address(ask.target):
         return Reply.err(f"fcan not sync event,illegal target {ask.target}")
     if ask.origin <= 0 or ask.delay < 0 or ask.delay > 10 or ask.ranger < 0:
@@ -93,8 +91,9 @@ async def start_sync_event(ask: AskStartEvent):
 
 @router.post(path="/restart")
 async def restart_sync_event(ask: AskRestartEvent):
-    _network = utils.get_network_name(ask.chain_id) if ask.chain_id else ask.network
-    _cid = ask.chain_id if ask.chain_id else utils.get_chain_id(_network)
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
+    if not _network or not _cid:
+        Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
 
     if not _network:
         return Reply.err(f"can not sync event,illegal network {_network}")
@@ -133,7 +132,9 @@ async def restart_sync_event(ask: AskRestartEvent):
 
 @router.post(path="/remove")
 async def remove_sync_event(ask: AskRemoveEvent):
-    _network = utils.get_network_name(ask.chain_id) if ask.chain_id else ask.network
+    _network, _cid = utils.get_network_and_cid(network=ask.network, chain_id=ask.chain_id)
+    if not _network or not _cid:
+        Reply.err(f'can not parse network {ask.network} or chainid {ask.chain_id},check it or update config')
     cn, ac = event_ctrl.remove_event(_network, ask.target, ask.clear)
     if 'remove' not in ac:
         return Reply.err(f'can not remove {cn},container is not exist')
@@ -142,9 +143,11 @@ async def remove_sync_event(ask: AskRemoveEvent):
 
 @router.get(path="/last")
 async def last_event(target: str, network: Union[str, None] = None, chain_id: Union[int, None] = None):
-    _network = utils.get_network_name(chain_id) if chain_id else network
+    _network, _cid = utils.get_network_and_cid(network=network, chain_id=chain_id)
+    if not _network or not _cid:
+        Reply.err(f'can not parse network {network} or chainid {chain_id},check it or update config')
     last = event_ctrl.last_event(_network, target)
-    return Reply.com(last, f'can not fint last event by network {_network}')
+    return Reply.com(last, f'can not fint last event by network={_network} target={target}')
 
 
 @router.post(path="/filter")
