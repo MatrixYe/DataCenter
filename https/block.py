@@ -82,7 +82,6 @@ async def start_sync_block(ask: AskStartBlock):
     if 'pass' in ac:
         return Reply.err(f'container {cn.name} is exist,can not submit task,please remove or restart')
     time.sleep(0.5)
-    block_ctrl
     return Reply.suc(
         {
             "network": _network,
@@ -146,7 +145,7 @@ async def remove_sync_block(ask: AskRemoveBlock):
     if not _network or not _cid:
         Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
 
-    cname, msg = block_ctrl.remove_block(network=_network, delete=ask.clear)
+    cname, msg = block_ctrl.remove_block(network=_network, clear=ask.clear)
     if 'remove' not in msg:
         return Reply.err(f'can not remove {cname},container is not exist')
     return Reply.suc(data={"network": _network, "container": cname, "clear": ask.clear, "result": msg})

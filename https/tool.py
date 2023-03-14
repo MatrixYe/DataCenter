@@ -9,11 +9,15 @@ from typing import Union
 
 from fastapi import APIRouter
 
-# from utils import support_network, get_chain_id
 import utils
+from tools.control import BlockCtrl, EventCtrl
+from tools.docker_api import DockerApi
 from .basic import Reply
 
 router = APIRouter()
+docker = DockerApi.from_env()
+block_ctrl = BlockCtrl(utils.load_config())
+event_ctrl = EventCtrl(utils.load_config())
 
 
 ### 获取支持的区块网络
@@ -22,9 +26,9 @@ router = APIRouter()
 @router.get("/networks")
 async def networks(search: Union[str, int, None] = None):
     values = utils.support_network()
-    if search:
-        ks = values.keys()
-        pass
+    # if search:
+    #     ks = values.keys()
+    #     pass
     return Reply.com(values)
 
 
@@ -38,3 +42,10 @@ async def network_info(name: str = None, chain_id: int = None):
         return Reply.com(name, f"unkonw chain_id {chain_id}")
     else:
         return Reply.err("unknow network name or chain id")
+
+
+@router.get("/tasks")
+async def tasks():
+    block_info = block_ctrl.task_info()
+    event_info = event_ctrl.task_info()
+    return Reply.com({'block_task': block_info, 'event_task': event_info}, 'unknown error')

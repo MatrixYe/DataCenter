@@ -210,7 +210,7 @@ class Task(object):
         if block:
             return block.get('timestamp')
         else:
-            log.warning("can not find block in database,so to net")
+            log.warning(f"can not find block {h} in database,so to net")
             head = self.eth.block_head(h)
             if head:
                 self._save_block(head)

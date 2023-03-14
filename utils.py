@@ -7,6 +7,7 @@
 # -------------------------------------------------------------------------------
 import json
 import platform
+import time
 from typing import Union
 
 import toml
@@ -227,3 +228,7 @@ def get_network_name(chain_id: Union[int, None]) -> Union[str, None]:
 
 def support_network() -> Union[dict, None]:
     return _networks
+
+
+def now(t=None, fm="%Y-%m-%d %H:%M:%S") -> str:
+    return time.strftime(fm, time.localtime(t))

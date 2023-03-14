@@ -5,7 +5,6 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-
 from typing import Union
 
 from docker.models.containers import Container
@@ -97,7 +96,7 @@ class BlockCtrl(_Ctrl):
         # 容器不存在->创建
         if old_container is None:
             print("container is not exist --> creating")
-            new_container, err = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
             self._logs('start', {'network': network,
                                  'origin': origin,
                                  'interval': interval,
@@ -117,7 +116,7 @@ class BlockCtrl(_Ctrl):
 
         # 容器存在+停止状态+不重启 -> 移除+创建
         else:
-            self.remove_block(network, delete=False)
+            self.remove_block(network, clear=False)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
             self._logs('start', {'network': network,
                                  'origin': origin,
@@ -161,7 +160,7 @@ class BlockCtrl(_Ctrl):
             return new_container, _act
         # 容器存在
         else:
-            self.remove_block(network, delete=clear)
+            self.remove_block(network, clear=clear)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
             _act = 'remove|clear|create' if clear else 'remove|create'
             self._logs('restart',
@@ -178,11 +177,11 @@ class BlockCtrl(_Ctrl):
             return (new_container, _act) if new_container else (None, 'failed')
 
     # 停止同步block data
-    def remove_block(self, network: str, delete: bool) -> (str, str):
+    def remove_block(self, network: str, clear: bool) -> (str, str):
         """
         停止block 同步
         :param network: 需要停止的网络
-        :param delete:
+        :param clear:
         :return:
         """
         container_name = utils.gen_block_continal_name(network)
@@ -193,10 +192,10 @@ class BlockCtrl(_Ctrl):
         else:
             _, _ = self.docker.remove_container(container_name, force=True)
             ret_act += 'remove'
-        if delete:
+        if clear:
             self._drop_block_data(network)
             ret_act += '|clear'
-        self._logs('remove', {'network': network, 'container': container_name}, ret_act)
+        self._logs('remove', {'network': network, 'container': container_name, 'clear': clear}, ret_act)
         return container_name, ret_act
 
     # 获取最新同步的block高度
@@ -209,10 +208,40 @@ class BlockCtrl(_Ctrl):
             "topic": "block",
             "action": ack,
             "data": data,
-            "result": result
+            "result": result,
+            'time': utils.now()
         }
         self.mongo.insert("logs", info)
+
     # def _logs(self, topic, data):
+    def task_info(self):
+        cs = self.docker.all_container()
+        buff = []
+        for c in cs:
+            #  容器名
+            c_name = c.name
+            if 'block-' not in c_name:
+                continue
+            # 环境变量
+            es = c.attrs['Config']['Env']
+            ed = dict()
+            for e in es:
+                iterm = e.split('=')
+                ed[iterm[0]] = iterm[1]
+            buff.append({
+                'name': c_name,
+                'args': {
+                    'network': ed.get('NETWORK'),
+                    'origin': ed.get('ORIGIN'),
+                    'interval': ed.get('INTERVAL'),
+                    'node': ed.get('NODE'),
+                    'webhook': ed.get('WEBHOOK'),
+                },
+                'current_block': self.redis.getdict(utils.gen_block_tag(ed.get("NETWORK"))),
+                'status': c.status
+            })
+
+        return buff
 
 
 class EventCtrl(_Ctrl):
@@ -231,7 +260,13 @@ class EventCtrl(_Ctrl):
         return container
 
     def _log(self, act, data, result=None):
-        self.mongo.insert('logs', {'topic': 'event', 'action': act, 'data': data, 'result': result})
+        self.mongo.insert('logs', {
+            'topic': 'event',
+            'action': act,
+            'data': data,
+            'result': result,
+            'time': utils.now()
+        })
 
     def start_event(self, network, target, origin, node, delay, ranger, webhook) -> (Container, str):
         c_net = utils.load_docker_net()
@@ -357,3 +392,34 @@ class EventCtrl(_Ctrl):
     def last_event(self, network, target):
         tag = utils.gen_event_tag(network, target)
         return self.redis.getdict(tag)
+
+    def task_info(self):
+        cs = self.docker.all_container()
+        buff = []
+        for c in cs:
+            #  容器名
+            c_name = c.name
+            if 'event-' not in c_name:
+                continue
+            # 环境变量
+            es = c.attrs['Config']['Env']
+            ed = dict()
+            for e in es:
+                iterm = e.split('=')
+                ed[iterm[0]] = iterm[1]
+            buff.append({
+                'name': c_name,
+                'args': {
+                    'network': ed.get('NETWORK'),
+                    'target': ed.get('TARGET'),
+                    'origin': ed.get('ORIGIN'),
+                    'node': ed.get('NODE'),
+                    'delay': ed.get('DELAY'),
+                    'range': ed.get('RANGE'),
+                    'webhook': ed.get('WEBHOOK'),
+                },
+                'current_event': self.redis.getdict(utils.gen_block_tag(ed.get("NETWORK"))),
+                'status': c.status
+            })
+
+        return buff

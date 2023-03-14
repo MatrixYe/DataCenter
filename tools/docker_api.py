@@ -56,24 +56,24 @@ class DockerApi(object):
             print(f"ERROR:run container failed:{e}")
             return None, e
 
-    def _all_container(self) -> List[Container]:
-        return self.client.containers.list(all=True)
+    def all_container(self, flag=True) -> List[Container]:
+        return self.client.containers.list(all=flag)
 
     def get_container(self, name_or_id) -> Union[Container, None]:
-        for c in self._all_container():
+        for c in self.all_container():
             if c.name == name_or_id:
                 return c
         return None
 
     def stop_container(self, name_or_id: str):
-        for a in self._all_container():
+        for a in self.all_container():
             if a.name == name_or_id or a.short_id == name_or_id:
                 a.stop()
                 return True, "success"
         return False, "stop container failed,can not find it by name or short_id"
 
     def remove_container(self, name_or_id, force=True) -> (bool, str):
-        for a in self._all_container():
+        for a in self.all_container():
             # print(f"{a.name} {a.status} {a.image.tags} {a.labels} {a.ports}")
             if a.name == name_or_id or a.short_id == name_or_id:
                 if not force and a.status == 'running':
@@ -82,7 +82,7 @@ class DockerApi(object):
                 return True, "success"
         return False, "remove container failed,can not find it by name or short_id"
 
-    def continers(self, flag=False) -> list:
+    def continers(self, flag=False) -> List[str]:
         """
         获取docker容器列表
         :param flag:
@@ -299,3 +299,10 @@ class DockerApi(object):
             if c.name == c_name and c.status != 'running':
                 return -1
         return 0
+
+    def container_env(self, name_id):
+        c: Container = self.get_container(name_id)
+        if not c:
+            return None
+        e = c.attrs['Config']['Env']
+        return e
