@@ -5,8 +5,7 @@
 # Date:         2021/10/22 2:44 下午
 # Description: 
 # -------------------------------------------------------------------------------
-
-
+import time
 from typing import Union
 
 from fastapi import APIRouter
@@ -82,6 +81,8 @@ async def start_sync_block(ask: AskStartBlock):
         return Reply.err("start container failed!!")
     if 'pass' in ac:
         return Reply.err(f'container {cn.name} is exist,can not submit task,please remove or restart')
+    time.sleep(0.5)
+    block_ctrl
     return Reply.suc(
         {
             "network": _network,

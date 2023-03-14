@@ -147,6 +147,7 @@ def gen_event_table_name(network: str, target: str) -> str:
     :param target: event out地址
     :return: 表名
     """
+    target = target.lower()
     return f"event_{network}_{target[2:6]}_{target[-4:]}"
 
 
@@ -157,6 +158,7 @@ def gen_event_tag(network: str, target: str) -> str:
     :param target: event out地址
     :return: event的redis缓存key
     """
+    target = target.lower()
     return f"event_{network}_{target[2:6]}_{target[-4:]}"
 
 
