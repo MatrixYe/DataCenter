@@ -111,6 +111,7 @@ def gen_event_container_name(network: str, target: str) -> str:
     :param target: event out 地址
     :return: event sync 容器名称
     """
+    target = target.lower()
     return f"event-{network}-{target[2:6]}-{target[-4:]}"
 
 
@@ -123,6 +124,8 @@ def gen_oracle_container_name(network: str, provider: str, target: str) -> str:
     :param target: 喂价源地址
     :return: oracle 容器名称
     """
+    target = target.lower()
+
     return f"oracle-{network}-{provider}-{target[2:6]}-{target[-4:]}"
 
 
