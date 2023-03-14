@@ -98,14 +98,33 @@ class BlockCtrl(_Ctrl):
         if old_container is None:
             print("container is not exist --> creating")
             new_container, err = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            self._logs('start', {'network': network,
+                                 'origin': origin,
+                                 'interval': interval,
+                                 'node': node,
+                                 'webhook': webhook},
+                       'create' if new_container else 'failed')
             return (new_container, 'create') if new_container else (None, 'failed')
         # 容器存在+运行状态+不重启 -> 跳过
         elif old_container.status == 'running':
+            self._logs('start', {'network': network,
+                                 'origin': origin,
+                                 'interval': interval,
+                                 'node': node,
+                                 'webhook': webhook},
+                       'pass')
             return old_container, 'pass'
+
         # 容器存在+停止状态+不重启 -> 移除+创建
         else:
             self.remove_block(network, delete=False)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
+            self._logs('start', {'network': network,
+                                 'origin': origin,
+                                 'interval': interval,
+                                 'node': node,
+                                 'webhook': webhook},
+                       'remove|create' if new_container else 'failed')
             return (new_container, 'remove|create') if new_container else (None, 'failed')
 
     def restart_block(self, network: str, origin: int, interval: int, node: str, webhook: str, clear=False):
@@ -126,12 +145,36 @@ class BlockCtrl(_Ctrl):
             if clear:
                 self._drop_block_data(network)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
-            return (new_container, 'create') if new_container else (None, 'failed')
+
+            _act = 'create' if new_container else 'failed'
+            self._logs('restart',
+                       {
+                           'network': network,
+                           'origin': origin,
+                           'interval': interval,
+                           'node': node,
+                           'webhook': webhook,
+                           'clear': clear
+                       },
+                       _act
+                       )
+            return new_container, _act
         # 容器存在
         else:
             self.remove_block(network, delete=clear)
             new_container = self._start_sync_block(c_name, c_net, c_env, c_restart)
             _act = 'remove|clear|create' if clear else 'remove|create'
+            self._logs('restart',
+                       {
+                           'network': network,
+                           'origin': origin,
+                           'interval': interval,
+                           'node': node,
+                           'webhook': webhook,
+                           'clear': clear
+                       },
+                       _act
+                       )
             return (new_container, _act) if new_container else (None, 'failed')
 
     # 停止同步block data
@@ -153,12 +196,23 @@ class BlockCtrl(_Ctrl):
         if delete:
             self._drop_block_data(network)
             ret_act += '|clear'
+        self._logs('remove', {'network': network, 'container': container_name}, ret_act)
         return container_name, ret_act
 
     # 获取最新同步的block高度
     def last_block(self, network) -> Union[dict, None]:
         tag = utils.gen_block_tag(network)
         return self.redis.getdict(tag)
+
+    def _logs(self, ack, data, result=None):
+        info = {
+            "topic": "block",
+            "action": ack,
+            "data": data,
+            "result": result
+        }
+        self.mongo.insert("logs", info)
+    # def _logs(self, topic, data):
 
 
 class EventCtrl(_Ctrl):
@@ -175,6 +229,9 @@ class EventCtrl(_Ctrl):
                                                  restart=c_restart,
                                                  commond=None)
         return container
+
+    def _log(self, act, data, result=None):
+        self.mongo.insert('logs', {'topic': 'event', 'action': act, 'data': data, 'result': result})
 
     def start_event(self, network, target, origin, node, delay, ranger, webhook) -> (Container, str):
         c_net = utils.load_docker_net()
@@ -194,14 +251,39 @@ class EventCtrl(_Ctrl):
         if old_container is None:
             print("container is not exist --> creating")
             new_container = self._start_event(c_name, c_net, c_env, c_restart)
+
+            self._log('start', {'network': network,
+                                'target': target,
+                                'origin': origin,
+                                'node': node,
+                                'delay': delay,
+                                'ranger': ranger,
+                                'webhook': webhook},
+                      'create' if new_container else 'failed')
             return (new_container, 'create') if new_container else (None, 'failed')
         # 容器存在+运行状态 -> 跳过
         elif old_container.status == 'running':
+            self._log('start', {'network': network,
+                                'target': target,
+                                'origin': origin,
+                                'node': node,
+                                'delay': delay,
+                                'ranger': ranger,
+                                'webhook': webhook},
+                      'pass')
             return old_container, 'pass'
         # 容器存在+停止状态+不重启 -> 移除+创建
         else:
             self.remove_event(network, target, delete=False)
             new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            self._log('start', {'network': network,
+                                'target': target,
+                                'origin': origin,
+                                'node': node,
+                                'delay': delay,
+                                'ranger': ranger,
+                                'webhook': webhook},
+                      'remove|create' if new_container else 'failed')
             return (new_container, 'remove|create') if new_container else (None, 'failed')
 
     def restart_event(self, network, target, origin, node, delay, ranger, webhook, cleardb):
@@ -224,11 +306,28 @@ class EventCtrl(_Ctrl):
             if cleardb:
                 self._drop_event_data(network, target)
             new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            self._log('start', {'network': network,
+                                'target': target,
+                                'origin': origin,
+                                'node': node,
+                                'delay': delay,
+                                'ranger': ranger,
+                                'webhook': webhook,
+                                'clear': cleardb},
+                      'create' if new_container else 'failed')
             return (new_container, 'create') if new_container else (None, 'failed')
         # 容器存在+停止状态+不重启 -> 移除+创建
         else:
             self.remove_event(network, target, delete=cleardb)
             new_container = self._start_event(c_name, c_net, c_env, c_restart)
+            self._log('start', {'network': network,
+                                'target': target,
+                                'origin': origin,
+                                'node': node,
+                                'delay': delay,
+                                'ranger': ranger,
+                                'webhook': webhook},
+                      'remove|create' if new_container else 'failed')
             return (new_container, 'remove|create') if new_container else (None, 'failed')
 
     def _drop_event_data(self, network, target):
@@ -242,13 +341,17 @@ class EventCtrl(_Ctrl):
         container = self.docker.get_container(container_name)
         ret_act = ''
         if container is None:
-            ret_act += 'noexist|pass'
+            ret_act += '|noexist|pass'
         else:
             _, _ = self.docker.remove_container(container_name, force=True)
-            ret_act += 'remove'
+            ret_act += '|remove'
         if delete:
             self._drop_event_data(network, target)
             ret_act += '|clear'
+        self._log('start', {'network': network,
+                            'target': target,
+                            'delete': delete},
+                  ret_act)
         return container_name, ret_act
 
     def last_event(self, network, target):
