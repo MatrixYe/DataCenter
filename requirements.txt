@@ -7,3 +7,4 @@ uvicorn==0.20.0
 fastapi==0.92.0
 pydantic==1.10.5
 toml==0.10.2
+grpcio~=1.51.3

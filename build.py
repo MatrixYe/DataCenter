@@ -12,35 +12,36 @@ engines = [
     {
         'name': 'basic python image',
         'cmd': 'docker build -t basic-py . -f imager/basic-py.Dockerfile',
-        'desc': '构建自定义基础python镜像'
+        'desc': '自定义基础python镜像'
     },
     {
         'name': 'Block Engine',
         'cmd': 'docker build -t sync-block . -f imager/sync_block.Dockerfile',
-        'desc': '构建区块高度同步器基础镜像'
+        'desc': '区块高度同步器基础镜像'
     }, {
         'name': 'Event Engine',
         'cmd': 'docker build -t sync-event . -f imager/sync_event.Dockerfile',
-        'desc': '构建通用事件同步器基础镜像'
+        'desc': '通用事件同步器基础镜像'
     },
     {
         'name': 'Oracle Engine',
         'cmd': 'docker build -t sync-oracle . -f imager/sync_oracle.Dockerfile',
-        'desc': '构建喂价源同步器基础镜像'
+        'desc': '喂价源同步器基础镜像'
     },
     {
         'name': 'Rpc Server',
         'cmd': 'docker build -t server-rpc . -f imager/server_rpc.Dockerfile',
-        'desc': '构建RPC-server服务镜像'
+        'desc': 'RPC-server服务镜像'
     },
     {
         'name': 'Http server',
         'cmd': 'docker build -t server-http . -f imager/server_http.Dockerfile',
-        'desc': '构建Http-server服务镜像'
+        'desc': 'Http-server服务镜像'
     }
 ]
 if __name__ == '__main__':
     print("-------- START --------")
+    print("请输入需要构建的镜像名称，输入0将构建全部镜像")
     for i, e in enumerate(engines):
         print(f"{i + 1}: {e['name']} {e['desc']}")
     try:

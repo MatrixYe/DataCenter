@@ -157,4 +157,8 @@ async def last_block(network: Union[str, None] = None, chain_id: Union[int, None
     if not _network or not _cid:
         Reply.err(f'network {network} not match chainid {chain_id},please input a right network or chainid')
     last = block_ctrl.last_block(_network)
-    return Reply.com(last, f'can not fint last block by network {_network}')
+    if last:
+        return Reply.suc(last)
+    else:
+        return Reply.err(f'can not fint last block by network {_network}')
+    # return Reply.com(last, f'can not fint last block by network {_network}')

@@ -73,6 +73,7 @@ def is_address(addr: str) -> bool:
     判断是否正确地址
     :param addr: 地址
     :return: True 正确地址，False非法地址
+    # todo    更换位正则表达式 regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
     """
     if not addr:
         return False
