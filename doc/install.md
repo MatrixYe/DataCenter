@@ -85,8 +85,15 @@ make build
 ```shell
 make start
 ```
+需要开放端口：
 
 #### 启动服务后，执行任务
 
+```shell
+redis:9002
+mongo:9003
+grpc:9005
+http:9006
+```
 根据自定义脚本运行
 

@@ -11,6 +11,7 @@ import time
 from typing import Union
 
 import toml
+from web3 import Web3
 
 # 以太坊系列 区块网络名称及chain-id
 with open('networks.toml', 'r') as f:
@@ -77,12 +78,7 @@ def is_address(addr: str) -> bool:
     """
     if not addr:
         return False
-    if not addr.startswith('0x'):
-        return False
-    if len(addr) < 32:
-        return False
-
-    return True
+    return Web3.isAddress(addr)
 
 
 def gen_docker_net_alias(contailer_name: str) -> str:

@@ -1,6 +1,3 @@
-arbitrum = 42161
-arbitrum_goerli = 421613
-arbitrum_testnet = 79377087078960
 avalanche = 43114
 avalanche_testnet = 43113
 bsc = 56
@@ -27,3 +24,10 @@ palm_testnet = 11297108099
 rinkeby = 4
 ropsten = 3
 xdai = 100
+# arbitrum L2
+arbitrum = 42161
+arbitrum_goerli = 421613
+arbitrum_testnet = 79377087078960
+# zksync L2 零知识证明
+zk = 324
+zk_goerli = 280
