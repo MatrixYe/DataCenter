@@ -10,9 +10,10 @@ from typing import List
 from typing import Union
 
 from web3 import Web3, HTTPProvider
-from web3.eth import LogReceipt, Contract, ChecksumAddress
+from web3.contract import Contract
 from web3.middleware import geth_poa_middleware
 from web3.middleware import simple_cache_middleware
+from web3.types import LogReceipt, ChecksumAddress
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s: -%(filename)s[L:%(lineno)d] %(message)s')
 
@@ -34,7 +35,7 @@ class EthApi(object):
         是否连接
         :return:
         """
-        return self.client.isConnected()
+        return self.client.is_connected()
 
     def chain_id(self) -> int:
         """
@@ -91,7 +92,7 @@ class EthApi(object):
         :param addr:
         :return:
         """
-        return self.client.isAddress(addr)
+        return self.client.is_address(addr)
 
     def to_text(self, v) -> str:
         """
@@ -99,7 +100,7 @@ class EthApi(object):
         :param v:
         :return:
         """
-        return self.client.toText(v)
+        return self.client.to_text(v)
 
     def to_hex(self, v) -> str:
         """
@@ -109,7 +110,7 @@ class EthApi(object):
         :return:
         """
         try:
-            return self.client.toHex(v)
+            return self.client.to_hex(v)
         except Exception as e:
             log.error(f"to hex error:{e}")
             return '0xUNKNOWN'
@@ -120,7 +121,7 @@ class EthApi(object):
         :param address:
         :return:
         """
-        return self.client.toChecksumAddress(address)
+        return self.client.to_checksum_address(address)
 
     def contract_instance(self, address: str, abi) -> Union[Contract, None]:
         """
@@ -130,7 +131,7 @@ class EthApi(object):
         :return:
         """
         try:
-            addr = self.client.toChecksumAddress(address)
+            addr = self.client.to_checksum_address(address)
             c = self.client.eth.contract(address=addr, abi=abi)
             return c
         except BaseException as e:
@@ -149,11 +150,12 @@ class EthApi(object):
         :param arg_filters: 参数过滤，eg: {'itype':2}
         :return:List[LogReceipt]
         """
-        # https://web3py.readthedocs.io/en/v5/contracts.html#web3.contract.Contract.events.your_event_name.createFilter
+
+        # https://web3py.readthedocs.io/en/stable/filters.html
         try:
-            f = contract.events[event_name].createFilter(fromBlock=from_block,
-                                                         toBlock=to_block,
-                                                         argument_filters=arg_filters)
+            f = contract.events[event_name].create_filter(fromBlock=from_block,
+                                                          toBlock=to_block,
+                                                          argument_filters=arg_filters)
             return f.get_all_entries(), True
         except Exception as e:
             log.error(

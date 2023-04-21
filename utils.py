@@ -78,7 +78,7 @@ def is_address(addr: str) -> bool:
     """
     if not addr:
         return False
-    return Web3.isAddress(addr)
+    return Web3.is_address(addr)
 
 
 def gen_docker_net_alias(contailer_name: str) -> str:

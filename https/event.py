@@ -27,7 +27,7 @@ class AskStartEvent(BaseModel):
     origin: int
     node: str
     delay: int = 10
-    ranger: int = 2000
+    range: int = 2000
     webhook: Union[str, None] = 'None'
     check_node: bool = True
 
@@ -39,7 +39,7 @@ class AskRestartEvent(BaseModel):
     origin: int
     node: str
     delay: int = 10
-    ranger: int = 2000
+    range: int = 2000
     webhook: Union[str, None] = 'None'
     check_node: bool = True
     clear: bool = False
@@ -59,8 +59,8 @@ async def start_sync_event(ask: AskStartEvent):
         Reply.err(f'network {ask.network} not match chainid {ask.chain_id},please input a right network or chainid')
     if not utils.is_address(ask.target):
         return Reply.err(f"fcan not sync event,illegal target {ask.target}")
-    if ask.origin <= 0 or ask.delay < 0 or ask.delay > 10 or ask.ranger < 0:
-        return Reply.err(f"can not sync event,illegal origin {ask.origin}、delay {ask.delay}、ranger {ask.ranger}")
+    if ask.origin <= 0 or ask.delay < 0 or ask.delay > 10 or ask.range < 0:
+        return Reply.err(f"can not sync event,illegal origin {ask.origin}、delay {ask.delay}、range {ask.range}")
 
     if ask.check_node:
         eth: EthApi = EthApi.from_node(ask.node)
@@ -70,7 +70,7 @@ async def start_sync_event(ask: AskStartEvent):
         if cid != _cid:
             return Reply.err(f"can not sync event,ask chain_id is {_cid},but node chain_id is {cid}")
 
-    cn, ac = event_ctrl.start_event(_network, ask.target, ask.origin, ask.node, ask.delay, ask.ranger, ask.webhook)
+    cn, ac = event_ctrl.start_event(_network, ask.target, ask.origin, ask.node, ask.delay, ask.range, ask.webhook)
     if 'failed' in ac or cn is None:
         return Reply.err("start container failed!!")
     if 'pass' in ac:
@@ -99,8 +99,8 @@ async def restart_sync_event(ask: AskRestartEvent):
         return Reply.err(f"can not sync event,illegal network {_network}")
     if not utils.is_address(ask.target):
         return Reply.err(f"fcan not sync event,illegal target {ask.target}")
-    if ask.origin <= 0 or ask.delay < 0 or ask.delay > 10 or ask.ranger < 0:
-        return Reply.err(f"can not sync event,illegal origin {ask.origin}、delay {ask.delay}、ranger {ask.ranger}")
+    if ask.origin <= 0 or ask.delay < 0 or ask.delay > 10 or ask.range < 0:
+        return Reply.err(f"can not sync event,illegal origin {ask.origin}、delay {ask.delay}、range {ask.range}")
 
     if ask.check_node:
         eth: EthApi = EthApi.from_node(ask.node)
@@ -110,7 +110,7 @@ async def restart_sync_event(ask: AskRestartEvent):
         if cid != _cid:
             return Reply.err(f"can not sync block,ask chain_id is {_cid},but node chain_id is {cid}")
 
-    cn, ac = event_ctrl.restart_event(_network, ask.target, ask.origin, ask.node, ask.delay, ask.ranger, ask.webhook,
+    cn, ac = event_ctrl.restart_event(_network, ask.target, ask.origin, ask.node, ask.delay, ask.range, ask.webhook,
                                       ask.clear)
     if 'failed' in ac or cn is None:
         return Reply.err("start container failed!!")

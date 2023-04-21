@@ -48,9 +48,6 @@ def check_args():
     if args.range < 100 or args.range > 10000:
         log.error("range must >100 and must <1w")
         exit()
-    if args.delay > 5 or args.delay < 0:
-        log.error("delay must <5 and >0")
-        exit()
 
 
 if __name__ == '__main__':

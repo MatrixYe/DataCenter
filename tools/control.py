@@ -268,7 +268,7 @@ class EventCtrl(_Ctrl):
             'time': utils.now()
         })
 
-    def start_event(self, network, target, origin, node, delay, ranger, webhook) -> (Container, str):
+    def start_event(self, network, target, origin, node, delay, range, webhook) -> (Container, str):
         c_net = utils.load_docker_net()
         c_name = utils.gen_event_container_name(network=network, target=target)
         c_restart = {"Name": "always"}
@@ -278,7 +278,7 @@ class EventCtrl(_Ctrl):
             "ORIGIN": origin,
             "NODE": node,
             "DELAY": delay,
-            "RANGE": ranger,
+            "RANGE": range,
             "WEBHOOK": webhook,
         }
         old_container = self.docker.get_container(c_name)
@@ -292,7 +292,7 @@ class EventCtrl(_Ctrl):
                                 'origin': origin,
                                 'node': node,
                                 'delay': delay,
-                                'ranger': ranger,
+                                'range': range,
                                 'webhook': webhook},
                       'create' if new_container else 'failed')
             return (new_container, 'create') if new_container else (None, 'failed')
@@ -303,7 +303,7 @@ class EventCtrl(_Ctrl):
                                 'origin': origin,
                                 'node': node,
                                 'delay': delay,
-                                'ranger': ranger,
+                                'range': range,
                                 'webhook': webhook},
                       'pass')
             return old_container, 'pass'
@@ -316,12 +316,12 @@ class EventCtrl(_Ctrl):
                                 'origin': origin,
                                 'node': node,
                                 'delay': delay,
-                                'ranger': ranger,
+                                'range': range,
                                 'webhook': webhook},
                       'remove|create' if new_container else 'failed')
             return (new_container, 'remove|create') if new_container else (None, 'failed')
 
-    def restart_event(self, network, target, origin, node, delay, ranger, webhook, cleardb):
+    def restart_event(self, network, target, origin, node, delay, range, webhook, cleardb):
         c_net = utils.load_docker_net()
         c_name = utils.gen_event_container_name(network=network, target=target)
         c_restart = {"Name": "always"}
@@ -331,7 +331,7 @@ class EventCtrl(_Ctrl):
             "ORIGIN": origin,
             "NODE": node,
             "DELAY": delay,
-            "RANGE": ranger,
+            "RANGE": range,
             "WEBHOOK": webhook,
         }
         old_container = self.docker.get_container(c_name)
@@ -346,7 +346,7 @@ class EventCtrl(_Ctrl):
                                 'origin': origin,
                                 'node': node,
                                 'delay': delay,
-                                'ranger': ranger,
+                                'range': range,
                                 'webhook': webhook,
                                 'clear': cleardb},
                       'create' if new_container else 'failed')
@@ -360,7 +360,7 @@ class EventCtrl(_Ctrl):
                                 'origin': origin,
                                 'node': node,
                                 'delay': delay,
-                                'ranger': ranger,
+                                'range': range,
                                 'webhook': webhook},
                       'remove|create' if new_container else 'failed')
             return (new_container, 'remove|create') if new_container else (None, 'failed')

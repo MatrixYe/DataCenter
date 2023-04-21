@@ -192,10 +192,10 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         origin = request.origin
         node = request.node
         delay = request.delay
-        ranger = request.range
+        range = request.range
         webhook = request.webhook
         log.info(
-            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin}  node:{node} delay:{delay} ranger:{ranger} webhook{webhook}")
+            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin}  node:{node} delay:{delay} range:{range} webhook{webhook}")
         if not utils.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
@@ -221,14 +221,14 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
             return server_pb2.ComReply(result='FAILED', msg=msg)
 
-        if ranger < 100 or ranger > 10000:
-            msg = f"ranger 的合法区间为[100,10000]"
+        if range < 100 or range > 10000:
+            msg = f"range 的合法区间为[100,10000]"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
             return server_pb2.ComReply(result='FAILED', msg=msg)
         if not webhook:
             webhook = 'None'
-        # network: str, target: str, origin: int, node: str, delay: int, ranger: int,webhook: str
-        msg = self.control.start_sync_event(network.lower(), target, origin, node, delay, ranger, webhook)
+        # network: str, target: str, origin: int, node: str, delay: int, range: int,webhook: str
+        msg = self.control.start_sync_event(network.lower(), target, origin, node, delay, range, webhook)
         return server_pb2.ComReply(result='SUCCESS', msg=msg)
 
     def StopSyncEvent(self, request, context):

@@ -96,7 +96,7 @@ class Ctrl(object):
             self.redis.delele(tag_block)
 
     # 开始同步event out 数据
-    def start_sync_event(self, network: str, target: str, origin: int, node: str, delay: int, ranger: int,
+    def start_sync_event(self, network: str, target: str, origin: int, node: str, delay: int, range: int,
                          webhook: str):
         net = utils.load_docker_net()
         container_name = utils.gen_event_container_name(network, target)
@@ -106,7 +106,7 @@ class Ctrl(object):
         st = self.docker.statu(container_name)
         if st == 0:
             print("container is not exist --> creating")
-            cmd = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK="{webhook}" -e DELAY={delay} -e RANGE={ranger} --network {net} --network-alias {net_alias} --restart={restart} {img}'
+            cmd = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK="{webhook}" -e DELAY={delay} -e RANGE={range} --network {net} --network-alias {net_alias} --restart={restart} {img}'
             print(cmd)
             os.system(cmd)
             return f"container({container_name}) is not exist --> creating"
@@ -117,7 +117,7 @@ class Ctrl(object):
         if st == -1:
             print("container is exist,but not running --> remove and creating")
             cmd1 = f"docker rm -f {container_name}"
-            cmd2 = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK={webhook} -e DELAY={delay} -e RANGE={ranger} --network {net} --network-alias {net_alias} --restart={restart} {img}'
+            cmd2 = f'docker run -itd --name {container_name} -e NETWORK={network} -e TARGET={target} -e ORIGIN={origin} -e NODE="{node}" -e WEBHOOK={webhook} -e DELAY={delay} -e RANGE={range} --network {net} --network-alias {net_alias} --restart={restart} {img}'
             os.system(cmd1)
             os.system(cmd2)
             print(cmd1)
