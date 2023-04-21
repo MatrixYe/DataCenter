@@ -48,11 +48,6 @@ make build
 ```json
 [
   {
-    "name": "basic python image",
-    "cmd": "docker build -t basic-py . -f imager/basic-py.Dockerfile",
-    "desc": "自定义基础python镜像"
-  },
-  {
     "name": "Block Engine",
     "cmd": "docker build -t sync-block . -f imager/sync_block.Dockerfile",
     "desc": "区块高度同步器基础镜像"
@@ -85,6 +80,7 @@ make build
 ```shell
 make start
 ```
+
 需要开放端口：
 
 #### 启动服务后，执行任务
@@ -95,5 +91,6 @@ mongo:9003
 grpc:9005
 http:9006
 ```
+
 根据自定义脚本运行
 

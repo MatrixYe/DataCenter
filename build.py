@@ -10,11 +10,6 @@ import os
 
 engines = [
     {
-        'name': 'basic python image',
-        'cmd': 'docker build -t basic-py . -f imager/basic-py.Dockerfile',
-        'desc': '自定义基础python镜像'
-    },
-    {
         'name': 'Block Engine',
         'cmd': 'docker build -t sync-block . -f imager/sync_block.Dockerfile',
         'desc': '区块高度同步器基础镜像'
