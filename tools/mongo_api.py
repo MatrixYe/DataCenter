@@ -77,9 +77,11 @@ class MongoApi(object):
         else:
             return var.find_one(filter=filte)
 
-    def find_all(self, c: str, filteit=None, id_desc=None):
+    def find_all(self, c: str, filteit=None, sort_keys=None):
         var = self.database[c]
         if var is None:
             return None
-        d = -1 if id_desc else 1
-        return var.find(filteit).sort('_id', d)
+        if not sort_keys:
+            return var.find(filteit)
+        else:
+            return var.find(filteit).sort(sort_keys)

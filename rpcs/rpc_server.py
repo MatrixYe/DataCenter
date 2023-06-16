@@ -113,15 +113,17 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, "查询高度范围错误，start > end")
             return server_pb2.EventFilterReply()
         colle = utils.gen_event_table_name(network=network, target=target)
+        # 按照block_number 和index进行排序
+        sort_keys = [('block_number', -1), ('index', -1)] if desc else [('block_number', 1), ('index', 1)]
         if senders:
             events = self.mongo.find_all(colle,
                                          {
                                              'sender': {'$in': senders},
                                              'block_number': {'$gte': start, '$lte': end}
-                                         }, desc
+                                         }, sort_keys
                                          )
         else:
-            events = self.mongo.find_all(colle, {'block_number': {'$gte': start, '$lte': end}}, desc)
+            events = self.mongo.find_all(colle, {'block_number': {'$gte': start, '$lte': end}}, sort_keys)
 
         datas = [self._gen_data(e) for e in list(events)] if events else []
         return server_pb2.EventFilterReply(events=datas)
@@ -192,10 +194,10 @@ class DataCenterImp(server_pb2_grpc.DataCenterServicer):
         origin = request.origin
         node = request.node
         delay = request.delay
-        range = request.range
+        _range = request.range
         webhook = request.webhook
         log.info(
-            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin}  node:{node} delay:{delay} range:{range} webhook{webhook}")
+            f"[Ask] [StartSyncBlock] -> network:{network} origin:{origin}  node:{node} delay:{delay} range:{_range} webhook{webhook}")
         if not utils.check_network(network):
             msg = f"无法识别的区块网络{network}"
             self._error(context, grpc.StatusCode.INVALID_ARGUMENT, msg)
